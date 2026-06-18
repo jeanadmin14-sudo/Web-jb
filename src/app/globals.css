@@ -32,6 +32,7 @@ textarea {
   --text-btn-full: #c084fc;
   --bg-navbar-pill: rgba(7, 1, 15, 0.95);
   --border-navbar-pill: rgba(147, 51, 234, 0.25);
+  --stats-gradient: linear-gradient(135deg, #a855f7, #c084fc);
 }
 
 html {
@@ -343,6 +344,7 @@ body {
   --glow-opacity: 0.04;
   --bg-navbar-pill: rgba(250, 247, 253, 0.95);
   --border-navbar-pill: rgba(147, 51, 234, 0.2);
+  --stats-gradient: linear-gradient(135deg, #7c3aed, #db2777);
 }
 
 .light-mode html,
@@ -405,10 +407,20 @@ body {
 .light-mode h2,
 .light-mode h3,
 .light-mode h4,
+.light-mode h5,
+.light-mode h6,
 .light-mode strong,
 .light-mode li,
 .light-mode label,
+.light-mode th,
+.light-mode td,
+.light-mode [style*="color:#fff"],
+.light-mode [style*="color:#ffffff"],
 .light-mode [style*="color: #fff"],
+.light-mode [style*="color: #ffffff"],
+.light-mode [style*="color:white"],
+.light-mode [style*="color: white"],
+.light-mode [style*="color:rgb(255,255,255)"],
 .light-mode [style*="color: rgb(255, 255, 255)"] {
   color: var(--text-main) !important;
 }
@@ -416,11 +428,33 @@ body {
 .light-mode p,
 .light-mode span:not([style*="color"]),
 .light-mode .mobile-theme-text,
-.light-mode [style*="color: rgba(255, 255, 255, 0.45)"],
-.light-mode [style*="color: rgba(255, 255, 255, 0.35)"],
-.light-mode [style*="color: rgba(255, 255, 255, 0.5)"] {
+.light-mode [style*="color:rgba(255"],
+.light-mode [style*="color: rgba(255"],
+.light-mode [style*="color:rgba(255, 255, 255"],
+.light-mode [style*="color: rgba(255,255,255"] {
   color: var(--text-muted) !important;
 }
+
+/* Tailwind utility text color overrides for light mode */
+.light-mode .text-white {
+  color: var(--text-main) !important;
+}
+.light-mode [class*="text-white/"] {
+  color: var(--text-muted) !important;
+}
+.light-mode .text-purple-400 {
+  color: #7c3aed !important;
+}
+.light-mode .text-purple-300 {
+  color: #6d28d9 !important;
+}
+.light-mode .text-green-400 {
+  color: #16a34a !important;
+}
+.light-mode .text-red-400 {
+  color: #dc2626 !important;
+}
+
 
 /* Modals */
 .light-mode [style*="background: rgba(0,0,0,0.8)"] {
@@ -470,3 +504,17 @@ select option {
 .light-mode footer p {
   color: var(--text-muted) !important;
 }
+
+/* Modal theme styles */
+.modal-box-container {
+  background: rgba(15, 6, 32, 0.96) !important;
+  border: 1px solid rgba(168, 85, 247, 0.3) !important;
+  box-shadow: 0 25px 70px -10px rgba(147, 51, 234, 0.5), 0 0 50px rgba(0, 0, 0, 0.8) !important;
+}
+
+.light-mode .modal-box-container {
+  background: #ffffff !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: 0 20px 50px rgba(147, 51, 234, 0.12) !important;
+}
+

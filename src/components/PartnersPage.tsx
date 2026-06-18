@@ -27,7 +27,7 @@ export default function PartnersPage() {
     <section
       style={{
         minHeight: '100vh',
-        padding: '40px 0',
+        padding: '120px 0 40px',
         position: 'relative',
         background: '#07010f',
       }}
@@ -311,7 +311,8 @@ export default function PartnersPage() {
       <style jsx>{`
         @media (max-width: 768px) {
           section {
-            padding: 24px 0 !important;
+            padding-top: 88px !important;
+            padding-bottom: 24px !important;
           }
           .partners-grid {
             grid-template-columns: 1fr !important;

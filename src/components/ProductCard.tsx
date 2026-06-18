@@ -372,13 +372,11 @@ export default function ProductCard({ product }: { product: Product }) {
 
           <div
             onClick={(e) => e.stopPropagation()}
+            className="modal-box-container"
             style={{
               width: '100%',
               maxWidth: '680px',
-              background: 'rgba(15, 6, 32, 0.95)',
-              border: '1px solid rgba(168, 85, 247, 0.3)',
               borderRadius: '32px',
-              boxShadow: '0 25px 70px -10px rgba(147, 51, 234, 0.5), 0 0 50px rgba(0, 0, 0, 0.8)',
               position: 'relative',
               overflow: 'hidden',
               animation: 'modalScaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',

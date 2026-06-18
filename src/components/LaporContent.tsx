@@ -130,7 +130,7 @@ export default function LaporContent() {
     <section
       style={{
         minHeight: '100vh',
-        padding: '80px 0',
+        padding: '120px 0 40px',
         position: 'relative',
         overflow: 'hidden',
         background: '#07010f',
@@ -395,6 +395,7 @@ export default function LaporContent() {
           }}
         >
           <div
+            className="modal-box-container"
             style={{
               width: '100%',
               maxWidth: '560px',
@@ -403,9 +404,6 @@ export default function LaporContent() {
               borderRadius: '24px',
               padding: '32px',
               position: 'relative',
-              background: '#0c0414',
-              border: '1px solid rgba(147, 51, 234, 0.25)',
-              boxShadow: '0 10px 40px rgba(0,0,0,0.8)',
             }}
           >
             <button
@@ -584,6 +582,15 @@ export default function LaporContent() {
           </div>
         </div>
       )}
+      {/* Responsive */}
+      <style jsx>{`
+        @media (max-width: 768px) {
+          section {
+            padding-top: 88px !important;
+            padding-bottom: 24px !important;
+          }
+        }
+      `}</style>
     </section>
   )
 }

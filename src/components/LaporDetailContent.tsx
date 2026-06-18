@@ -74,7 +74,7 @@ export default function LaporDetailContent() {
 
   return (
     <section
-      className="min-h-screen py-20 relative overflow-hidden"
+      className="min-h-screen pt-32 pb-20 relative overflow-hidden"
       style={{ background: '#07010f' }}
     >
       {/* Background glow */}

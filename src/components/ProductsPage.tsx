@@ -216,7 +216,7 @@ export default function ProductsPage() {
     <section
       style={{
         minHeight: '100vh',
-        padding: '40px 0',
+        padding: '120px 0 40px',
         position: 'relative',
         background: '#07010f',
       }}
@@ -367,9 +367,9 @@ export default function ProductsPage() {
                         boxShadow: '0 0 14px rgba(147,51,234,0.4)',
                       }
                     : {
-                        background: 'rgba(12,4,20,0.8)',
-                        border: '1px solid rgba(147,51,234,0.2)',
-                        color: 'rgba(255,255,255,0.5)',
+                        background: 'var(--bg-btn-outline)',
+                        border: '1px solid var(--border-btn-outline)',
+                        color: 'var(--text-btn-outline)',
                       }),
                 }}
               >
@@ -396,9 +396,9 @@ export default function ProductsPage() {
                         boxShadow: '0 0 14px rgba(147,51,234,0.4)',
                       }
                     : {
-                        background: 'rgba(12,4,20,0.6)',
-                        border: '1px solid rgba(255,255,255,0.07)',
-                        color: 'rgba(255,255,255,0.4)',
+                        background: 'var(--bg-btn-outline)',
+                        border: '1px solid var(--border-btn-outline)',
+                        color: 'var(--text-btn-outline)',
                       }),
                 }}
               >
@@ -546,7 +546,8 @@ export default function ProductsPage() {
       <style jsx>{`
         @media (max-width: 768px) {
           section {
-            padding: 24px 0 !important;
+            padding-top: 88px !important;
+            padding-bottom: 24px !important;
           }
           .products-grid {
             grid-template-columns: repeat(2, 1fr) !important;

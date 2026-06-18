@@ -16,7 +16,7 @@ export default function Hero() {
         minHeight: '75vh',
         display: 'flex',
         alignItems: 'center',
-        paddingTop: '3rem',
+        paddingTop: '7.5rem',
         paddingBottom: '3rem',
       }}
     >
@@ -216,18 +216,18 @@ export default function Hero() {
                     padding: '14px 28px',
                     borderRadius: '14px',
                     transition: 'all 0.2s ease',
-                    background: 'rgba(12,4,20,0.85)',
-                    border: '1px solid rgba(147,51,234,0.2)',
+                    background: 'var(--bg-card)',
+                    border: '1px solid var(--border-card)',
                     minWidth: '110px',
                   }}
                   onMouseEnter={(e) => {
                     const el = e.currentTarget as HTMLElement
-                    el.style.borderColor = 'rgba(168,85,247,0.45)'
+                    el.style.borderColor = 'var(--border-card-hover)'
                     el.style.boxShadow = '0 0 20px rgba(147,51,234,0.15)'
                   }}
                   onMouseLeave={(e) => {
                     const el = e.currentTarget as HTMLElement
-                    el.style.borderColor = 'rgba(147,51,234,0.2)'
+                    el.style.borderColor = 'var(--border-card)'
                     el.style.boxShadow = 'none'
                   }}
                 >
@@ -235,7 +235,7 @@ export default function Hero() {
                     style={{
                       fontSize: '1.25rem',
                       fontWeight: 900,
-                      background: 'linear-gradient(135deg, #a855f7, #c084fc)',
+                      background: 'var(--stats-gradient)',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                       backgroundClip: 'text',
@@ -247,7 +247,7 @@ export default function Hero() {
                     style={{
                       fontSize: '12px',
                       marginTop: '2px',
-                      color: 'rgba(255,255,255,0.4)',
+                      color: 'var(--text-desc)',
                     }}
                   >
                     {s.label}
@@ -313,7 +313,7 @@ export default function Hero() {
       <style jsx>{`
         @media (max-width: 768px) {
           section {
-            padding-top: 2.5rem !important;
+            padding-top: 5.5rem !important;
             padding-bottom: 2.5rem !important;
             min-height: auto !important;
           }
