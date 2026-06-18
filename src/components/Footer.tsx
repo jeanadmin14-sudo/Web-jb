@@ -240,7 +240,7 @@ export default function Footer() {
             flexWrap: 'wrap',
           }}
         >
-          <p>© 2025 JBJean. All rights reserved.</p>
+          <p>dibuat oleh Copyright © GenZcodeRush - PT.GenZ selalu cuan - code ♡ Jarpad</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             <Crown style={{ width: '12px', height: '12px', color: 'rgba(234,179,8,0.4)' }} />
             <span>Premium Game Marketplace</span>
