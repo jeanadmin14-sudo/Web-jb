@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
-import { query } from '@/lib/db'
+import { query, getDbPool } from '@/lib/db'
 import { initializeDatabase } from '@/lib/db-init'
 import { insertLog } from '@/lib/db-log'
+import { getAuthSession } from '@/lib/auth-server'
 
 // Helper to ensure database is initialized on demand
 let isDbInitialized = false
@@ -12,9 +13,15 @@ async function ensureDb() {
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     await ensureDb()
+
+    // Security check - admins list GET must be protected
+    if (getDbPool() && !getAuthSession(req)) {
+      return NextResponse.json({ error: 'Unauthorized: Sesi tidak sah.' }, { status: 401 })
+    }
+
     const { rows } = await query('SELECT username, password_hash FROM admins')
     
     // Map password_hash back to passwordHash to match type AdminAccount in frontend
@@ -33,6 +40,12 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     await ensureDb()
+
+    // Security check
+    if (getDbPool() && !getAuthSession(req)) {
+      return NextResponse.json({ error: 'Unauthorized: Sesi tidak sah.' }, { status: 401 })
+    }
+
     const adminUser = req.headers.get('x-admin-user')
     const body = await req.json()
     const { username, passwordHash } = body
@@ -69,6 +82,12 @@ export async function POST(req: Request) {
 export async function DELETE(req: Request) {
   try {
     await ensureDb()
+
+    // Security check
+    if (getDbPool() && !getAuthSession(req)) {
+      return NextResponse.json({ error: 'Unauthorized: Sesi tidak sah.' }, { status: 401 })
+    }
+
     const adminUser = req.headers.get('x-admin-user')
     const { searchParams } = new URL(req.url)
     const username = searchParams.get('username')

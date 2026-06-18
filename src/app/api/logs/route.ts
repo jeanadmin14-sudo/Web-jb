@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
-import { query } from '@/lib/db'
+import { query, getDbPool } from '@/lib/db'
 import { initializeDatabase } from '@/lib/db-init'
+import { getAuthSession } from '@/lib/auth-server'
 
 // Helper to ensure database is initialized on demand
 let isDbInitialized = false
@@ -11,9 +12,15 @@ async function ensureDb() {
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     await ensureDb()
+
+    // Security check
+    if (getDbPool() && !getAuthSession(req)) {
+      return NextResponse.json({ error: 'Unauthorized: Sesi tidak sah.' }, { status: 401 })
+    }
+
     const { rows } = await query('SELECT * FROM activity_logs ORDER BY created_at DESC')
     return NextResponse.json(rows)
   } catch (err: any) {

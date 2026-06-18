@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
-import { query } from '@/lib/db'
+import { query, getDbPool } from '@/lib/db'
 import { initializeDatabase } from '@/lib/db-init'
 import { insertLog } from '@/lib/db-log'
+import { getAuthSession } from '@/lib/auth-server'
 
 // Helper to ensure database is initialized on demand
 let isDbInitialized = false
@@ -33,6 +34,12 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     await ensureDb()
+    
+    // Security check
+    if (getDbPool() && !getAuthSession(req)) {
+      return NextResponse.json({ error: 'Unauthorized: Sesi tidak sah.' }, { status: 401 })
+    }
+
     const adminUser = req.headers.get('x-admin-user')
     const body = await req.json()
     const { id, name, description, price, category, status, image_url, created_at, rent_end_date } = body
@@ -70,6 +77,12 @@ export async function POST(req: Request) {
 export async function DELETE(req: Request) {
   try {
     await ensureDb()
+
+    // Security check
+    if (getDbPool() && !getAuthSession(req)) {
+      return NextResponse.json({ error: 'Unauthorized: Sesi tidak sah.' }, { status: 401 })
+    }
+
     const adminUser = req.headers.get('x-admin-user')
     const { searchParams } = new URL(req.url)
     const id = searchParams.get('id')

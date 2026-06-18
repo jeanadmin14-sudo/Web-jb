@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Eye, EyeOff, Lock, User, ArrowLeft } from 'lucide-react'
-import { getAdmins } from '@/lib/storage'
+
 
 export default function LoginPage() {
   const router = useRouter()
@@ -37,22 +37,26 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const admins = await getAdmins()
-      const admin = admins.find(
-        (a) => a.username === username.trim() && a.passwordHash === password
-      )
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      })
 
-      if (admin) {
+      if (res.ok) {
+        const data = await res.json()
         // Logged in successfully
-        localStorage.setItem('jbjean_session', username.trim())
+        localStorage.setItem('jbjean_session', data.username)
+        localStorage.setItem('jbjean_session_token', data.token)
         if (rememberMe) {
-          localStorage.setItem('jbjean_remembered_user', username.trim())
+          localStorage.setItem('jbjean_remembered_user', data.username)
         } else {
           localStorage.removeItem('jbjean_remembered_user')
         }
         router.push('/admin')
       } else {
-        setError('Username atau password salah.')
+        const data = await res.json().catch(() => ({}))
+        setError(data.error || 'Username atau password salah.')
       }
     } catch (err) {
       setError('Terjadi kesalahan sistem.')

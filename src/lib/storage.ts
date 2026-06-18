@@ -227,6 +227,16 @@ export async function getProducts(): Promise<Product[]> {
   return getLocal<Product[]>(KEY_PRODUCTS, DEFAULT_PRODUCTS)
 }
 
+function getSessionTokenHeader(): Record<string, string> {
+  if (typeof window === 'undefined') return {}
+  const token = localStorage.getItem('jbjean_session_token') || ''
+  const user = localStorage.getItem('jbjean_session') || ''
+  return {
+    'x-admin-user': user,
+    'x-admin-token': token
+  }
+}
+
 export async function saveProduct(product: Product): Promise<void> {
   const isNew = !product.created_at || getLocal<Product[]>(KEY_PRODUCTS, DEFAULT_PRODUCTS).findIndex(p => p.id === product.id) === -1
 
@@ -235,7 +245,7 @@ export async function saveProduct(product: Product): Promise<void> {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
-        'x-admin-user': getSessionUser()
+        ...getSessionTokenHeader()
       },
       body: JSON.stringify(product),
     })
@@ -263,9 +273,7 @@ export async function deleteProduct(id: string): Promise<void> {
   if (await checkPostgres()) {
     const res = await fetch(`/api/products?id=${encodeURIComponent(id)}`, {
       method: 'DELETE',
-      headers: {
-        'x-admin-user': getSessionUser()
-      }
+      headers: getSessionTokenHeader()
     })
     if (res.ok) return
     throw new Error('Gagal menghapus produk dari Postgres')
@@ -314,7 +322,7 @@ export async function savePartner(partner: Partner): Promise<void> {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
-        'x-admin-user': getSessionUser()
+        ...getSessionTokenHeader()
       },
       body: JSON.stringify(partner),
     })
@@ -342,9 +350,7 @@ export async function deletePartner(id: string): Promise<void> {
   if (await checkPostgres()) {
     const res = await fetch(`/api/partners?id=${encodeURIComponent(id)}`, {
       method: 'DELETE',
-      headers: {
-        'x-admin-user': getSessionUser()
-      }
+      headers: getSessionTokenHeader()
     })
     if (res.ok) return
     throw new Error('Gagal menghapus partner dari Postgres')
@@ -374,7 +380,9 @@ export async function deletePartner(id: string): Promise<void> {
 
 export async function getAdmins(): Promise<AdminAccount[]> {
   if (await checkPostgres()) {
-    const res = await fetch('/api/admins')
+    const res = await fetch('/api/admins', {
+      headers: getSessionTokenHeader()
+    })
     if (res.ok) return await res.json()
   }
   return getLocal<AdminAccount[]>(KEY_ADMINS, DEFAULT_ADMINS)
@@ -388,7 +396,7 @@ export async function saveAdmin(admin: AdminAccount): Promise<void> {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
-        'x-admin-user': getSessionUser()
+        ...getSessionTokenHeader()
       },
       body: JSON.stringify(admin),
     })
@@ -411,9 +419,7 @@ export async function deleteAdmin(username: string): Promise<void> {
   if (await checkPostgres()) {
     const res = await fetch(`/api/admins?username=${encodeURIComponent(username)}`, {
       method: 'DELETE',
-      headers: {
-        'x-admin-user': getSessionUser()
-      }
+      headers: getSessionTokenHeader()
     })
     if (res.ok) return
     throw new Error('Gagal menghapus admin dari Postgres')
@@ -428,7 +434,9 @@ export async function deleteAdmin(username: string): Promise<void> {
 
 export async function getActivityLogs(): Promise<ActivityLog[]> {
   if (await checkPostgres()) {
-    const res = await fetch('/api/logs')
+    const res = await fetch('/api/logs', {
+      headers: getSessionTokenHeader()
+    })
     if (res.ok) return await res.json()
   }
   return getLocal<ActivityLog[]>(KEY_LOGS, [])
