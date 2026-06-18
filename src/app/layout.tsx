@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
+import AppShell from '@/components/AppShell'
 
 const inter = Inter({
   variable: '--font-inter',
@@ -47,9 +46,7 @@ export default function RootLayout({
         className={`${inter.variable} antialiased`}
         style={{ backgroundColor: '#07010f', color: '#fff' }}
       >
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   )

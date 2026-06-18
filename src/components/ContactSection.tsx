@@ -157,7 +157,7 @@ export default function ContactSection() {
               ))}
 
               {/* Instagram & TikTok side by side */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div className="contact-social-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <a
                   href="https://www.instagram.com/jean_cruel23?igsh=MW5iYXk4amFzNThsdw=="
                   target="_blank"
@@ -305,6 +305,27 @@ export default function ContactSection() {
           .contact-grid > div:first-child p {
             margin-left: auto !important;
             margin-right: auto !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .contact-card {
+            padding: 22px 14px !important;
+          }
+          .contact-grid {
+            gap: 18px !important;
+          }
+          .contact-social-grid {
+            grid-template-columns: 1fr !important;
+            gap: 10px !important;
+          }
+          .contact-grid a {
+            min-height: 44px !important;
+            border-radius: 12px !important;
+            font-size: 13px !important;
+            padding: 11px 14px !important;
+          }
+          .contact-grid h2 {
+            font-size: clamp(1.7rem, 9vw, 2.25rem) !important;
           }
         }
       `}</style>

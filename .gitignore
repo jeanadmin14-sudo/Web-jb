@@ -43,6 +43,7 @@ next-env.d.ts
 # local dev logs
 dev-err.log
 dev-out.log
+dev-server*.log
 
 # helper scripts
 fix_files.py

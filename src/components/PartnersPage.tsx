@@ -6,8 +6,6 @@ import type { Partner } from '@/lib/supabase'
 import Image from 'next/image'
 import { ExternalLink, Crown } from 'lucide-react'
 
-const MOCK_PARTNERS: Partner[] = []
-
 export default function PartnersPage() {
   const [partners, setPartners] = useState<Partner[]>([])
   const [loading, setLoading]   = useState(true)
@@ -25,6 +23,7 @@ export default function PartnersPage() {
 
   return (
     <section
+      className="partners-section"
       style={{
         minHeight: '100vh',
         padding: '120px 0 40px',
@@ -48,6 +47,7 @@ export default function PartnersPage() {
       />
 
       <div
+        className="partners-container"
         style={{
           position: 'relative',
           maxWidth: '1280px',
@@ -56,8 +56,9 @@ export default function PartnersPage() {
         }}
       >
         {/* Header */}
-        <div style={{ marginBottom: '28px' }}>
+        <div className="partners-header" style={{ marginBottom: '28px' }}>
           <div
+            className="partners-badge"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -76,6 +77,7 @@ export default function PartnersPage() {
             Layanan
           </div>
           <h1
+            className="partners-title"
             style={{
               fontWeight: 800,
               marginBottom: '8px',
@@ -96,7 +98,7 @@ export default function PartnersPage() {
               JBJean
             </span>
           </h1>
-          <p style={{ color: 'rgba(255,255,255,0.45)' }}>
+          <p className="partners-subtitle" style={{ color: 'rgba(255,255,255,0.45)' }}>
             Daftar partner terpercaya dan layanan resmi.
           </p>
         </div>
@@ -146,6 +148,7 @@ export default function PartnersPage() {
               >
                 {/* Image */}
                 <div
+                  className="partner-image"
                   style={{
                     position: 'relative',
                     aspectRatio: '16/9',
@@ -190,8 +193,9 @@ export default function PartnersPage() {
                     }}
                   />
                   {/* Badges */}
-                  <div style={{ position: 'absolute', top: '10px', left: '10px' }}>
+                  <div className="partner-badge-left" style={{ position: 'absolute', top: '10px', left: '10px' }}>
                     <span
+                      className="partner-official-badge"
                       style={{
                         fontSize: '12px',
                         fontWeight: 700,
@@ -206,8 +210,9 @@ export default function PartnersPage() {
                       Partner Resmi JBJean
                     </span>
                   </div>
-                  <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
+                  <div className="partner-badge-right" style={{ position: 'absolute', top: '10px', right: '10px' }}>
                     <span
+                      className="partner-status-badge"
                       style={{
                         fontSize: '12px',
                         fontWeight: 700,
@@ -229,9 +234,10 @@ export default function PartnersPage() {
                 </div>
 
                 {/* Body */}
-                <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                  <h3 style={{ fontWeight: 700, color: '#fff', fontSize: '16px', marginBottom: '8px' }}>{partner.name}</h3>
+                <div className="partner-body" style={{ padding: '20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <h3 className="partner-name" style={{ fontWeight: 700, color: '#fff', fontSize: '16px', marginBottom: '8px' }}>{partner.name}</h3>
                   <p
+                    className="partner-description"
                     style={{
                       fontSize: '14px',
                       marginBottom: '16px',
@@ -248,6 +254,7 @@ export default function PartnersPage() {
                   </p>
                   {partner.wa_channel_url && (
                     <a
+                      className="partner-link"
                       href={partner.wa_channel_url}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -310,13 +317,98 @@ export default function PartnersPage() {
       {/* Responsive */}
       <style jsx>{`
         @media (max-width: 768px) {
-          section {
-            padding-top: 88px !important;
-            padding-bottom: 24px !important;
+          .partners-section {
+            padding-top: 94px !important;
+            padding-bottom: 28px !important;
+            min-height: auto !important;
+          }
+          .partners-container {
+            padding: 0 14px !important;
+          }
+          .partners-header {
+            text-align: center !important;
+            margin-bottom: 22px !important;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
+          .partners-badge {
+            margin-bottom: 12px !important;
+            font-size: 11px !important;
+            padding: 6px 12px !important;
+          }
+          .partners-title {
+            font-size: clamp(2rem, 10vw, 2.75rem) !important;
+            line-height: 1.05 !important;
+            letter-spacing: -0.04em !important;
+            margin-bottom: 10px !important;
+          }
+          .partners-subtitle {
+            max-width: 300px;
+            font-size: 14px !important;
+            line-height: 1.6 !important;
           }
           .partners-grid {
             grid-template-columns: 1fr !important;
-            gap: 16px !important;
+            gap: 14px !important;
+          }
+          .partners-grid :global(.card-dark) {
+            border-radius: 18px !important;
+            transform: none !important;
+          }
+          .partner-image {
+            aspect-ratio: 4 / 3 !important;
+          }
+          .partner-badge-left,
+          .partner-badge-right {
+            top: 10px !important;
+            left: 10px !important;
+            right: auto !important;
+            max-width: calc(100% - 20px);
+          }
+          .partner-badge-right {
+            top: 42px !important;
+          }
+          .partner-official-badge,
+          .partner-status-badge {
+            max-width: 100%;
+            min-height: 26px;
+            font-size: 11px !important;
+            line-height: 1.2 !important;
+            padding: 5px 9px !important;
+            white-space: nowrap;
+          }
+          .partner-body {
+            padding: 16px !important;
+          }
+          .partner-name {
+            font-size: 16px !important;
+            line-height: 1.25 !important;
+            margin-bottom: 8px !important;
+          }
+          .partner-description {
+            font-size: 13px !important;
+            line-height: 1.55 !important;
+            margin-bottom: 14px !important;
+            -webkit-line-clamp: 2 !important;
+          }
+          .partner-link {
+            min-height: 44px;
+            border-radius: 12px !important;
+            font-size: 13px !important;
+            padding: 11px 14px !important;
+          }
+        }
+        @media (max-width: 380px) {
+          .partners-container {
+            padding: 0 12px !important;
+          }
+          .partner-official-badge,
+          .partner-status-badge {
+            font-size: 10px !important;
+          }
+          .partner-badge-right {
+            top: 40px !important;
           }
         }
         @media (min-width: 769px) and (max-width: 1024px) {

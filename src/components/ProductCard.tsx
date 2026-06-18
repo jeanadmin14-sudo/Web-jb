@@ -1,7 +1,6 @@
 "use client"
 
 import Image from 'next/image'
-import Link from 'next/link'
 import type { Product } from '@/lib/supabase'
 import { Search, MessageSquare, Info, ShoppingCart, X } from 'lucide-react'
 import { useState, useEffect } from 'react'
@@ -29,7 +28,8 @@ export default function ProductCard({ product }: { product: Product }) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
+    const timer = window.setTimeout(() => setMounted(true), 0)
+    return () => window.clearTimeout(timer)
   }, [])
 
   const waText = encodeURIComponent(`Halo, saya tertarik dengan produk: ${product.name}`)
@@ -37,6 +37,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
   return (
     <div
+      className="product-card"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
@@ -74,6 +75,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
       {/* Visual Header / Image Box (Portrait ratio 3/4) */}
       <div
+        className="product-card-image"
         style={{
           position: 'relative',
           aspectRatio: '3/4',
@@ -243,7 +245,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
       {/* Action Buttons Row */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: 'auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+        <div className="product-card-actions-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
           {/* Hubungi */}
           <a
             href={waUrl}
@@ -631,6 +633,26 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>,
         document.body
       )}
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .product-card {
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.36) !important;
+          }
+          .product-card-image {
+            aspect-ratio: 16 / 10 !important;
+            border-radius: 16px !important;
+          }
+          .product-card-actions-row {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 10px !important;
+          }
+        }
+        @media (max-width: 380px) {
+          .product-card-actions-row {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   )
 }

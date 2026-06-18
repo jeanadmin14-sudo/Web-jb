@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { getProducts } from '@/lib/storage'
 import type { Product } from '@/lib/supabase'
 import ProductCard from '@/components/ProductCard'
@@ -14,131 +14,8 @@ const SORT_OPTIONS = [
 ]
 const STATUS_FILTERS = ['All Status', 'Ready Only', 'Sold Out']
 
-const MOCK_PRODUCTS: Product[] = [
-  {
-    id: 'm1',
-    name: 'Akun Free Fire Old Season 1',
-    description: 'Set Sakura, Hip Hop, bundle langka lengkap, vault melimpah.',
-    price: 1500000,
-    category: 'Free Fire',
-    status: 'Ready',
-    image_url: '/Logo.jpeg',
-    created_at: '2026-06-12T00:00:00Z',
-  },
-  {
-    id: 'm2',
-    name: 'Akun Mobile Legends Mythical Glory',
-    description: 'Skins Collector Granger, Lightborn, KOF Gusion & Chou, winrate 72%.',
-    price: 2200000,
-    category: 'Mobile Legends',
-    status: 'Ready',
-    image_url: '/Logo.jpeg',
-    created_at: '2026-06-11T00:00:00Z',
-  },
-  {
-    id: 'm3',
-    name: 'Rental Akun FF Max Skin Full',
-    description: 'Rental harian akun Free Fire full skin senjata Evo max level.',
-    price: 35000,
-    category: 'Rental',
-    status: 'Ready',
-    image_url: '/Logo.jpeg',
-    created_at: '2026-06-10T00:00:00Z',
-  },
-  {
-    id: 'm4',
-    name: 'Jasa Post Paid Promote Instagram',
-    description: 'Paid promote ke 50k followers gaming target Indonesia.',
-    price: 50000,
-    category: 'JasaPost',
-    status: 'Ready',
-    image_url: '/Logo.jpeg',
-    created_at: '2026-06-09T00:00:00Z',
-  },
-  {
-    id: 'm5',
-    name: 'Akun Free Fire Cobra Max + Evo Gun',
-    description: 'Bundle Cobra, Evo Gun level 7, AK Dragon level 6, akun aman.',
-    price: 850000,
-    category: 'Free Fire',
-    status: 'Ready',
-    image_url: '/Logo.jpeg',
-    created_at: '2026-06-08T00:00:00Z',
-  },
-  {
-    id: 'm6',
-    name: 'Akun Mobile Legends Legend Skin Alucard',
-    description: 'Skin Obsidian Blade Alucard, 120 skin, all hero unlocked.',
-    price: 1100000,
-    category: 'Mobile Legends',
-    status: 'Sold Out',
-    image_url: '/Logo.jpeg',
-    created_at: '2026-06-07T00:00:00Z',
-  },
-  {
-    id: 'm7',
-    name: 'Rental Akun MLBB Granger Starfall Knight',
-    description: 'Rental 24 jam akun skin Legend Granger, full emblem max.',
-    price: 45000,
-    category: 'Rental',
-    status: 'Ready',
-    image_url: '/Logo.jpeg',
-    created_at: '2026-06-06T00:00:00Z',
-  },
-  {
-    id: 'm8',
-    name: 'Paid Promote Story WhatsApp',
-    description: 'Promosi produk game ke story WA views 2k+ aktif harian.',
-    price: 25000,
-    category: 'JasaPost',
-    status: 'Ready',
-    image_url: '/Logo.jpeg',
-    created_at: '2026-06-05T00:00:00Z',
-  },
-  {
-    id: 'm9',
-    name: 'Akun FF Letda Hyper Clone',
-    description: 'Bundle Letda Hyper, M1887 Rapper Underworld, MP40 Cobra.',
-    price: 1200000,
-    category: 'Free Fire',
-    status: 'Ready',
-    image_url: '/Logo.jpeg',
-    created_at: '2026-06-04T00:00:00Z',
-  },
-  {
-    id: 'm10',
-    name: 'Akun Mobile Legends KOF Chou + Iori',
-    description: 'Skin KOF Chou, Skin Hero Bruno, Skin Collector Wanwan.',
-    price: 3500000,
-    category: 'Mobile Legends',
-    status: 'Ready',
-    image_url: '/Logo.jpeg',
-    created_at: '2026-06-03T00:00:00Z',
-  },
-  {
-    id: 'm11',
-    name: 'Rental Akun Steam Black Myth Wukong',
-    description: 'Rental akun Steam offline mode game Black Myth Wukong harian.',
-    price: 20000,
-    category: 'Rental',
-    status: 'Ready',
-    image_url: '/Logo.jpeg',
-    created_at: '2026-06-02T00:00:00Z',
-  },
-  {
-    id: 'm12',
-    name: 'Jasa Post Feeds Partner Resmi',
-    description: 'Post feeds partner resmi JBJean di Instagram & TikTok.',
-    price: 150000,
-    category: 'JasaPost',
-    status: 'Ready',
-    image_url: '/Logo.jpeg',
-    created_at: '2026-06-01T00:00:00Z',
-  },
-]
-
 export default function ProductsPage() {
-  const [products, setProducts] = useState<Product[]>([])
+  const [allProducts, setAllProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch]   = useState('')
   const [category, setCategory] = useState('Semua')
@@ -149,28 +26,27 @@ export default function ProductsPage() {
   useEffect(() => {
     async function fetchProducts() {
       setLoading(true)
-      let data = await getProducts()
-
-      if (category !== 'Semua') {
-        data = data.filter(p => p.category === category)
-      }
-      if (sort === 'price_asc') {
-        data.sort((a, b) => a.price - b.price)
-      } else if (sort === 'price_desc') {
-        data.sort((a, b) => b.price - a.price)
-      } else {
-        data.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-      }
-
-      setProducts(data)
+      const data = await getProducts()
+      setAllProducts(data)
       setLoading(false)
     }
     fetchProducts()
-  }, [category, sort])
+  }, [])
 
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [category, search, status, sort])
+  const products = useMemo(() => {
+    let data = [...allProducts]
+    if (category !== 'Semua') {
+      data = data.filter(p => p.category === category)
+    }
+    if (sort === 'price_asc') {
+      data.sort((a, b) => a.price - b.price)
+    } else if (sort === 'price_desc') {
+      data.sort((a, b) => b.price - a.price)
+    } else {
+      data.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    }
+    return data
+  }, [allProducts, category, sort])
 
   const filtered = products.filter((p) => {
     const q = search.toLowerCase()
@@ -303,7 +179,10 @@ export default function ProductsPage() {
               type="text"
               placeholder="Cari nama atau game..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value)
+                setCurrentPage(1)
+              }}
               style={{ ...inputStyle, paddingLeft: '40px', paddingRight: '16px', paddingTop: '10px', paddingBottom: '10px' }}
               onFocus={(e) => {
                 e.currentTarget.style.borderColor = 'rgba(147,51,234,0.5)'
@@ -332,7 +211,10 @@ export default function ProductsPage() {
             />
             <select
               value={sort}
-              onChange={(e) => setSort(e.target.value)}
+              onChange={(e) => {
+                setSort(e.target.value)
+                setCurrentPage(1)
+              }}
               style={{
                 ...inputStyle,
                 paddingLeft: '40px',
@@ -357,7 +239,10 @@ export default function ProductsPage() {
             return (
               <button
                 key={cat}
-                onClick={() => setCategory(cat)}
+                onClick={() => {
+                  setCategory(cat)
+                  setCurrentPage(1)
+                }}
                 style={{
                   ...pillBase,
                   ...(isActive
@@ -386,7 +271,10 @@ export default function ProductsPage() {
             return (
               <button
                 key={s}
-                onClick={() => setStatus(s)}
+                onClick={() => {
+                  setStatus(s)
+                  setCurrentPage(1)
+                }}
                 style={{
                   ...pillBase,
                   ...(isActive
@@ -549,9 +437,23 @@ export default function ProductsPage() {
             padding-top: 88px !important;
             padding-bottom: 24px !important;
           }
+          section > div {
+            padding: 0 14px !important;
+          }
           .products-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
-            gap: 12px !important;
+            grid-template-columns: minmax(0, 1fr) !important;
+            gap: 16px !important;
+            max-width: 430px;
+            margin-left: auto;
+            margin-right: auto;
+          }
+          .products-grid :global(> div) {
+            width: 100%;
+          }
+        }
+        @media (min-width: 560px) and (max-width: 768px) {
+          .products-grid {
+            max-width: 480px;
           }
         }
         @media (min-width: 769px) and (max-width: 1024px) {
