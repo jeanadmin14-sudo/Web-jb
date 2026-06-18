@@ -1,0 +1,448 @@
+import { createSupabaseClient } from './supabase'
+import type { Product, Partner } from './supabase'
+
+export type AdminAccount = {
+  username: string
+  passwordHash: string // Simple string comparison for demo/local storage persistence
+}
+
+export type ActivityLog = {
+  id: string | number
+  admin_user: string
+  action: string
+  created_at: string
+}
+
+const DEFAULT_PRODUCTS: Product[] = [
+  {
+    id: 'm1',
+    name: 'Akun Free Fire Old Season 1',
+    description: 'Set Sakura, Hip Hop, bundle langka lengkap, vault melimpah.',
+    price: 1500000,
+    category: 'Free Fire',
+    status: 'Ready',
+    image_url: '/Logo.jpeg',
+    created_at: '2026-06-12T00:00:00Z',
+    rent_end_date: null,
+  },
+  {
+    id: 'm2',
+    name: 'Akun Mobile Legends Mythical Glory',
+    description: 'Skins Collector Granger, Lightborn, KOF Gusion & Chou, winrate 72%.',
+    price: 2200000,
+    category: 'Mobile Legends',
+    status: 'Ready',
+    image_url: '/Logo.jpeg',
+    created_at: '2026-06-11T00:00:00Z',
+    rent_end_date: null,
+  },
+  {
+    id: 'm3',
+    name: 'Rental Akun FF Max Skin Full',
+    description: 'Rental harian akun Free Fire full skin senjata Evo max level.',
+    price: 35000,
+    category: 'Rental',
+    status: 'Ready',
+    image_url: '/Logo.jpeg',
+    created_at: '2026-06-10T00:00:00Z',
+    rent_end_date: '2026-06-25',
+  },
+  {
+    id: 'm4',
+    name: 'Jasa Post Paid Promote Instagram',
+    description: 'Paid promote ke 50k followers gaming target Indonesia.',
+    price: 50000,
+    category: 'JasaPost',
+    status: 'Ready',
+    image_url: '/Logo.jpeg',
+    created_at: '2026-06-09T00:00:00Z',
+    rent_end_date: null,
+  },
+  {
+    id: 'm5',
+    name: 'Akun Free Fire Cobra Max + Evo Gun',
+    description: 'Bundle Cobra, Evo Gun level 7, AK Dragon level 6, akun aman.',
+    price: 850000,
+    category: 'Free Fire',
+    status: 'Ready',
+    image_url: '/Logo.jpeg',
+    created_at: '2026-06-08T00:00:00Z',
+    rent_end_date: null,
+  },
+  {
+    id: 'm6',
+    name: 'Akun Mobile Legends Legend Skin Alucard',
+    description: 'Skin Obsidian Blade Alucard, 120 skin, all hero unlocked.',
+    price: 1100000,
+    category: 'Mobile Legends',
+    status: 'Sold Out',
+    image_url: '/Logo.jpeg',
+    created_at: '2026-06-07T00:00:00Z',
+    rent_end_date: null,
+  },
+  {
+    id: 'm7',
+    name: 'Rental Akun MLBB Granger Starfall Knight',
+    description: 'Rental 24 jam akun skin Legend Granger, full emblem max.',
+    price: 45000,
+    category: 'Rental',
+    status: 'Ready',
+    image_url: '/Logo.jpeg',
+    created_at: '2026-06-06T00:00:00Z',
+    rent_end_date: null,
+  },
+  {
+    id: 'm8',
+    name: 'Paid Promote Story WhatsApp',
+    description: 'Promosi produk game ke story WA views 2k+ aktif harian.',
+    price: 25000,
+    category: 'JasaPost',
+    status: 'Ready',
+    image_url: '/Logo.jpeg',
+    created_at: '2026-06-05T00:00:00Z',
+    rent_end_date: null,
+  },
+  {
+    id: 'm9',
+    name: 'Akun FF Letda Hyper Clone',
+    description: 'Bundle Letda Hyper, M1887 Rapper Underworld, MP40 Cobra.',
+    price: 1200000,
+    category: 'Free Fire',
+    status: 'Ready',
+    image_url: '/Logo.jpeg',
+    created_at: '2026-06-04T00:00:00Z',
+    rent_end_date: null,
+  },
+  {
+    id: 'm10',
+    name: 'Akun Mobile Legends KOF Chou + Iori',
+    description: 'Skin KOF Chou, Skin Hero Bruno, Skin Collector Wanwan.',
+    price: 3500000,
+    category: 'Mobile Legends',
+    status: 'Ready',
+    image_url: '/Logo.jpeg',
+    created_at: '2026-06-03T00:00:00Z',
+    rent_end_date: null,
+  },
+  {
+    id: 'm11',
+    name: 'Rental Akun Steam Black Myth Wukong',
+    description: 'Rental akun Steam offline mode game Black Myth Wukong harian.',
+    price: 20000,
+    category: 'Rental',
+    status: 'Ready',
+    image_url: '/Logo.jpeg',
+    created_at: '2026-06-02T00:00:00Z',
+    rent_end_date: null,
+  },
+  {
+    id: 'm12',
+    name: 'Jasa Post Feeds Partner Resmi',
+    description: 'Post feeds partner resmi JBJean di Instagram & TikTok.',
+    price: 150000,
+    category: 'JasaPost',
+    status: 'Ready',
+    image_url: '/Logo.jpeg',
+    created_at: '2026-06-01T00:00:00Z',
+    rent_end_date: null,
+  },
+]
+
+const DEFAULT_ADMINS: AdminAccount[] = [
+  { username: 'admin', passwordHash: 'admin123' },
+]
+
+const DEFAULT_PARTNERS: Partner[] = [
+  {
+    id: 'p1',
+    name: 'Jean Store Official',
+    description: 'Partner resmi top-up, rekber, dan rental aman bergaransi.',
+    wa_channel_url: 'https://whatsapp.com/channel/0029VbBqyVG0AgWAXwVIu73m',
+    image_url: '/Logo.jpeg',
+    status: 'Ready',
+    created_at: '2026-06-12T00:00:00Z',
+  }
+]
+
+// Local storage keys
+const KEY_PRODUCTS = 'jbjean_products'
+const KEY_PARTNERS = 'jbjean_partners'
+const KEY_ADMINS = 'jbjean_admins'
+const KEY_LOGS = 'jbjean_logs'
+
+function getLocal<T>(key: string, defaultVal: T): T {
+  if (typeof window === 'undefined') return defaultVal
+  const item = localStorage.getItem(key)
+  if (!item) {
+    localStorage.setItem(key, JSON.stringify(defaultVal))
+    return defaultVal
+  }
+  try {
+    return JSON.parse(item) as T
+  } catch {
+    return defaultVal
+  }
+}
+
+function setLocal<T>(key: string, val: T) {
+  if (typeof window === 'undefined') return
+  localStorage.setItem(key, JSON.stringify(val))
+}
+
+let isPostgresAvailable: boolean | null = null
+
+async function checkPostgres(): Promise<boolean> {
+  if (typeof window === 'undefined') return false
+  if (isPostgresAvailable !== null) return isPostgresAvailable
+  
+  try {
+    const res = await fetch('/api/setup')
+    const data = await res.json()
+    if (res.ok && data.message === 'Database initialized successfully') {
+      isPostgresAvailable = true
+      return true
+    }
+  } catch {
+    // ignore
+  }
+  isPostgresAvailable = false
+  return false
+}
+
+function getSessionUser(): string {
+  if (typeof window === 'undefined') return 'System'
+  return localStorage.getItem('jbjean_session') || 'System'
+}
+
+export async function getProducts(): Promise<Product[]> {
+  if (await checkPostgres()) {
+    const res = await fetch('/api/products')
+    if (res.ok) return await res.json()
+  }
+  const supabase = createSupabaseClient()
+  if (supabase) {
+    const { data } = await supabase.from('products').select('*').order('created_at', { ascending: false })
+    return (data as Product[]) ?? []
+  }
+  return getLocal<Product[]>(KEY_PRODUCTS, DEFAULT_PRODUCTS)
+}
+
+export async function saveProduct(product: Product): Promise<void> {
+  const isNew = !product.created_at || getLocal<Product[]>(KEY_PRODUCTS, DEFAULT_PRODUCTS).findIndex(p => p.id === product.id) === -1
+
+  if (await checkPostgres()) {
+    const res = await fetch('/api/products', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-admin-user': getSessionUser()
+      },
+      body: JSON.stringify(product),
+    })
+    if (res.ok) return
+    throw new Error('Gagal menyimpan produk ke Postgres')
+  }
+  const supabase = createSupabaseClient()
+  if (supabase) {
+    await supabase.from('products').upsert(product)
+    return
+  }
+  const list = getLocal<Product[]>(KEY_PRODUCTS, DEFAULT_PRODUCTS)
+  const idx = list.findIndex(p => p.id === product.id)
+  if (idx > -1) {
+    list[idx] = product
+  } else {
+    list.unshift(product) // Add to front of mock list
+  }
+  setLocal(KEY_PRODUCTS, list)
+  await saveActivityLog(`${isNew ? 'Menambahkan' : 'Mengubah'} produk (local): ${product.name}`)
+}
+
+export async function deleteProduct(id: string): Promise<void> {
+  console.log("deleteProduct called with id:", id)
+  if (await checkPostgres()) {
+    const res = await fetch(`/api/products?id=${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: {
+        'x-admin-user': getSessionUser()
+      }
+    })
+    if (res.ok) return
+    throw new Error('Gagal menghapus produk dari Postgres')
+  }
+  const supabase = createSupabaseClient()
+  if (supabase) {
+    console.log("Supabase client found, deleting from Supabase...")
+    const { error } = await supabase.from('products').delete().eq('id', id)
+    if (error) {
+      console.error("Error deleting product from Supabase:", error)
+      alert("Gagal menghapus produk dari database Supabase: " + error.message)
+      throw error
+    }
+    return
+  }
+  console.log("No Supabase client, deleting from LocalStorage...")
+  let list = getLocal<Product[]>(KEY_PRODUCTS, DEFAULT_PRODUCTS)
+  const checkProd = list.find(p => p.id === id)
+  const name = checkProd ? checkProd.name : id
+
+  const initialLength = list.length
+  list = list.filter(p => p.id !== id)
+  console.log(`Filtered local list. Removed: ${initialLength - list.length} items. New length: ${list.length}`)
+  setLocal(KEY_PRODUCTS, list)
+  await saveActivityLog(`Menghapus produk (local): ${name}`)
+}
+
+export async function getPartners(): Promise<Partner[]> {
+  if (await checkPostgres()) {
+    const res = await fetch('/api/partners')
+    if (res.ok) return await res.json()
+  }
+  const supabase = createSupabaseClient()
+  if (supabase) {
+    const { data } = await supabase.from('partners').select('*').order('created_at', { ascending: false })
+    return (data as Partner[]) ?? []
+  }
+  return getLocal<Partner[]>(KEY_PARTNERS, DEFAULT_PARTNERS)
+}
+
+export async function savePartner(partner: Partner): Promise<void> {
+  const isNew = !partner.created_at || getLocal<Partner[]>(KEY_PARTNERS, DEFAULT_PARTNERS).findIndex(p => p.id === partner.id) === -1
+
+  if (await checkPostgres()) {
+    const res = await fetch('/api/partners', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-admin-user': getSessionUser()
+      },
+      body: JSON.stringify(partner),
+    })
+    if (res.ok) return
+    throw new Error('Gagal menyimpan partner ke Postgres')
+  }
+  const supabase = createSupabaseClient()
+  if (supabase) {
+    await supabase.from('partners').upsert(partner)
+    return
+  }
+  const list = getLocal<Partner[]>(KEY_PARTNERS, DEFAULT_PARTNERS)
+  const idx = list.findIndex(p => p.id === partner.id)
+  if (idx > -1) {
+    list[idx] = partner
+  } else {
+    list.unshift(partner)
+  }
+  setLocal(KEY_PARTNERS, list)
+  await saveActivityLog(`${isNew ? 'Menambahkan' : 'Mengubah'} partner (local): ${partner.name}`)
+}
+
+export async function deletePartner(id: string): Promise<void> {
+  console.log("deletePartner called with id:", id)
+  if (await checkPostgres()) {
+    const res = await fetch(`/api/partners?id=${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: {
+        'x-admin-user': getSessionUser()
+      }
+    })
+    if (res.ok) return
+    throw new Error('Gagal menghapus partner dari Postgres')
+  }
+  const supabase = createSupabaseClient()
+  if (supabase) {
+    console.log("Supabase client found, deleting partner from Supabase...")
+    const { error } = await supabase.from('partners').delete().eq('id', id)
+    if (error) {
+      console.error("Error deleting partner from Supabase:", error)
+      alert("Gagal menghapus partner dari database Supabase: " + error.message)
+      throw error
+    }
+    return
+  }
+  console.log("No Supabase client, deleting partner from LocalStorage...")
+  let list = getLocal<Partner[]>(KEY_PARTNERS, DEFAULT_PARTNERS)
+  const checkPart = list.find(p => p.id === id)
+  const name = checkPart ? checkPart.name : id
+
+  const initialLength = list.length
+  list = list.filter(p => p.id !== id)
+  console.log(`Filtered local partners. Removed: ${initialLength - list.length} items. New length: ${list.length}`)
+  setLocal(KEY_PARTNERS, list)
+  await saveActivityLog(`Menghapus partner (local): ${name}`)
+}
+
+export async function getAdmins(): Promise<AdminAccount[]> {
+  if (await checkPostgres()) {
+    const res = await fetch('/api/admins')
+    if (res.ok) return await res.json()
+  }
+  return getLocal<AdminAccount[]>(KEY_ADMINS, DEFAULT_ADMINS)
+}
+
+export async function saveAdmin(admin: AdminAccount): Promise<void> {
+  const isNew = getLocal<AdminAccount[]>(KEY_ADMINS, DEFAULT_ADMINS).findIndex(a => a.username === admin.username) === -1
+
+  if (await checkPostgres()) {
+    const res = await fetch('/api/admins', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-admin-user': getSessionUser()
+      },
+      body: JSON.stringify(admin),
+    })
+    if (res.ok) return
+    throw new Error('Gagal menyimpan admin ke Postgres')
+  }
+  const list = getLocal<AdminAccount[]>(KEY_ADMINS, DEFAULT_ADMINS)
+  const idx = list.findIndex(a => a.username === admin.username)
+  if (idx > -1) {
+    list[idx] = admin
+  } else {
+    list.push(admin)
+  }
+  setLocal(KEY_ADMINS, list)
+  await saveActivityLog(`${isNew ? 'Mendaftarkan' : 'Mengubah password'} akun admin (local): ${admin.username}`)
+}
+
+export async function deleteAdmin(username: string): Promise<void> {
+  console.log("deleteAdmin called for username:", username)
+  if (await checkPostgres()) {
+    const res = await fetch(`/api/admins?username=${encodeURIComponent(username)}`, {
+      method: 'DELETE',
+      headers: {
+        'x-admin-user': getSessionUser()
+      }
+    })
+    if (res.ok) return
+    throw new Error('Gagal menghapus admin dari Postgres')
+  }
+  let list = getLocal<AdminAccount[]>(KEY_ADMINS, DEFAULT_ADMINS)
+  const initialLength = list.length
+  list = list.filter(a => a.username !== username)
+  console.log(`Filtered local admins. Removed: ${initialLength - list.length} items. New length: ${list.length}`)
+  setLocal(KEY_ADMINS, list)
+  await saveActivityLog(`Menghapus akun admin (local): ${username}`)
+}
+
+export async function getActivityLogs(): Promise<ActivityLog[]> {
+  if (await checkPostgres()) {
+    const res = await fetch('/api/logs')
+    if (res.ok) return await res.json()
+  }
+  return getLocal<ActivityLog[]>(KEY_LOGS, [])
+}
+
+export async function saveActivityLog(action: string): Promise<void> {
+  const actor = getSessionUser()
+  const list = getLocal<ActivityLog[]>(KEY_LOGS, [])
+  const newLog: ActivityLog = {
+    id: 'log_' + Date.now(),
+    admin_user: actor,
+    action,
+    created_at: new Date().toISOString()
+  }
+  list.unshift(newLog)
+  setLocal(KEY_LOGS, list)
+}
