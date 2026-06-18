@@ -82,7 +82,7 @@ create table if not exists site_config (
 -- Sample site_config rows
 insert into site_config (key, value) values
   ('whatsapp_number', '6281234567890'),
-  ('store_name', 'Pergam Store'),
+  ('store_name', 'JBjean'),
   ('hero_title', 'Akun game premium, rental aman.'),
   ('hero_subtitle', 'Stock Free Fire, Mobile Legends, rental akun, dan layanan partner dalam satu pengalaman web yang cepat dari mobile.'),
   ('total_transactions', '5K+'),

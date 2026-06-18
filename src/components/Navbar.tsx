@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
-import { Menu, X, Moon, Sun, Zap } from 'lucide-react'
+import { Menu, X, Moon, Sun } from 'lucide-react'
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -13,8 +13,8 @@ const navLinks = [
   { href: '#kontak', label: 'Kontak' },
 ]
 
-function scrollToKontak() {
-  const el = document.getElementById('kontak')
+function scrollToSection(id: string) {
+  const el = document.getElementById(id)
   if (el) {
     el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
@@ -211,8 +211,8 @@ export default function Navbar() {
         style={{
           maxWidth: '1280px',
           margin: '0 auto',
-          padding: scrolled ? '0 16px' : '0 24px',
-          height: '56px',
+          padding: scrolled ? '0 16px' : '0 20px',
+          height: scrolled ? '58px' : '64px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -221,7 +221,7 @@ export default function Navbar() {
             : 'linear-gradient(135deg, rgba(10, 4, 24, 0.96), rgba(26, 9, 48, 0.92))',
           backdropFilter: 'blur(30px) saturate(1.45)',
           WebkitBackdropFilter: 'blur(30px) saturate(1.45)',
-          borderRadius: open ? '22px' : '999px',
+          borderRadius: open ? '24px' : '999px',
           border: open
             ? '1px solid rgba(216, 180, 254, 0.32)'
             : '1px solid var(--border-navbar-pill, rgba(147, 51, 234, 0.25))',
@@ -233,12 +233,12 @@ export default function Navbar() {
         }}
       >
         {/* Logo */}
-        <Link href="/" prefetch onPointerEnter={() => prefetchRoute('/')} style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
+        <Link href="/" prefetch onPointerEnter={() => prefetchRoute('/')} style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', flex: '1 1 0%', minWidth: 0 }}>
           <div
             style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '8px',
+              width: '38px',
+              height: '38px',
+              borderRadius: '10px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -246,22 +246,23 @@ export default function Navbar() {
               background: 'linear-gradient(135deg, #4c1d95, #7c3aed)',
               border: '1px solid rgba(168,85,247,0.4)',
               boxShadow: '0 0 12px rgba(147,51,234,0.4)',
+              flexShrink: 0,
             }}
           >
             <Image
               src="/Logo.jpeg"
               alt="JBJean"
-              width={32}
-              height={32}
-              style={{ objectFit: 'cover', borderRadius: '6px' }}
+              width={38}
+              height={38}
+              style={{ objectFit: 'cover', borderRadius: '8px' }}
             />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
+          <div className="navbar-brand-text" style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.05, minWidth: 0 }}>
             <span
               style={{
                 fontWeight: 900,
-                fontSize: '14px',
-                letterSpacing: '-0.02em',
+                fontSize: '15px',
+                letterSpacing: '-0.025em',
                 color: '#fff',
               }}
             >
@@ -279,11 +280,12 @@ export default function Navbar() {
             </span>
             <span
               style={{
-                fontSize: '8px',
-                letterSpacing: '0.15em',
+                marginTop: '3px',
+                fontSize: '10px',
+                letterSpacing: '0.18em',
                 textTransform: 'uppercase',
-                fontWeight: 500,
-                color: 'rgba(168,85,247,0.6)',
+                fontWeight: 800,
+                color: 'rgba(168,85,247,0.72)',
               }}
             >
               Premium Marketplace
@@ -295,11 +297,12 @@ export default function Navbar() {
         <nav
           style={{
             alignItems: 'center',
-            padding: '3px',
-            gap: '2px',
+            padding: '4px',
+            gap: '6px',
             borderRadius: '999px',
             background: 'rgba(12,4,20,0.8)',
             border: '1px solid rgba(147,51,234,0.18)',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
           }}
           className="hidden md:flex"
         >
@@ -308,18 +311,21 @@ export default function Navbar() {
             const isActive = isAnchor ? false : pathname === link.href
 
             if (isAnchor) {
+              const sectionId = link.href.slice(1)
               return (
                 <button
                   key={link.href}
-                  onClick={scrollToKontak}
+                  className="navbar-nav-item"
+                  onClick={() => scrollToSection(sectionId)}
                   style={{
-                    padding: '6px 16px',
+                    minHeight: '38px',
+                    padding: '0 18px',
                     borderRadius: '999px',
-                    fontSize: '13px',
-                    fontWeight: 500,
+                    fontSize: '14px',
+                    fontWeight: 800,
                     transition: 'all 0.2s ease',
                     whiteSpace: 'nowrap',
-                    color: 'rgba(255,255,255,0.6)',
+                    color: 'rgba(255,255,255,0.66)',
                     background: 'transparent',
                     border: 'none',
                     cursor: 'pointer',
@@ -329,7 +335,7 @@ export default function Navbar() {
                     e.currentTarget.style.background = 'rgba(147,51,234,0.15)'
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.color = 'rgba(255,255,255,0.6)'
+                    e.currentTarget.style.color = 'rgba(255,255,255,0.66)'
                     e.currentTarget.style.background = 'transparent'
                   }}
                 >
@@ -341,14 +347,18 @@ export default function Navbar() {
             return (
               <Link
                 key={link.href}
+                className={`navbar-nav-item ${isActive ? 'is-active' : ''}`}
                 href={link.href}
                 prefetch
                 onPointerEnter={() => prefetchRoute(link.href)}
                 style={{
-                  padding: '6px 16px',
+                  minHeight: '38px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  padding: '0 18px',
                   borderRadius: '999px',
-                  fontSize: '13px',
-                  fontWeight: 500,
+                  fontSize: '14px',
+                  fontWeight: 800,
                   transition: 'all 0.2s ease',
                   textDecoration: 'none',
                   whiteSpace: 'nowrap',
@@ -356,9 +366,9 @@ export default function Navbar() {
                     ? {
                         background: 'linear-gradient(135deg, #ec4899, #a855f7)',
                         color: '#fff',
-                        boxShadow: '0 0 12px rgba(236,72,153,0.5)',
+                        boxShadow: '0 0 18px rgba(236,72,153,0.48)',
                       }
-                    : { color: 'rgba(255,255,255,0.6)' }),
+                    : { color: 'rgba(255,255,255,0.66)' }),
                 }}
                 onMouseEnter={(e) => {
                   if (!isActive) {
@@ -368,7 +378,7 @@ export default function Navbar() {
                 }}
                 onMouseLeave={(e) => {
                   if (!isActive) {
-                    e.currentTarget.style.color = 'rgba(255,255,255,0.6)'
+                    e.currentTarget.style.color = 'rgba(255,255,255,0.66)'
                     e.currentTarget.style.background = 'transparent'
                   }
                 }}
@@ -380,13 +390,14 @@ export default function Navbar() {
         </nav>
 
         {/* Right side Actions (Desktop) */}
-        <div className="hidden md:flex" style={{ alignItems: 'center', gap: '10px' }}>
+        <div className="hidden md:flex" style={{ alignItems: 'center', justifyContent: 'flex-end', gap: '10px', flex: '1 1 0%' }}>
           {/* Dark mode toggle */}
           <button
+            className="navbar-theme-toggle"
             onClick={handleToggleTheme}
             style={{
-              width: '32px',
-              height: '32px',
+              width: '42px',
+              height: '42px',
               borderRadius: '999px',
               display: 'flex',
               alignItems: 'center',
@@ -394,7 +405,7 @@ export default function Navbar() {
               transition: 'all 0.2s ease',
               background: 'rgba(12,4,20,0.8)',
               border: '1px solid rgba(147,51,234,0.2)',
-              color: 'rgba(255,255,255,0.5)',
+              color: 'rgba(255,255,255,0.68)',
               cursor: 'pointer',
             }}
             onMouseEnter={(e) => {
@@ -403,7 +414,7 @@ export default function Navbar() {
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLElement).style.borderColor = 'rgba(147,51,234,0.2)'
-              ;(e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.5)'
+              ;(e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.68)'
             }}
             aria-label="Toggle dark/light mode"
           >
@@ -415,6 +426,7 @@ export default function Navbar() {
           </button>
 
           <Link
+            className="navbar-order-link"
             href="/produk"
             prefetch
             onPointerEnter={() => prefetchRoute('/produk')}
@@ -422,14 +434,15 @@ export default function Navbar() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              padding: '6px 16px',
+              minHeight: '42px',
+              padding: '0 18px',
               borderRadius: '999px',
-              fontSize: '13px',
-              fontWeight: 700,
+              fontSize: '14px',
+              fontWeight: 900,
               transition: 'all 0.2s ease',
               background: 'linear-gradient(135deg, #ec4899, #a855f7)',
               color: '#fff',
-              boxShadow: '0 0 12px rgba(236,72,153,0.4)',
+              boxShadow: '0 0 16px rgba(236,72,153,0.42)',
               textDecoration: 'none',
             }}
             onMouseEnter={(e) => {
@@ -532,7 +545,7 @@ export default function Navbar() {
               return (
                 <button
                   key={link.href}
-                  onClick={() => { closeMenu(); scrollToKontak() }}
+                  onClick={() => { closeMenu(); scrollToSection(link.href.slice(1)) }}
                   style={{
                     padding: '12px 14px',
                     borderRadius: '14px',
@@ -589,6 +602,7 @@ export default function Navbar() {
             )
           })}
           <Link
+            className="navbar-mobile-order-link"
             href="/produk"
             prefetch
             onPointerEnter={() => prefetchRoute('/produk')}
@@ -608,7 +622,6 @@ export default function Navbar() {
               textDecoration: 'none',
             }}
           >
-            <Zap style={{ width: '14px', height: '14px', color: '#eab308' }} />
             Order Sekarang
           </Link>
         </div>
@@ -640,6 +653,29 @@ export default function Navbar() {
         .navbar-pill {
           position: relative;
           z-index: 3;
+        }
+
+        .navbar-nav-item.is-active,
+        .navbar-order-link,
+        .navbar-mobile-order-link {
+          color: #fff !important;
+        }
+
+        :global(.light-mode) .navbar-nav-item:not(.is-active) {
+          background: transparent !important;
+          border-color: transparent !important;
+          color: rgba(46, 16, 101, 0.68) !important;
+        }
+
+        :global(.light-mode) .navbar-nav-item.is-active,
+        :global(.light-mode) .navbar-order-link,
+        :global(.light-mode) .navbar-mobile-order-link {
+          background: linear-gradient(135deg, #ec4899, #a855f7) !important;
+          color: #fff !important;
+        }
+
+        :global(.light-mode) .navbar-theme-toggle {
+          color: #4c1d95 !important;
         }
 
         .mobile-nav-menu {
