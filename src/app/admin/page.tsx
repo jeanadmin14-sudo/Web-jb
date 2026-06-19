@@ -1233,6 +1233,86 @@ export default function AdminPage() {
                 </>
               )}
 
+              {prodCategory !== 'Rental' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderTop: '1px solid rgba(147, 51, 234, 0.15)', paddingTop: '16px', marginTop: '8px' }}>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>GALERI GAMBAR PRODUK (MAKSIMAL 6)</label>
+                  <div className="admin-gallery-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '10px' }}>
+                    {prodGallery.map((img, idx) => (
+                      <div key={idx} style={{ position: 'relative', aspectRatio: '1/1', borderRadius: '8px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+                        <img src={img} alt={`Gallery ${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <button
+                          type="button"
+                          onClick={() => setProdGallery(prev => prev.filter((_, i) => i !== idx))}
+                          style={{
+                            position: 'absolute',
+                            top: '4px',
+                            right: '4px',
+                            width: '20px',
+                            height: '20px',
+                            borderRadius: '50%',
+                            background: 'rgba(239,68,68,0.85)',
+                            color: '#fff',
+                            border: 'none',
+                            fontSize: '10px',
+                            fontWeight: 'bold',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          x
+                        </button>
+                      </div>
+                    ))}
+                    {prodGallery.length < 6 && (
+                      <div
+                        onClick={() => document.getElementById('gallery-file-input')?.click()}
+                        style={{
+                          aspectRatio: '1/1',
+                          borderRadius: '8px',
+                          border: '1.5px dashed rgba(147,51,234,0.3)',
+                          background: 'rgba(255,255,255,0.01)',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '20px',
+                          color: '#a855f7',
+                          transition: 'all 0.2s',
+                        }}
+                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#a855f7'; e.currentTarget.style.background = 'rgba(147,51,234,0.05)' }}
+                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(147,51,234,0.3)'; e.currentTarget.style.background = 'rgba(255,255,255,0.01)' }}
+                      >
+                        +
+                        <input
+                          id="gallery-file-input"
+                          type="file"
+                          multiple
+                          accept="image/*"
+                          onChange={(e) => {
+                            const files = Array.from(e.target.files || [])
+                            files.forEach(file => {
+                              const reader = new FileReader()
+                              reader.onload = (ev) => {
+                                if (ev.target?.result) {
+                                  setProdGallery(prev => {
+                                    if (prev.length >= 6) return prev
+                                    return [...prev, ev.target!.result as string]
+                                  })
+                                }
+                              }
+                              reader.readAsDataURL(file)
+                            })
+                          }}
+                          style={{ display: 'none' }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
               <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
                 <button
                   type="button"

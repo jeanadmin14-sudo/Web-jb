@@ -52,8 +52,8 @@ export default function ProductCard({ product }: { product: Product }) {
   const waText = encodeURIComponent(`Halo, saya tertarik dengan produk: ${product.name}`)
   const waUrl = `https://wa.me/6287832017296?text=${waText}`
   const isRental = product.category === 'Rental'
-  const rentalGallery = parseJsonArray<string>(product.gallery).filter(Boolean)
-  const rentalImages = (rentalGallery.length > 0 ? rentalGallery : [product.image_url || '/Logo.jpeg']).slice(0, 6)
+  const galleryImages = parseJsonArray<string>(product.gallery).filter(Boolean)
+  const productImages = Array.from(new Set([product.image_url || '/Logo.jpeg', ...galleryImages])).slice(0, 6)
   const rentalPackages = parseJsonArray<RentalPackage>(product.rental_packages)
     .filter((pkg) => pkg?.name && Number(pkg.price) > 0)
   const displayedRentalPackages = rentalPackages.length > 0
@@ -404,6 +404,9 @@ export default function ProductCard({ product }: { product: Product }) {
               .modal-info-col {
                 width: 100% !important;
               }
+              .product-detail-gallery {
+                grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+              }
             }
           `}</style>
 
@@ -507,7 +510,7 @@ export default function ProductCard({ product }: { product: Product }) {
                     gap: '10px',
                   }}
                 >
-                  {rentalImages.map((image, idx) => (
+                  {productImages.map((image, idx) => (
                     <button
                       key={`${image}-${idx}`}
                       type="button"
@@ -788,6 +791,50 @@ export default function ProductCard({ product }: { product: Product }) {
                   </p>
                 </div>
 
+                {productImages.length > 1 && (
+                  <div>
+                    <span style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.45)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Galeri</span>
+                    <div
+                      className="product-detail-gallery"
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+                        gap: '8px',
+                        marginTop: '8px',
+                      }}
+                    >
+                      {productImages.map((image, idx) => (
+                        <button
+                          key={`${image}-${idx}`}
+                          type="button"
+                          onClick={() => {
+                            setSelectedImage(image)
+                            setIsImageOpen(true)
+                          }}
+                          style={{
+                            position: 'relative',
+                            aspectRatio: '1 / 1',
+                            overflow: 'hidden',
+                            borderRadius: '10px',
+                            border: '1px solid rgba(168, 85, 247, 0.3)',
+                            background: 'rgba(12, 4, 20, 0.8)',
+                            cursor: 'pointer',
+                            padding: 0,
+                          }}
+                        >
+                          <Image
+                            src={image}
+                            alt={`${product.name} ${idx + 1}`}
+                            fill
+                            style={{ objectFit: 'cover' }}
+                            unoptimized
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Actions */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: 'auto' }}>
                   <a
@@ -927,6 +974,47 @@ export default function ProductCard({ product }: { product: Product }) {
                 </div>
               )}
             </div>
+
+            {productImages.length > 1 && (
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(6, minmax(0, 1fr))',
+                  gap: '8px',
+                  padding: '8px',
+                }}
+              >
+                {productImages.map((image, idx) => {
+                  const isActive = (selectedImage || product.image_url || '/Logo.jpeg') === image
+                  return (
+                    <button
+                      key={`${image}-viewer-${idx}`}
+                      type="button"
+                      onClick={() => setSelectedImage(image)}
+                      style={{
+                        position: 'relative',
+                        aspectRatio: '1 / 1',
+                        overflow: 'hidden',
+                        borderRadius: '10px',
+                        border: isActive ? '2px solid #f472b6' : '1px solid rgba(168, 85, 247, 0.25)',
+                        background: 'rgba(12, 4, 20, 0.8)',
+                        cursor: 'pointer',
+                        padding: 0,
+                        opacity: isActive ? 1 : 0.72,
+                      }}
+                    >
+                      <Image
+                        src={image}
+                        alt={`${product.name} ${idx + 1}`}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                        unoptimized
+                      />
+                    </button>
+                  )
+                })}
+              </div>
+            )}
           </div>
         </div>,
         document.body
