@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { query, getDbPool } from '@/lib/db'
 import { insertLog } from '@/lib/db-log'
 import { getAuthSession } from '@/lib/auth-server'
+import { revalidateTag } from 'next/cache'
 
 export const preferredRegion = 'sin1'
 
@@ -15,7 +16,11 @@ export async function GET() {
       price: Number(p.price),
     }))
     
-    return NextResponse.json(formatted)
+    return NextResponse.json(formatted, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+      },
+    })
   } catch (err: any) {
     console.error('API products GET error:', err)
     return NextResponse.json({ error: err.message }, { status: 500 })
@@ -57,6 +62,7 @@ export async function POST(req: Request) {
     // Log the action
     const actionText = `${isNew ? 'Menambahkan' : 'Mengubah'} produk: ${name} (Kategori: ${category}, Status: ${status})`
     await insertLog(adminUser, actionText)
+    revalidateTag('products', 'max')
 
     return NextResponse.json({ success: true })
   } catch (err: any) {
@@ -88,6 +94,7 @@ export async function DELETE(req: Request) {
 
     // Log the action
     await insertLog(adminUser, `Menghapus produk: ${name}`)
+    revalidateTag('products', 'max')
 
     return NextResponse.json({ success: true })
   } catch (err: any) {

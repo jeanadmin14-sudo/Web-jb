@@ -1,5 +1,6 @@
 import { query } from '@/lib/db'
 import type { Partner, Product } from '@/lib/supabase'
+import { unstable_cache } from 'next/cache'
 
 type ProductRow = Omit<Product, 'price' | 'created_at'> & {
   price: number | string
@@ -29,7 +30,7 @@ function normalizePartnerRow(partner: PartnerRow): Partner {
   }
 }
 
-export async function getServerProducts(): Promise<Product[] | null> {
+async function fetchServerProducts(): Promise<Product[] | null> {
   try {
     const { rows } = await query('SELECT * FROM products ORDER BY created_at DESC')
     return (rows as ProductRow[]).map(normalizeProductRow)
@@ -39,7 +40,7 @@ export async function getServerProducts(): Promise<Product[] | null> {
   }
 }
 
-export async function getServerPartners(): Promise<Partner[] | null> {
+async function fetchServerPartners(): Promise<Partner[] | null> {
   try {
     const { rows } = await query('SELECT * FROM partners ORDER BY created_at ASC')
     return (rows as PartnerRow[]).map(normalizePartnerRow)
@@ -48,3 +49,13 @@ export async function getServerPartners(): Promise<Partner[] | null> {
     return null
   }
 }
+
+export const getServerProducts = unstable_cache(fetchServerProducts, ['server-products'], {
+  revalidate: 300,
+  tags: ['products'],
+})
+
+export const getServerPartners = unstable_cache(fetchServerPartners, ['server-partners'], {
+  revalidate: 300,
+  tags: ['partners'],
+})

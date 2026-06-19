@@ -29,6 +29,36 @@ function formatRupiah(amount: number) {
   }).format(amount)
 }
 
+function loadImageElement(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new window.Image()
+    img.onload = () => resolve(img)
+    img.onerror = reject
+    img.src = src
+  })
+}
+
+async function compressImageFile(file: File, maxSize = 1200, quality = 0.72): Promise<string> {
+  const source = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result))
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+
+  const img = await loadImageElement(source)
+  const scale = Math.min(1, maxSize / Math.max(img.naturalWidth, img.naturalHeight))
+  const width = Math.max(1, Math.round(img.naturalWidth * scale))
+  const height = Math.max(1, Math.round(img.naturalHeight * scale))
+  const canvas = document.createElement('canvas')
+  canvas.width = width
+  canvas.height = height
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return source
+  ctx.drawImage(img, 0, 0, width, height)
+  return canvas.toDataURL('image/webp', quality)
+}
+
 export default function AdminPage() {
   const router = useRouter()
   const [sessionUser, setSessionUser] = useState<string | null>(null)
@@ -74,26 +104,22 @@ export default function AdminPage() {
   const [prodDragActive, setProdDragActive] = useState(false)
   const [partDragActive, setPartDragActive] = useState(false)
 
-  const handleProductFile = (file: File | undefined) => {
+  const handleProductFile = async (file: File | undefined) => {
     if (!file) return
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      if (e.target?.result) {
-        setProdImage(e.target.result as string)
-      }
+    try {
+      setProdImage(await compressImageFile(file, 1200, 0.72))
+    } catch {
+      alert('Gagal memproses gambar. Coba gunakan file JPG/PNG/WEBP lain.')
     }
-    reader.readAsDataURL(file)
   }
 
-  const handlePartnerFile = (file: File | undefined) => {
+  const handlePartnerFile = async (file: File | undefined) => {
     if (!file) return
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      if (e.target?.result) {
-        setPartImage(e.target.result as string)
-      }
+    try {
+      setPartImage(await compressImageFile(file, 1200, 0.72))
+    } catch {
+      alert('Gagal memproses gambar. Coba gunakan file JPG/PNG/WEBP lain.')
     }
-    reader.readAsDataURL(file)
   }
 
   // Modal / Form States - Partners
@@ -1144,20 +1170,17 @@ export default function AdminPage() {
                             type="file"
                             multiple
                             accept="image/*"
-                            onChange={(e) => {
+                            onChange={async (e) => {
                               const files = Array.from(e.target.files || [])
-                              files.forEach(file => {
-                                const reader = new FileReader()
-                                reader.onload = (ev) => {
-                                  if (ev.target?.result) {
-                                    setProdGallery(prev => {
-                                      if (prev.length >= 6) return prev
-                                      return [...prev, ev.target!.result as string]
-                                    })
-                                  }
-                                }
-                                reader.readAsDataURL(file)
-                              })
+                              const remaining = Math.max(0, 6 - prodGallery.length)
+                              const selectedFiles = files.slice(0, remaining)
+                              const compressed = await Promise.all(
+                                selectedFiles.map((file) => compressImageFile(file, 900, 0.7))
+                              ).catch(() => [])
+                              if (compressed.length > 0) {
+                                setProdGallery(prev => [...prev, ...compressed].slice(0, 6))
+                              }
+                              e.currentTarget.value = ''
                             }}
                             style={{ display: 'none' }}
                           />

@@ -2,6 +2,13 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   async headers() {
+    const publicCacheHeaders = [
+      {
+        key: "Cache-Control",
+        value: "public, s-maxage=300, stale-while-revalidate=600",
+      },
+    ];
+
     const noCacheHeaders = [
       {
         key: "Cache-Control",
@@ -20,15 +27,15 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/",
-        headers: noCacheHeaders,
+        headers: publicCacheHeaders,
       },
       {
         source: "/produk",
-        headers: noCacheHeaders,
+        headers: publicCacheHeaders,
       },
       {
         source: "/layanan",
-        headers: noCacheHeaders,
+        headers: publicCacheHeaders,
       },
       {
         source: "/login",
@@ -39,7 +46,7 @@ const nextConfig: NextConfig = {
         headers: noCacheHeaders,
       },
       {
-        source: "/api/:path*",
+        source: "/api/setup",
         headers: noCacheHeaders,
       },
     ];

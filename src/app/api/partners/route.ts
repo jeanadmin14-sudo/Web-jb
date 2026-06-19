@@ -2,13 +2,18 @@ import { NextResponse } from 'next/server'
 import { query, getDbPool } from '@/lib/db'
 import { insertLog } from '@/lib/db-log'
 import { getAuthSession } from '@/lib/auth-server'
+import { revalidateTag } from 'next/cache'
 
 export const preferredRegion = 'sin1'
 
 export async function GET() {
   try {
     const { rows } = await query('SELECT * FROM partners ORDER BY created_at ASC')
-    return NextResponse.json(rows)
+    return NextResponse.json(rows, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+      },
+    })
   } catch (err: any) {
     console.error('API partners GET error:', err)
     return NextResponse.json({ error: err.message }, { status: 500 })
@@ -47,6 +52,7 @@ export async function POST(req: Request) {
     // Log the action
     const actionText = `${isNew ? 'Menambahkan' : 'Mengubah'} partner: ${name} (Status: ${status})`
     await insertLog(adminUser, actionText)
+    revalidateTag('partners', 'max')
 
     return NextResponse.json({ success: true })
   } catch (err: any) {
@@ -78,6 +84,7 @@ export async function DELETE(req: Request) {
 
     // Log the action
     await insertLog(adminUser, `Menghapus partner: ${name}`)
+    revalidateTag('partners', 'max')
 
     return NextResponse.json({ success: true })
   } catch (err: any) {
