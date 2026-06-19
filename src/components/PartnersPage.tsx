@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react'
 import { getPartners } from '@/lib/storage'
 import type { Partner } from '@/lib/supabase'
 import Image from 'next/image'
-import { ExternalLink, Crown, MessageSquare } from 'lucide-react'
+import { createPortal } from 'react-dom'
+import { ExternalLink, Crown, MessageSquare, Search, X } from 'lucide-react'
 
 function getWhatsAppChatUrl(partner: Partner) {
   const number = partner.whatsapp_number?.replace(/\D/g, '')
@@ -16,6 +17,16 @@ function getWhatsAppChatUrl(partner: Partner) {
 export default function PartnersPage() {
   const [partners, setPartners] = useState<Partner[]>([])
   const [loading, setLoading]   = useState(true)
+  const [mounted, setMounted] = useState(false)
+  const [selectedPartnerImage, setSelectedPartnerImage] = useState<{
+    src: string
+    alt: string
+  } | null>(null)
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setMounted(true), 0)
+    return () => window.clearTimeout(timer)
+  }, [])
 
   useEffect(() => {
     async function fetchPartners() {
@@ -201,6 +212,21 @@ export default function PartnersPage() {
                       pointerEvents: 'none',
                     }}
                   />
+                  {partner.image_url && (
+                    <button
+                      type="button"
+                      className="partner-image-view-button"
+                      aria-label={`Lihat detail gambar ${partner.name}`}
+                      onClick={() => {
+                        setSelectedPartnerImage({
+                          src: partner.image_url || '/Logo.jpeg',
+                          alt: partner.name,
+                        })
+                      }}
+                    >
+                      <Search style={{ width: '15px', height: '15px' }} />
+                    </button>
+                  )}
                   {/* Badges */}
                   <div className="partner-badge-left" style={{ position: 'absolute', top: '10px', left: '10px' }}>
                     <span
@@ -364,8 +390,172 @@ export default function PartnersPage() {
         )}
       </div>
 
+      {selectedPartnerImage && mounted && createPortal(
+        <div
+          className="partner-image-viewer-backdrop"
+          onClick={() => setSelectedPartnerImage(null)}
+        >
+          <div
+            className="partner-image-viewer-card"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="partner-image-viewer-close"
+              aria-label="Tutup detail gambar"
+              onClick={() => setSelectedPartnerImage(null)}
+            >
+              <X style={{ width: '20px', height: '20px' }} />
+            </button>
+
+            <div className="partner-image-viewer-media">
+              <Image
+                src={selectedPartnerImage.src}
+                alt={selectedPartnerImage.alt}
+                width={1200}
+                height={800}
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  display: 'block',
+                  borderRadius: '16px',
+                }}
+                unoptimized
+              />
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
       {/* Responsive */}
       <style jsx>{`
+        .partner-image-view-button {
+          position: absolute;
+          right: 12px;
+          bottom: 12px;
+          z-index: 2;
+          width: 42px;
+          height: 42px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid rgba(168, 85, 247, 0.35);
+          border-radius: 999px;
+          color: #c084fc;
+          background: rgba(9, 4, 22, 0.86);
+          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+          cursor: pointer;
+          transition:
+            transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+            color 0.3s ease,
+            background 0.3s ease,
+            border-color 0.3s ease,
+            box-shadow 0.3s ease;
+        }
+
+        .partner-image-view-button:hover {
+          color: #fff;
+          background: linear-gradient(135deg, #ec4899, #a855f7);
+          border-color: transparent;
+          box-shadow: 0 0 18px rgba(168, 85, 247, 0.6);
+          transform: scale(1.12) rotate(90deg);
+        }
+
+        .partner-image-viewer-backdrop {
+          position: fixed;
+          inset: 0;
+          z-index: 99999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 24px;
+          background: rgba(5, 1, 12, 0.9);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+        }
+
+        .partner-image-viewer-card {
+          width: 100%;
+          max-width: 760px;
+          max-height: 90vh;
+          overflow-y: auto;
+          padding: 4px;
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          border-radius: 24px;
+          background: #0c0414;
+          border: 1px solid rgba(147, 51, 234, 0.25);
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+        }
+
+        .partner-image-viewer-close {
+          position: absolute;
+          top: 16px;
+          right: 16px;
+          z-index: 3;
+          width: 40px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 999px;
+          color: rgba(255, 255, 255, 0.74);
+          background: rgba(9, 4, 22, 0.86);
+          border: 1px solid rgba(168, 85, 247, 0.25);
+          cursor: pointer;
+          transition:
+            color 0.2s ease,
+            background 0.2s ease,
+            border-color 0.2s ease;
+        }
+
+        .partner-image-viewer-close:hover {
+          color: #fff;
+          background: rgba(239, 68, 68, 0.2);
+          border-color: rgba(239, 68, 68, 0.4);
+        }
+
+        .partner-image-viewer-media {
+          width: 100%;
+        }
+
+        :global(.light-mode) .partner-image-view-button {
+          color: #be185d;
+          background: rgba(255, 255, 255, 0.94);
+          border-color: rgba(219, 39, 119, 0.24);
+          box-shadow: 0 12px 26px rgba(76, 29, 149, 0.14);
+        }
+
+        :global(.light-mode) .partner-image-view-button:hover {
+          color: #fff;
+          background: linear-gradient(135deg, #db2777, #7c3aed);
+          border-color: transparent;
+        }
+
+        :global(.light-mode) .partner-image-viewer-backdrop {
+          background: rgba(19, 4, 38, 0.5);
+        }
+
+        :global(.light-mode) .partner-image-viewer-card {
+          background: #ffffff;
+          border-color: rgba(147, 51, 234, 0.22);
+          box-shadow: 0 25px 50px rgba(76, 29, 149, 0.18);
+        }
+
+        :global(.light-mode) .partner-image-viewer-close {
+          color: rgba(76, 29, 149, 0.72);
+          background: rgba(255, 255, 255, 0.9);
+          border-color: rgba(147, 51, 234, 0.2);
+        }
+
+        :global(.light-mode) .partner-image-viewer-close:hover {
+          color: #fff;
+          background: rgba(220, 38, 38, 0.82);
+          border-color: rgba(220, 38, 38, 0.35);
+        }
+
         @media (max-width: 768px) {
           .partners-section {
             padding-top: 94px !important;
@@ -447,6 +637,19 @@ export default function PartnersPage() {
             border-radius: 12px !important;
             font-size: 13px !important;
             padding: 11px 14px !important;
+          }
+          .partner-image-view-button {
+            width: 40px;
+            height: 40px;
+            right: 10px;
+            bottom: 10px;
+          }
+          .partner-image-viewer-backdrop {
+            padding: 14px;
+          }
+          .partner-image-viewer-card {
+            max-height: 86vh;
+            border-radius: 20px;
           }
           .partner-body > div {
             grid-template-columns: 1fr !important;
