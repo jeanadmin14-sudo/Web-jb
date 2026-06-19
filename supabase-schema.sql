@@ -9,6 +9,8 @@ create table if not exists products (
   category text not null default 'Free Fire',
   status text not null default 'Ready',
   image_url text,
+  gallery text,
+  rental_packages text,
   created_at timestamp with time zone default now()
 );
 
@@ -17,6 +19,7 @@ create table if not exists partners (
   name text not null,
   description text,
   wa_channel_url text,
+  whatsapp_number text,
   image_url text,
   status text not null default 'Online',
   created_at timestamp with time zone default now()
@@ -59,6 +62,8 @@ create table if not exists products (
   category text not null default 'Free Fire',
   status text not null default 'Ready',
   image_url text,
+  gallery text,
+  rental_packages text,
   created_at timestamp with time zone default now()
 );
 
@@ -67,6 +72,7 @@ create table if not exists partners (
   name text not null,
   description text,
   wa_channel_url text,
+  whatsapp_number text,
   image_url text,
   status text not null default 'Online',
   created_at timestamp with time zone default now()

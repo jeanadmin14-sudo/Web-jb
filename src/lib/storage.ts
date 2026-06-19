@@ -13,6 +13,14 @@ export type ActivityLog = {
   created_at: string
 }
 
+const DEFAULT_RENTAL_GALLERY = JSON.stringify(['/Logo.jpeg', '/Logo.jpeg', '/Logo.jpeg', '/Logo.jpeg', '/Logo.jpeg', '/Logo.jpeg'])
+const DEFAULT_RENTAL_PACKAGES = JSON.stringify([
+  { name: '6 Jam', price: 80000 },
+  { name: '12 Jam', price: 140000 },
+  { name: '24 Jam', price: 220000 },
+  { name: 'Permanen', price: 8000000 },
+])
+
 const DEFAULT_PRODUCTS: Product[] = [
   {
     id: 'm1',
@@ -44,6 +52,8 @@ const DEFAULT_PRODUCTS: Product[] = [
     category: 'Rental',
     status: 'Ready',
     image_url: '/Logo.jpeg',
+    gallery: DEFAULT_RENTAL_GALLERY,
+    rental_packages: DEFAULT_RENTAL_PACKAGES,
     created_at: '2026-06-10T00:00:00Z',
     rent_end_date: '2026-06-25',
   },
@@ -88,6 +98,8 @@ const DEFAULT_PRODUCTS: Product[] = [
     category: 'Rental',
     status: 'Ready',
     image_url: '/Logo.jpeg',
+    gallery: DEFAULT_RENTAL_GALLERY,
+    rental_packages: DEFAULT_RENTAL_PACKAGES,
     created_at: '2026-06-06T00:00:00Z',
     rent_end_date: null,
   },
@@ -132,6 +144,8 @@ const DEFAULT_PRODUCTS: Product[] = [
     category: 'Rental',
     status: 'Ready',
     image_url: '/Logo.jpeg',
+    gallery: DEFAULT_RENTAL_GALLERY,
+    rental_packages: DEFAULT_RENTAL_PACKAGES,
     created_at: '2026-06-02T00:00:00Z',
     rent_end_date: null,
   },
@@ -158,6 +172,7 @@ const DEFAULT_PARTNERS: Partner[] = [
     name: 'Jean Store Official',
     description: 'Partner resmi top-up, rekber, dan rental aman bergaransi.',
     wa_channel_url: 'https://whatsapp.com/channel/0029VbBqyVG0AgWAXwVIu73m',
+    whatsapp_number: '6287832017296',
     image_url: '/Logo.jpeg',
     status: 'Ready',
     created_at: '2026-06-12T00:00:00Z',

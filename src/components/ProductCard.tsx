@@ -2,9 +2,14 @@
 
 import Image from 'next/image'
 import type { Product } from '@/lib/supabase'
-import { Search, MessageSquare, Info, ShoppingCart, X } from 'lucide-react'
+import { Search, MessageSquare, Info, ShoppingCart, X, Clock3, Box } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+
+type RentalPackage = {
+  name: string
+  price: number
+}
 
 function formatRupiah(amount: number) {
   return new Intl.NumberFormat('id-ID', {
@@ -12,6 +17,16 @@ function formatRupiah(amount: number) {
     currency: 'IDR',
     minimumFractionDigits: 0,
   }).format(amount)
+}
+
+function parseJsonArray<T>(value?: string | null): T[] {
+  if (!value) return []
+  try {
+    const parsed = JSON.parse(value)
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
 }
 
 const STATUS_COLORS: Record<string, { bg: string; color: string; dot: string }> = {
@@ -25,6 +40,8 @@ export default function ProductCard({ product }: { product: Product }) {
   const statusStyle = STATUS_COLORS[product.status] ?? STATUS_COLORS.default
   const [hovered, setHovered] = useState(false)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
+  const [isImageOpen, setIsImageOpen] = useState(false)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -34,6 +51,14 @@ export default function ProductCard({ product }: { product: Product }) {
 
   const waText = encodeURIComponent(`Halo, saya tertarik dengan produk: ${product.name}`)
   const waUrl = `https://wa.me/6287832017296?text=${waText}`
+  const isRental = product.category === 'Rental'
+  const rentalGallery = parseJsonArray<string>(product.gallery).filter(Boolean)
+  const rentalImages = (rentalGallery.length > 0 ? rentalGallery : [product.image_url || '/Logo.jpeg']).slice(0, 6)
+  const rentalPackages = parseJsonArray<RentalPackage>(product.rental_packages)
+    .filter((pkg) => pkg?.name && Number(pkg.price) > 0)
+  const displayedRentalPackages = rentalPackages.length > 0
+    ? rentalPackages
+    : [{ name: 'Mulai dari', price: product.price }]
 
   return (
     <div
@@ -118,7 +143,10 @@ export default function ProductCard({ product }: { product: Product }) {
 
         {/* Magnifier Glass overlay at bottom-right */}
         <div
-          onClick={() => setIsDetailOpen(true)}
+          onClick={() => {
+            setSelectedImage(product.image_url || '/Logo.jpeg')
+            setIsImageOpen(true)
+          }}
           style={{
             position: 'absolute',
             bottom: '12px',
@@ -322,7 +350,7 @@ export default function ProductCard({ product }: { product: Product }) {
           }}
         >
           <ShoppingCart style={{ width: '14px', height: '14px' }} />
-          Beli Sekarang — {formatRupiah(product.price)}
+          {isRental ? 'Sewa Sekarang' : 'Beli Sekarang'} - {formatRupiah(product.price)}
         </a>
       </div>
 
@@ -355,6 +383,13 @@ export default function ProductCard({ product }: { product: Product }) {
               }
             }
             @media (max-width: 640px) {
+              .rental-detail-wrapper {
+                padding: 22px 14px 18px !important;
+              }
+              .rental-gallery-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+                gap: 8px !important;
+              }
               .modal-content-wrapper {
                 flex-direction: column !important;
                 padding: 24px 16px !important;
@@ -377,10 +412,12 @@ export default function ProductCard({ product }: { product: Product }) {
             className="modal-box-container"
             style={{
               width: '100%',
-              maxWidth: '680px',
-              borderRadius: '32px',
+              maxWidth: isRental ? '420px' : '680px',
+              maxHeight: '92vh',
+              borderRadius: isRental ? '0' : '32px',
               position: 'relative',
-              overflow: 'hidden',
+              overflowY: 'auto',
+              overflowX: 'hidden',
               animation: 'modalScaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
             }}
           >
@@ -418,6 +455,166 @@ export default function ProductCard({ product }: { product: Product }) {
               <X style={{ width: '20px', height: '20px' }} />
             </button>
 
+            {isRental ? (
+              <div
+                className="rental-detail-wrapper"
+                style={{
+                  padding: '26px 14px 18px',
+                  background: '#11184a',
+                  minHeight: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '18px',
+                }}
+              >
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', paddingRight: '48px' }}>
+                  <span
+                    style={{
+                      width: 'fit-content',
+                      fontSize: '12px',
+                      fontWeight: 800,
+                      padding: '4px 11px',
+                      borderRadius: '999px',
+                      background: 'rgba(236, 72, 153, 0.12)',
+                      border: '1px solid rgba(236, 72, 153, 0.35)',
+                      color: '#ff6fae',
+                    }}
+                  >
+                    Rental
+                  </span>
+                  <h2
+                    style={{
+                      margin: 0,
+                      color: '#f4f7ff',
+                      fontSize: '24px',
+                      lineHeight: 1.15,
+                      fontWeight: 900,
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {product.name}
+                  </h2>
+                  <p style={{ margin: 0, color: 'rgba(244,247,255,0.72)', fontSize: '15px', lineHeight: 1.55 }}>
+                    {product.description}
+                  </p>
+                </div>
+
+                <div
+                  className="rental-gallery-grid"
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+                    gap: '10px',
+                  }}
+                >
+                  {rentalImages.map((image, idx) => (
+                    <button
+                      key={`${image}-${idx}`}
+                      type="button"
+                      onClick={() => {
+                        setSelectedImage(image)
+                        setIsImageOpen(true)
+                      }}
+                      style={{
+                        position: 'relative',
+                        aspectRatio: '1 / 1',
+                        overflow: 'hidden',
+                        borderRadius: '18px',
+                        border: '1px solid rgba(236, 72, 153, 0.35)',
+                        background: 'rgba(20, 7, 42, 0.75)',
+                        cursor: 'pointer',
+                        padding: 0,
+                      }}
+                    >
+                      <Image
+                        src={image}
+                        alt={`${product.name} ${idx + 1}`}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                        unoptimized
+                      />
+                    </button>
+                  ))}
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ff80bb', fontSize: '18px', fontWeight: 900, marginTop: '6px' }}>
+                  <span style={{ display: 'inline-flex', gap: '5px', alignItems: 'center' }}>
+                    <Clock3 style={{ width: '16px', height: '16px' }} />
+                    Paket Hemat
+                  </span>
+                  <Box style={{ width: '16px', height: '16px' }} />
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {displayedRentalPackages.map((pkg, idx) => (
+                    <div
+                      key={`${pkg.name}-${idx}`}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: '16px',
+                        minHeight: '62px',
+                        padding: '12px 16px',
+                        borderRadius: '22px',
+                        background: 'rgba(50, 31, 82, 0.72)',
+                        border: '1px solid rgba(236, 72, 153, 0.28)',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '13px', minWidth: 0 }}>
+                        <span
+                          style={{
+                            width: '36px',
+                            height: '36px',
+                            borderRadius: '999px',
+                            background: 'rgba(236, 72, 153, 0.12)',
+                            color: '#f35fa4',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                          }}
+                        >
+                          <Clock3 style={{ width: '16px', height: '16px' }} />
+                        </span>
+                        <strong style={{ color: '#f4f7ff', fontSize: '16px', lineHeight: 1.2 }}>{pkg.name}</strong>
+                      </div>
+                      <strong style={{ color: '#ff96c9', fontSize: '16px', whiteSpace: 'nowrap' }}>
+                        {formatRupiah(Number(pkg.price))}
+                      </strong>
+                    </div>
+                  ))}
+                </div>
+
+                <p style={{ margin: '-2px 0 8px', textAlign: 'center', fontSize: '11px', color: 'rgba(244,247,255,0.68)' }}>
+                  Hubungi admin untuk pilih paket sesuai kebutuhanmu.
+                </p>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: 'auto' }}>
+                  <a
+                    href={waUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      minHeight: '50px',
+                      borderRadius: '999px',
+                      background: '#f35aa0',
+                      color: '#fff',
+                      fontSize: '16px',
+                      fontWeight: 900,
+                      textDecoration: 'none',
+                      boxShadow: '0 14px 26px rgba(236, 72, 153, 0.24)',
+                    }}
+                  >
+                    Sewa Sekarang
+                  </a>
+                </div>
+              </div>
+            ) : (
+              <>
             {/* Inner Wrapper */}
             <div
               className="modal-content-wrapper"
@@ -629,10 +826,112 @@ export default function ProductCard({ product }: { product: Product }) {
                 </div>
               </div>
             </div>
+              </>
+            )}
           </div>
         </div>,
         document.body
       )}
+
+      {isImageOpen && mounted && createPortal(
+        <div
+          onClick={() => setIsImageOpen(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 99999,
+            background: 'rgba(5, 1, 12, 0.9)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '24px',
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: '100%',
+              maxWidth: '640px',
+              maxHeight: '90vh',
+              borderRadius: '24px',
+              background: '#0c0414',
+              border: '1px solid rgba(147, 51, 234, 0.25)',
+              boxShadow: '0 25px 50px -12px rgba(0,0,0,0.8)',
+              position: 'relative',
+              overflowY: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setIsImageOpen(false)}
+              style={{
+                position: 'absolute',
+                top: '16px',
+                right: '16px',
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                background: 'rgba(9, 4, 22, 0.85)',
+                border: '1px solid rgba(168, 85, 247, 0.25)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'rgba(255,255,255,0.7)',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                zIndex: 10,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = '#fff'
+                e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'
+                e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.4)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = 'rgba(255,255,255,0.7)'
+                e.currentTarget.style.background = 'rgba(9, 4, 22, 0.85)'
+                e.currentTarget.style.borderColor = 'rgba(168, 85, 247, 0.25)'
+              }}
+            >
+              <X style={{ width: '20px', height: '20px' }} />
+            </button>
+
+            {/* Scrollable Image Content */}
+            <div style={{ width: '100%', padding: '4px' }}>
+              {(selectedImage || product.image_url) ? (
+                <Image
+                  src={selectedImage || product.image_url || ''}
+                  alt={product.name}
+                  width={1200}
+                  height={800}
+                  style={{
+                    width: '100%',
+                    height: 'auto',
+                    display: 'block',
+                    borderRadius: '16px',
+                  }}
+                  unoptimized
+                />
+              ) : (
+                <div
+                  style={{
+                    padding: '80px 20px',
+                    textAlign: 'center',
+                    color: 'rgba(255,255,255,0.2)',
+                  }}
+                >
+                  No Image Available
+                </div>
+              )}
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
       <style jsx>{`
         @media (max-width: 768px) {
           .product-card {

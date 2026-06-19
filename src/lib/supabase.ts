@@ -25,6 +25,8 @@ export type Product = {
   image_url: string | null
   created_at: string
   rent_end_date?: string | null
+  gallery?: string | null
+  rental_packages?: string | null
 }
 
 export type Partner = {
@@ -32,6 +34,7 @@ export type Partner = {
   name: string
   description: string
   wa_channel_url: string
+  whatsapp_number?: string | null
   image_url: string | null
   status: string
   created_at: string

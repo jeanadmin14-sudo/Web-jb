@@ -20,10 +20,21 @@ export async function initializeDatabase() {
         category TEXT NOT NULL DEFAULT 'Free Fire',
         status TEXT NOT NULL DEFAULT 'Ready',
         image_url TEXT,
+        gallery TEXT,
+        rental_packages TEXT,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
         rent_end_date TEXT
       );
     `)
+
+    try {
+      await query(`
+        ALTER TABLE products ADD COLUMN IF NOT EXISTS gallery TEXT;
+        ALTER TABLE products ADD COLUMN IF NOT EXISTS rental_packages TEXT;
+      `)
+    } catch (e) {
+      console.warn('ALTER TABLE products ADD COLUMN warn:', e)
+    }
 
     await query(`
       CREATE TABLE IF NOT EXISTS partners (
@@ -31,11 +42,20 @@ export async function initializeDatabase() {
         name TEXT NOT NULL,
         description TEXT,
         wa_channel_url TEXT,
+        whatsapp_number TEXT,
         image_url TEXT,
         status TEXT NOT NULL DEFAULT 'Online',
         created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
       );
     `)
+
+    try {
+      await query(`
+        ALTER TABLE partners ADD COLUMN IF NOT EXISTS whatsapp_number TEXT;
+      `)
+    } catch (e) {
+      console.warn('ALTER TABLE partners ADD COLUMN warn:', e)
+    }
 
     await query(`
       CREATE TABLE IF NOT EXISTS admins (
@@ -100,6 +120,13 @@ export async function initializeDatabase() {
           category: 'Rental',
           status: 'Ready',
           image_url: '/Logo.jpeg',
+          gallery: JSON.stringify(['/Logo.jpeg', '/Logo.jpeg', '/Logo.jpeg', '/Logo.jpeg', '/Logo.jpeg', '/Logo.jpeg']),
+          rental_packages: JSON.stringify([
+            { name: '6 Jam', price: 80000 },
+            { name: '12 Jam', price: 140000 },
+            { name: '24 Jam', price: 220000 },
+            { name: 'Permanen', price: 8000000 }
+          ]),
           created_at: new Date('2026-06-10T00:00:00Z').toISOString(),
           rent_end_date: '2026-06-25',
         },
@@ -144,6 +171,13 @@ export async function initializeDatabase() {
           category: 'Rental',
           status: 'Ready',
           image_url: '/Logo.jpeg',
+          gallery: JSON.stringify(['/Logo.jpeg', '/Logo.jpeg', '/Logo.jpeg', '/Logo.jpeg', '/Logo.jpeg', '/Logo.jpeg']),
+          rental_packages: JSON.stringify([
+            { name: '6 Jam', price: 80000 },
+            { name: '12 Jam', price: 140000 },
+            { name: '24 Jam', price: 220000 },
+            { name: 'Permanen', price: 8000000 }
+          ]),
           created_at: new Date('2026-06-06T00:00:00Z').toISOString(),
           rent_end_date: null,
         },
@@ -188,6 +222,13 @@ export async function initializeDatabase() {
           category: 'Rental',
           status: 'Ready',
           image_url: '/Logo.jpeg',
+          gallery: JSON.stringify(['/Logo.jpeg', '/Logo.jpeg', '/Logo.jpeg', '/Logo.jpeg', '/Logo.jpeg', '/Logo.jpeg']),
+          rental_packages: JSON.stringify([
+            { name: '6 Jam', price: 80000 },
+            { name: '12 Jam', price: 140000 },
+            { name: '24 Jam', price: 220000 },
+            { name: 'Permanen', price: 8000000 }
+          ]),
           created_at: new Date('2026-06-02T00:00:00Z').toISOString(),
           rent_end_date: null,
         },
@@ -206,8 +247,8 @@ export async function initializeDatabase() {
 
       for (const p of defaultProducts) {
         await query(
-          'INSERT INTO products (id, name, description, price, category, status, image_url, created_at, rent_end_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
-          [p.id, p.name, p.description, p.price, p.category, p.status, p.image_url, p.created_at, p.rent_end_date]
+          'INSERT INTO products (id, name, description, price, category, status, image_url, created_at, rent_end_date, gallery, rental_packages) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)',
+          [p.id, p.name, p.description, p.price, p.category, p.status, p.image_url, p.created_at, p.rent_end_date, (p as any).gallery || null, (p as any).rental_packages || null]
         )
       }
     }
@@ -222,6 +263,7 @@ export async function initializeDatabase() {
           name: 'Jean Store Official',
           description: 'Partner resmi top-up, rekber, dan rental aman bergaransi.',
           wa_channel_url: 'https://whatsapp.com/channel/0029VbBqyVG0AgWAXwVIu73m',
+          whatsapp_number: '6287832017296',
           image_url: '/Logo.jpeg',
           status: 'Ready',
           created_at: new Date('2026-06-12T00:00:00Z').toISOString(),
@@ -230,8 +272,8 @@ export async function initializeDatabase() {
 
       for (const pt of defaultPartners) {
         await query(
-          'INSERT INTO partners (id, name, description, wa_channel_url, image_url, status, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-          [pt.id, pt.name, pt.description, pt.wa_channel_url, pt.image_url, pt.status, pt.created_at]
+          'INSERT INTO partners (id, name, description, wa_channel_url, whatsapp_number, image_url, status, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+          [pt.id, pt.name, pt.description, pt.wa_channel_url, pt.whatsapp_number, pt.image_url, pt.status, pt.created_at]
         )
       }
     }

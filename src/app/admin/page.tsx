@@ -65,6 +65,10 @@ export default function AdminPage() {
   const [prodStatus, setProdStatus] = useState('Ready')
   const [prodImage, setProdImage] = useState('/Logo.jpeg')
   const [prodRentEnd, setProdRentEnd] = useState('')
+  const [prodGallery, setProdGallery] = useState<string[]>([])
+  const [prodPackages, setProdPackages] = useState<{name: string, price: number}[]>([])
+  const [newPkgName, setNewPkgName] = useState('')
+  const [newPkgPrice, setNewPkgPrice] = useState(0)
 
   // Drag and Drop active states
   const [prodDragActive, setProdDragActive] = useState(false)
@@ -98,6 +102,7 @@ export default function AdminPage() {
   const [partName, setPartName] = useState('')
   const [partDesc, setPartDesc] = useState('')
   const [partWaUrl, setPartWaUrl] = useState('')
+  const [partWaNumber, setPartWaNumber] = useState('')
   const [partImage, setPartImage] = useState('/Logo.jpeg')
   const [partStatus, setPartStatus] = useState('Ready')
 
@@ -151,6 +156,10 @@ export default function AdminPage() {
     setProdStatus('Ready')
     setProdImage('/Logo.jpeg')
     setProdRentEnd('')
+    setProdGallery([])
+    setProdPackages([])
+    setNewPkgName('')
+    setNewPkgPrice(0)
     setShowProductModal(true)
   }
 
@@ -163,6 +172,18 @@ export default function AdminPage() {
     setProdStatus(p.status)
     setProdImage(p.image_url || '/Logo.jpeg')
     setProdRentEnd(p.rent_end_date || '')
+    try {
+      setProdGallery(p.gallery ? JSON.parse(p.gallery) : [])
+    } catch {
+      setProdGallery([])
+    }
+    try {
+      setProdPackages(p.rental_packages ? JSON.parse(p.rental_packages) : [])
+    } catch {
+      setProdPackages([])
+    }
+    setNewPkgName('')
+    setNewPkgPrice(0)
     setShowProductModal(true)
   }
 
@@ -176,6 +197,8 @@ export default function AdminPage() {
       category: prodCategory,
       status: prodStatus,
       image_url: prodImage || '/Logo.jpeg',
+      gallery: JSON.stringify(prodGallery),
+      rental_packages: JSON.stringify(prodPackages),
       created_at: editingProduct ? editingProduct.created_at : new Date().toISOString(),
       rent_end_date: prodCategory === 'Rental' && prodRentEnd ? prodRentEnd : null
     }
@@ -245,6 +268,7 @@ export default function AdminPage() {
     setPartName('')
     setPartDesc('')
     setPartWaUrl('')
+    setPartWaNumber('')
     setPartImage('/Logo.jpeg')
     setPartStatus('Ready')
     setShowPartnerModal(true)
@@ -255,6 +279,7 @@ export default function AdminPage() {
     setPartName(pt.name)
     setPartDesc(pt.description || '')
     setPartWaUrl(pt.wa_channel_url || '')
+    setPartWaNumber(pt.whatsapp_number || '')
     setPartImage(pt.image_url || '/Logo.jpeg')
     setPartStatus(pt.status || 'Ready')
     setShowPartnerModal(true)
@@ -267,6 +292,7 @@ export default function AdminPage() {
       name: partName,
       description: partDesc,
       wa_channel_url: partWaUrl,
+      whatsapp_number: partWaNumber || null,
       image_url: partImage || '/Logo.jpeg',
       status: partStatus,
       created_at: editingPartner ? editingPartner.created_at : new Date().toISOString()
@@ -296,6 +322,7 @@ export default function AdminPage() {
 
   return (
     <div
+      className="admin-page"
       style={{
         minHeight: '100vh',
         background: '#07010f',
@@ -320,6 +347,7 @@ export default function AdminPage() {
       />
 
       <div
+        className="admin-container"
         style={{
           maxWidth: '1280px',
           margin: '0 auto',
@@ -330,6 +358,7 @@ export default function AdminPage() {
       >
         {/* Dashboard Header */}
         <div
+          className="admin-dashboard-header"
           style={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -383,6 +412,7 @@ export default function AdminPage() {
 
         {/* Tab Controls */}
         <div
+          className="admin-tabs"
           style={{
             display: 'flex',
             gap: '8px',
@@ -609,7 +639,7 @@ export default function AdminPage() {
                 <thead>
                   <tr style={{ borderBottom: '1px solid rgba(147, 51, 234, 0.15)', color: 'rgba(255,255,255,0.5)', textAlign: 'left' }}>
                     <th style={{ padding: '16px' }}>Partner</th>
-                    <th style={{ padding: '16px' }}>WhatsApp Channel</th>
+                    <th style={{ padding: '16px' }}>WhatsApp Channel & Chat</th>
                     <th style={{ padding: '16px' }}>Status</th>
                     <th style={{ padding: '16px', textAlign: 'right' }}>Aksi</th>
                   </tr>
@@ -627,7 +657,20 @@ export default function AdminPage() {
                         </div>
                       </td>
                       <td style={{ padding: '16px' }}>
-                        <a href={pt.wa_channel_url} target="_blank" rel="noopener noreferrer" style={{ color: '#c084fc', textDecoration: 'underline' }}>Link Channel</a>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                          {pt.wa_channel_url && (
+                            <a href={pt.wa_channel_url} target="_blank" rel="noopener noreferrer" style={{ color: '#c084fc', textDecoration: 'underline', fontSize: '13px' }}>
+                              Channel WA
+                            </a>
+                          )}
+                          {pt.whatsapp_number ? (
+                            <a href={`https://wa.me/${pt.whatsapp_number}`} target="_blank" rel="noopener noreferrer" style={{ color: '#f472b6', textDecoration: 'underline', fontSize: '13px' }}>
+                              WhatsApp Chat (+{pt.whatsapp_number})
+                            </a>
+                          ) : (
+                            <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.3)' }}>No WA Chat</span>
+                          )}
+                        </div>
                       </td>
                       <td style={{ padding: '16px' }}>
                         <span style={{
@@ -736,7 +779,7 @@ export default function AdminPage() {
                 <thead>
                   <tr style={{ borderBottom: '1px solid rgba(147, 51, 234, 0.15)', color: 'rgba(255,255,255,0.5)', textAlign: 'left' }}>
                     <th style={{ padding: '16px' }}>Username</th>
-                    <th style={{ padding: '16px' }}>Password (Plain text demo)</th>
+                    <th style={{ padding: '16px' }}>Password</th>
                     <th style={{ padding: '16px', textAlign: 'right' }}>Aksi</th>
                   </tr>
                 </thead>
@@ -744,7 +787,7 @@ export default function AdminPage() {
                   {admins.map((a) => (
                     <tr key={a.username} style={{ borderBottom: '1px solid rgba(147, 51, 234, 0.08)' }}>
                       <td style={{ padding: '16px', fontWeight: 600 }}>{a.username}</td>
-                      <td style={{ padding: '16px', color: 'rgba(255,255,255,0.45)' }}>•••••••• ({a.passwordHash})</td>
+                      <td style={{ padding: '16px', color: 'rgba(255,255,255,0.45)' }}>••••••••</td>
                       <td style={{ padding: '16px', textAlign: 'right' }}>
                         <div style={{ display: 'inline-flex', gap: '8px', alignItems: 'center' }}>
                           <button
@@ -909,6 +952,7 @@ export default function AdminPage() {
           }}
         >
           <div
+            className="admin-modal-card"
             onClick={(e) => e.stopPropagation()}
             style={{
               width: '100%',
@@ -950,7 +994,7 @@ export default function AdminPage() {
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div className="admin-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   <label style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>HARGA (IDR)</label>
                   <input
@@ -973,7 +1017,7 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div className="admin-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   <label style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>STATUS</label>
                   <select value={prodStatus} onChange={(e) => setProdStatus(e.target.value)} style={inputStyle}>
@@ -1033,15 +1077,160 @@ export default function AdminPage() {
 
               {/* Conditional Rental Expiry Field */}
               {prodCategory === 'Rental' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>MASA HABIS RENTAL SAMPAI DENGAN</label>
-                  <input
-                    type="date"
-                    value={prodRentEnd}
-                    onChange={(e) => setProdRentEnd(e.target.value)}
-                    style={inputStyle}
-                  />
-                </div>
+                <>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>MASA HABIS RENTAL SAMPAI DENGAN</label>
+                    <input
+                      type="date"
+                      value={prodRentEnd}
+                      onChange={(e) => setProdRentEnd(e.target.value)}
+                      style={inputStyle}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderTop: '1px solid rgba(147, 51, 234, 0.15)', paddingTop: '16px', marginTop: '8px' }}>
+                    <label style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>GALERI GAMBAR (MAKSIMAL 6)</label>
+                    <div className="admin-gallery-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '10px' }}>
+                      {prodGallery.map((img, idx) => (
+                        <div key={idx} style={{ position: 'relative', aspectRatio: '1/1', borderRadius: '8px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+                          <img src={img} alt={`Gallery ${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          <button
+                            type="button"
+                            onClick={() => setProdGallery(prev => prev.filter((_, i) => i !== idx))}
+                            style={{
+                              position: 'absolute',
+                              top: '4px',
+                              right: '4px',
+                              width: '20px',
+                              height: '20px',
+                              borderRadius: '50%',
+                              background: 'rgba(239,68,68,0.85)',
+                              color: '#fff',
+                              border: 'none',
+                              fontSize: '10px',
+                              fontWeight: 'bold',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                      {prodGallery.length < 6 && (
+                        <div
+                          onClick={() => document.getElementById('gallery-file-input')?.click()}
+                          style={{
+                            aspectRatio: '1/1',
+                            borderRadius: '8px',
+                            border: '1.5px dashed rgba(147,51,234,0.3)',
+                            background: 'rgba(255,255,255,0.01)',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '20px',
+                            color: '#a855f7',
+                            transition: 'all 0.2s',
+                          }}
+                          onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#a855f7'; e.currentTarget.style.background = 'rgba(147,51,234,0.05)'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(147,51,234,0.3)'; e.currentTarget.style.background = 'rgba(255,255,255,0.01)'; }}
+                        >
+                          +
+                          <input
+                            id="gallery-file-input"
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            onChange={(e) => {
+                              const files = Array.from(e.target.files || [])
+                              files.forEach(file => {
+                                const reader = new FileReader()
+                                reader.onload = (ev) => {
+                                  if (ev.target?.result) {
+                                    setProdGallery(prev => {
+                                      if (prev.length >= 6) return prev
+                                      return [...prev, ev.target!.result as string]
+                                    })
+                                  }
+                                }
+                                reader.readAsDataURL(file)
+                              })
+                            }}
+                            style={{ display: 'none' }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderTop: '1px solid rgba(147, 51, 234, 0.15)', paddingTop: '16px' }}>
+                    <label style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>PAKET HEMAT</label>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '8px' }}>
+                      {prodPackages.map((pkg, idx) => (
+                        <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(147,51,234,0.1)', padding: '8px 12px', borderRadius: '10px' }}>
+                          <span style={{ fontSize: '13px', fontWeight: 600 }}>{pkg.name}</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <span style={{ fontSize: '13px', fontWeight: 700, color: '#f472b6' }}>{formatRupiah(pkg.price)}</span>
+                            <button
+                              type="button"
+                              onClick={() => setProdPackages(prev => prev.filter((_, i) => i !== idx))}
+                              style={{ background: 'transparent', border: 'none', color: '#f87171', cursor: 'pointer', fontSize: '14px', padding: '2px' }}
+                            >
+                              Hapus
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="admin-package-row" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr auto', gap: '8px', alignItems: 'end' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>DURASI PAKET</span>
+                        <input
+                          type="text"
+                          value={newPkgName}
+                          onChange={(e) => setNewPkgName(e.target.value)}
+                          placeholder="Contoh: 12 Jam"
+                          style={{ ...inputStyle, padding: '8px 12px' }}
+                        />
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>HARGA (IDR)</span>
+                        <input
+                          type="number"
+                          value={newPkgPrice || ''}
+                          onChange={(e) => setNewPkgPrice(Number(e.target.value))}
+                          placeholder="Contoh: 140000"
+                          style={{ ...inputStyle, padding: '8px 12px' }}
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!newPkgName.trim() || newPkgPrice <= 0) return
+                          setProdPackages(prev => [...prev, { name: newPkgName.trim(), price: newPkgPrice }])
+                          setNewPkgName('')
+                          setNewPkgPrice(0)
+                        }}
+                        style={{
+                          padding: '10px 16px',
+                          background: 'rgba(168,85,247,0.15)',
+                          border: '1px solid rgba(168,85,247,0.4)',
+                          borderRadius: '10px',
+                          color: '#c084fc',
+                          fontSize: '13px',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        Tambah
+                      </button>
+                    </div>
+                  </div>
+                </>
               )}
 
               <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
@@ -1081,6 +1270,7 @@ export default function AdminPage() {
           }}
         >
           <div
+            className="admin-modal-card"
             onClick={(e) => e.stopPropagation()}
             style={{
               width: '100%',
@@ -1122,19 +1312,31 @@ export default function AdminPage() {
                 />
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>WHATSAPP CHANNEL URL</label>
-                <input
-                  type="text"
-                  required
-                  value={partWaUrl}
-                  onChange={(e) => setPartWaUrl(e.target.value)}
-                  placeholder="https://whatsapp.com/channel/..."
-                  style={inputStyle}
-                />
+              <div className="admin-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>WHATSAPP CHANNEL URL</label>
+                  <input
+                    type="text"
+                    required
+                    value={partWaUrl}
+                    onChange={(e) => setPartWaUrl(e.target.value)}
+                    placeholder="https://whatsapp.com/channel/..."
+                    style={inputStyle}
+                  />
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>NOMOR WHATSAPP CHAT</label>
+                  <input
+                    type="text"
+                    value={partWaNumber}
+                    onChange={(e) => setPartWaNumber(e.target.value)}
+                    placeholder="Contoh: 6287832017296"
+                    style={inputStyle}
+                  />
+                </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div className="admin-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   <label style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>STATUS</label>
                   <select value={partStatus} onChange={(e) => setPartStatus(e.target.value)} style={inputStyle}>
@@ -1229,6 +1431,7 @@ export default function AdminPage() {
           }}
         >
           <div
+            className="admin-modal-card"
             onClick={(e) => e.stopPropagation()}
             style={{
               width: '100%',
@@ -1343,7 +1546,7 @@ export default function AdminPage() {
               Konfirmasi Hapus
             </h3>
             <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: '24px' }}>
-              Apakah Anda yakin ingin menghapus {deleteConfirm.type === 'product' ? 'produk' : deleteConfirm.type === 'partner' ? 'partner' : 'akun admin'} <strong style={{ color: '#fff' }}>"{deleteConfirm.name}"</strong>? Tindakan ini tidak dapat dibatalkan.
+              Apakah Anda yakin ingin menghapus {deleteConfirm.type === 'product' ? 'produk' : deleteConfirm.type === 'partner' ? 'partner' : 'akun admin'} <strong style={{ color: '#fff' }}>&quot;{deleteConfirm.name}&quot;</strong>? Tindakan ini tidak dapat dibatalkan.
             </p>
             <div style={{ display: 'flex', gap: '12px' }}>
               <button
@@ -1383,6 +1586,63 @@ export default function AdminPage() {
           </div>
         </div>
       )}
+
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .admin-page {
+            padding-top: 72px !important;
+          }
+          .admin-container {
+            padding: 0 14px 48px !important;
+          }
+          .admin-dashboard-header {
+            align-items: flex-start !important;
+            flex-direction: column !important;
+            gap: 14px !important;
+            padding: 16px !important;
+            border-radius: 18px !important;
+            margin-bottom: 20px !important;
+          }
+          .admin-dashboard-header > button {
+            width: 100%;
+            justify-content: center;
+            min-height: 42px;
+          }
+          .admin-tabs {
+            width: 100% !important;
+            overflow-x: auto;
+            border-radius: 18px !important;
+            margin-bottom: 22px !important;
+            scrollbar-width: none;
+          }
+          .admin-tabs::-webkit-scrollbar {
+            display: none;
+          }
+          .admin-tabs button {
+            flex: 0 0 auto;
+            padding: 10px 14px !important;
+            font-size: 12px !important;
+          }
+          .admin-modal-card {
+            max-height: calc(100vh - 24px) !important;
+            padding: 20px !important;
+            border-radius: 18px !important;
+          }
+          .admin-form-grid,
+          .admin-package-row {
+            grid-template-columns: 1fr !important;
+          }
+          .admin-gallery-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            gap: 8px !important;
+          }
+        }
+        @media (max-width: 420px) {
+          .admin-gallery-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          }
+        }
+      `}</style>
 
     </div>
   )

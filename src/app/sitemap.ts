@@ -24,11 +24,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.8,
     },
-    {
-      url: `${siteUrl}/lapor`,
-      lastModified,
-      changeFrequency: 'weekly',
-      priority: 0.6,
-    },
   ]
 }

@@ -42,15 +42,15 @@ export async function POST(req: Request) {
 
     const adminUser = req.headers.get('x-admin-user')
     const body = await req.json()
-    const { id, name, description, price, category, status, image_url, created_at, rent_end_date } = body
+    const { id, name, description, price, category, status, image_url, created_at, rent_end_date, gallery, rental_packages } = body
 
     // Check if product exists to determine if we are adding or editing
     const checkExist = await query('SELECT 1 FROM products WHERE id = $1', [id])
     const isNew = checkExist.rowCount === 0
 
     await query(
-      `INSERT INTO products (id, name, description, price, category, status, image_url, created_at, rent_end_date)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      `INSERT INTO products (id, name, description, price, category, status, image_url, created_at, rent_end_date, gallery, rental_packages)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
        ON CONFLICT (id) DO UPDATE SET
          name = EXCLUDED.name,
          description = EXCLUDED.description,
@@ -59,8 +59,10 @@ export async function POST(req: Request) {
          status = EXCLUDED.status,
          image_url = EXCLUDED.image_url,
          created_at = EXCLUDED.created_at,
-         rent_end_date = EXCLUDED.rent_end_date`,
-      [id, name, description, Number(price), category, status, image_url, created_at, rent_end_date || null]
+         rent_end_date = EXCLUDED.rent_end_date,
+         gallery = EXCLUDED.gallery,
+         rental_packages = EXCLUDED.rental_packages`,
+      [id, name, description, Number(price), category, status, image_url, created_at, rent_end_date || null, gallery || null, rental_packages || null]
     )
 
     // Log the action

@@ -35,23 +35,24 @@ export async function POST(req: Request) {
 
     const adminUser = req.headers.get('x-admin-user')
     const body = await req.json()
-    const { id, name, description, wa_channel_url, image_url, status, created_at } = body
+    const { id, name, description, wa_channel_url, whatsapp_number, image_url, status, created_at } = body
 
     // Check if partner exists to determine if we are adding or editing
     const checkExist = await query('SELECT 1 FROM partners WHERE id = $1', [id])
     const isNew = checkExist.rowCount === 0
 
     await query(
-      `INSERT INTO partners (id, name, description, wa_channel_url, image_url, status, created_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `INSERT INTO partners (id, name, description, wa_channel_url, whatsapp_number, image_url, status, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        ON CONFLICT (id) DO UPDATE SET
          name = EXCLUDED.name,
          description = EXCLUDED.description,
          wa_channel_url = EXCLUDED.wa_channel_url,
+         whatsapp_number = EXCLUDED.whatsapp_number,
          image_url = EXCLUDED.image_url,
          status = EXCLUDED.status,
          created_at = EXCLUDED.created_at`,
-      [id, name, description, wa_channel_url, image_url, status || 'Online', created_at]
+      [id, name, description, wa_channel_url, whatsapp_number, image_url, status || 'Online', created_at]
     )
 
     // Log the action

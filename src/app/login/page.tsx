@@ -147,7 +147,7 @@ export default function LoginPage() {
         <div className="login-visual-copy">
           <span>Admin Area</span>
           <h2>Kelola katalog JBJean dengan tampilan yang bersih dan cepat.</h2>
-          <p>Dashboard untuk produk, rental, layanan partner, dan laporan pelanggan.</p>
+          <p>Dashboard untuk produk, rental, dan layanan partner.</p>
         </div>
       </div>
 

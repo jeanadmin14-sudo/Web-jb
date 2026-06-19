@@ -4,7 +4,14 @@ import { useEffect, useState } from 'react'
 import { getPartners } from '@/lib/storage'
 import type { Partner } from '@/lib/supabase'
 import Image from 'next/image'
-import { ExternalLink, Crown } from 'lucide-react'
+import { ExternalLink, Crown, MessageSquare } from 'lucide-react'
+
+function getWhatsAppChatUrl(partner: Partner) {
+  const number = partner.whatsapp_number?.replace(/\D/g, '')
+  if (!number) return null
+  const text = encodeURIComponent(`Halo, saya tertarik dengan layanan/partner ${partner.name}`)
+  return `https://wa.me/${number}?text=${text}`
+}
 
 export default function PartnersPage() {
   const [partners, setPartners] = useState<Partner[]>([])
@@ -135,7 +142,9 @@ export default function PartnersPage() {
             className="partners-grid"
             style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}
           >
-            {partners.map((partner) => (
+            {partners.map((partner) => {
+              const chatUrl = getWhatsAppChatUrl(partner)
+              return (
               <div
                 key={partner.id}
                 className="card-dark card-shine"
@@ -252,51 +261,92 @@ export default function PartnersPage() {
                   >
                     {partner.description}
                   </p>
-                  {partner.wa_channel_url && (
-                    <a
-                      className="partner-link"
-                      href={partner.wa_channel_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        width: '100%',
-                        justifyContent: 'center',
-                        fontWeight: 700,
-                        fontSize: '14px',
-                        padding: '10px 16px',
-                        borderRadius: '12px',
-                        transition: 'all 0.2s',
-                        background: 'var(--bg-card, rgba(12, 4, 20, 0.65))',
-                        border: '1px solid var(--border-card, rgba(147, 51, 234, 0.18))',
-                        color: 'var(--text-title, #fff)',
-                        boxShadow: 'none',
-                        textDecoration: 'none',
-                      }}
-                      onMouseEnter={(e) => {
-                        const el = e.currentTarget as HTMLElement
-                        el.style.transform = 'translateY(-1px)'
-                        el.style.background = 'var(--bg-card-hover, rgba(13, 6, 32, 0.8))'
-                        el.style.borderColor = 'var(--border-card-hover, rgba(168, 85, 247, 0.55))'
-                        el.style.boxShadow = '0 4px 20px rgba(147, 51, 234, 0.15)'
-                      }}
-                      onMouseLeave={(e) => {
-                        const el = e.currentTarget as HTMLElement
-                        el.style.transform = 'translateY(0)'
-                        el.style.background = 'var(--bg-card, rgba(12, 4, 20, 0.65))'
-                        el.style.borderColor = 'var(--border-card, rgba(147, 51, 234, 0.18))'
-                        el.style.boxShadow = 'none'
-                      }}
-                    >
-                      <ExternalLink style={{ width: '16px', height: '16px' }} />
-                      Saluran WA
-                    </a>
-                  )}
+                  <div style={{ display: 'grid', gridTemplateColumns: partner.wa_channel_url && chatUrl ? '1fr 1fr' : '1fr', gap: '10px', width: '100%', marginTop: 'auto' }}>
+                    {partner.wa_channel_url && (
+                      <a
+                        className="partner-link"
+                        href={partner.wa_channel_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          width: '100%',
+                          justifyContent: 'center',
+                          fontWeight: 700,
+                          fontSize: '14px',
+                          padding: '10px 16px',
+                          borderRadius: '12px',
+                          transition: 'all 0.2s',
+                          background: 'var(--bg-card, rgba(12, 4, 20, 0.65))',
+                          border: '1px solid var(--border-card, rgba(147, 51, 234, 0.18))',
+                          color: 'var(--text-title, #fff)',
+                          boxShadow: 'none',
+                          textDecoration: 'none',
+                        }}
+                        onMouseEnter={(e) => {
+                          const el = e.currentTarget as HTMLElement
+                          el.style.transform = 'translateY(-1px)'
+                          el.style.background = 'var(--bg-card-hover, rgba(13, 6, 32, 0.8))'
+                          el.style.borderColor = 'var(--border-card-hover, rgba(168, 85, 247, 0.55))'
+                          el.style.boxShadow = '0 4px 20px rgba(147, 51, 234, 0.15)'
+                        }}
+                        onMouseLeave={(e) => {
+                          const el = e.currentTarget as HTMLElement
+                          el.style.transform = 'translateY(0)'
+                          el.style.background = 'var(--bg-card, rgba(12, 4, 20, 0.65))'
+                          el.style.borderColor = 'var(--border-card, rgba(147, 51, 234, 0.18))'
+                          el.style.boxShadow = 'none'
+                        }}
+                      >
+                        <ExternalLink style={{ width: '16px', height: '16px' }} />
+                        Saluran WA
+                      </a>
+                    )}
+                    {chatUrl && (
+                      <a
+                        className="partner-link"
+                        href={chatUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          width: '100%',
+                          justifyContent: 'center',
+                          fontWeight: 700,
+                          fontSize: '14px',
+                          padding: '10px 16px',
+                          borderRadius: '12px',
+                          transition: 'all 0.2s',
+                          background: 'linear-gradient(90deg, #ec4899, #d946ef)',
+                          border: 'none',
+                          color: '#fff',
+                          boxShadow: '0 4px 15px rgba(236, 72, 153, 0.2)',
+                          textDecoration: 'none',
+                        }}
+                        onMouseEnter={(e) => {
+                          const el = e.currentTarget as HTMLElement
+                          el.style.transform = 'translateY(-1px)'
+                          el.style.boxShadow = '0 6px 20px rgba(236, 72, 153, 0.4)'
+                        }}
+                        onMouseLeave={(e) => {
+                          const el = e.currentTarget as HTMLElement
+                          el.style.transform = 'translateY(0)'
+                          el.style.boxShadow = '0 4px 15px rgba(236, 72, 153, 0.2)'
+                        }}
+                      >
+                        <MessageSquare style={{ width: '16px', height: '16px' }} />
+                        Hubungi
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
-            ))}
+              )
+            })}
           </div>
         ) : (
           <div
@@ -397,6 +447,9 @@ export default function PartnersPage() {
             border-radius: 12px !important;
             font-size: 13px !important;
             padding: 11px 14px !important;
+          }
+          .partner-body > div {
+            grid-template-columns: 1fr !important;
           }
         }
         @media (max-width: 380px) {
