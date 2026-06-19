@@ -166,13 +166,15 @@ const DEFAULT_ADMINS: AdminAccount[] = [
   { username: 'admin', passwordHash: 'admin123' },
 ]
 
+const DEFAULT_PARTNER_WHATSAPP = '6287832017296'
+
 const DEFAULT_PARTNERS: Partner[] = [
   {
     id: 'p1',
     name: 'Jean Store Official',
     description: 'Partner resmi top-up, rekber, dan rental aman bergaransi.',
     wa_channel_url: 'https://whatsapp.com/channel/0029VbBqyVG0AgWAXwVIu73m',
-    whatsapp_number: '6287832017296',
+    whatsapp_number: DEFAULT_PARTNER_WHATSAPP,
     image_url: '/Logo.jpeg',
     status: 'Ready',
     created_at: '2026-06-12T00:00:00Z',
@@ -232,6 +234,13 @@ async function checkPostgres(): Promise<boolean> {
 function getSessionUser(): string {
   if (typeof window === 'undefined') return 'System'
   return localStorage.getItem('jbjean_session') || 'System'
+}
+
+function normalizePartner(partner: Partner): Partner {
+  return {
+    ...partner,
+    whatsapp_number: partner.whatsapp_number || DEFAULT_PARTNER_WHATSAPP,
+  }
 }
 
 export async function getProducts(): Promise<Product[]> {
@@ -324,14 +333,22 @@ export async function deleteProduct(id: string): Promise<void> {
 export async function getPartners(): Promise<Partner[]> {
   if (await checkPostgres()) {
     const res = await fetch('/api/partners')
-    if (res.ok) return await res.json()
+    if (res.ok) {
+      const data = await res.json()
+      return (data as Partner[]).map(normalizePartner)
+    }
   }
   const supabase = createSupabaseClient()
   if (supabase) {
     const { data } = await supabase.from('partners').select('*').order('created_at', { ascending: false })
-    return (data as Partner[]) ?? []
+    return ((data as Partner[]) ?? []).map(normalizePartner)
   }
-  return getLocal<Partner[]>(KEY_PARTNERS, DEFAULT_PARTNERS)
+  const localPartners = getLocal<Partner[]>(KEY_PARTNERS, DEFAULT_PARTNERS)
+  const normalized = localPartners.map(normalizePartner)
+  if (JSON.stringify(localPartners) !== JSON.stringify(normalized)) {
+    setLocal(KEY_PARTNERS, normalized)
+  }
+  return normalized
 }
 
 export async function savePartner(partner: Partner): Promise<void> {
