@@ -41,7 +41,7 @@ export async function getServerProducts(): Promise<Product[] | null> {
 
 export async function getServerPartners(): Promise<Partner[] | null> {
   try {
-    const { rows } = await query('SELECT * FROM partners ORDER BY created_at DESC')
+    const { rows } = await query('SELECT * FROM partners ORDER BY created_at ASC')
     return (rows as PartnerRow[]).map(normalizePartnerRow)
   } catch (error) {
     console.error('getServerPartners error:', error)

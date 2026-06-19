@@ -7,7 +7,7 @@ export const preferredRegion = 'sin1'
 
 export async function GET() {
   try {
-    const { rows } = await query('SELECT * FROM partners ORDER BY created_at DESC')
+    const { rows } = await query('SELECT * FROM partners ORDER BY created_at ASC')
     return NextResponse.json(rows)
   } catch (err: any) {
     console.error('API partners GET error:', err)

@@ -34,7 +34,7 @@ export default function PartnersPage({ initialPartners }: { initialPartners?: Pa
     async function fetchPartners() {
       setLoading(true)
       const data = await getPartners()
-      const sorted = [...data].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      const sorted = [...data].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
       setPartners(sorted)
       setLoading(false)
     }

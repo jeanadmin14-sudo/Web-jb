@@ -371,7 +371,7 @@ export async function getPartners(): Promise<Partner[]> {
 
   const supabase = createSupabaseClient()
   if (supabase) {
-    const { data } = await supabase.from('partners').select('*').order('created_at', { ascending: false })
+    const { data } = await supabase.from('partners').select('*').order('created_at', { ascending: true })
     return ((data as Partner[]) ?? []).map(normalizePartner)
   }
   const localPartners = getLocal<Partner[]>(KEY_PARTNERS, DEFAULT_PARTNERS)
