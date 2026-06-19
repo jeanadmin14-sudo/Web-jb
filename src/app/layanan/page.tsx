@@ -1,6 +1,11 @@
 import type { Metadata } from 'next'
 import PartnersPage from '@/components/PartnersPage'
 import ContactSection from '@/components/ContactSection'
+import { getServerPartners } from '@/lib/server-data'
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+export const preferredRegion = 'sin1'
 
 export const metadata: Metadata = {
   title: 'Layanan',
@@ -15,10 +20,12 @@ export const metadata: Metadata = {
   },
 }
 
-export default function Layanan() {
+export default async function Layanan() {
+  const partners = await getServerPartners()
+
   return (
     <>
-      <PartnersPage />
+      <PartnersPage initialPartners={partners ?? undefined} />
       <ContactSection />
     </>
   )

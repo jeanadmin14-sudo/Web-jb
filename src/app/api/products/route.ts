@@ -3,6 +3,8 @@ import { query, getDbPool } from '@/lib/db'
 import { insertLog } from '@/lib/db-log'
 import { getAuthSession } from '@/lib/auth-server'
 
+export const preferredRegion = 'sin1'
+
 export async function GET() {
   try {
     const { rows } = await query('SELECT * FROM products ORDER BY created_at DESC')

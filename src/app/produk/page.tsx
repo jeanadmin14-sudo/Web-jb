@@ -1,6 +1,11 @@
 import type { Metadata } from 'next'
 import ProductsPage from '@/components/ProductsPage'
 import ContactSection from '@/components/ContactSection'
+import { getServerProducts } from '@/lib/server-data'
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+export const preferredRegion = 'sin1'
 
 export const metadata: Metadata = {
   title: 'Produk',
@@ -15,10 +20,12 @@ export const metadata: Metadata = {
   },
 }
 
-export default function Produk() {
+export default async function Produk() {
+  const products = await getServerProducts()
+
   return (
     <>
-      <ProductsPage />
+      <ProductsPage initialProducts={products ?? undefined} />
       <ContactSection />
     </>
   )

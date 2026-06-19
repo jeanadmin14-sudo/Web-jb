@@ -6,6 +6,8 @@ const DEFAULT_ADMINS = [
   { username: 'admin', passwordHash: 'admin123' },
 ]
 
+export const preferredRegion = 'sin1'
+
 export async function POST(req: Request) {
   try {
     const { username, password } = await req.json()

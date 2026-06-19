@@ -14,9 +14,9 @@ function getWhatsAppChatUrl(partner: Partner) {
   return `https://wa.me/${number}?text=${text}`
 }
 
-export default function PartnersPage() {
-  const [partners, setPartners] = useState<Partner[]>([])
-  const [loading, setLoading]   = useState(true)
+export default function PartnersPage({ initialPartners }: { initialPartners?: Partner[] }) {
+  const [partners, setPartners] = useState<Partner[]>(initialPartners ?? [])
+  const [loading, setLoading]   = useState(!initialPartners)
   const [mounted, setMounted] = useState(false)
   const [selectedPartnerImage, setSelectedPartnerImage] = useState<{
     src: string
@@ -29,6 +29,8 @@ export default function PartnersPage() {
   }, [])
 
   useEffect(() => {
+    if (initialPartners) return
+
     async function fetchPartners() {
       setLoading(true)
       const data = await getPartners()
@@ -37,7 +39,7 @@ export default function PartnersPage() {
       setLoading(false)
     }
     fetchPartners()
-  }, [])
+  }, [initialPartners])
 
   return (
     <section

@@ -3,6 +3,8 @@ import { query, getDbPool } from '@/lib/db'
 import { insertLog } from '@/lib/db-log'
 import { getAuthSession } from '@/lib/auth-server'
 
+export const preferredRegion = 'sin1'
+
 export async function GET(req: Request) {
   try {
     // Security check - admins list GET must be protected

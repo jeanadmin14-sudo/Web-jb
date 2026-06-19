@@ -14,9 +14,9 @@ const SORT_OPTIONS = [
 ]
 const STATUS_FILTERS = ['All Status', 'Ready Only', 'Sold Out']
 
-export default function ProductsPage() {
-  const [allProducts, setAllProducts] = useState<Product[]>([])
-  const [loading, setLoading] = useState(true)
+export default function ProductsPage({ initialProducts }: { initialProducts?: Product[] }) {
+  const [allProducts, setAllProducts] = useState<Product[]>(initialProducts ?? [])
+  const [loading, setLoading] = useState(!initialProducts)
   const [search, setSearch]   = useState('')
   const [category, setCategory] = useState('Semua')
   const [sort, setSort]       = useState('newest')
@@ -24,6 +24,8 @@ export default function ProductsPage() {
   const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
+    if (initialProducts) return
+
     async function fetchProducts() {
       setLoading(true)
       const data = await getProducts()
@@ -31,7 +33,7 @@ export default function ProductsPage() {
       setLoading(false)
     }
     fetchProducts()
-  }, [])
+  }, [initialProducts])
 
   const products = useMemo(() => {
     let data = [...allProducts]
