@@ -10,7 +10,6 @@ const features = [
     description: 'Cek stock akun Free Fire, Mobile Legends, Rental Akun dan lainnya secara realtime.',
     href: '/produk',
     linkText: 'Lihat Katalog',
-    color: '#ec4899',
   },
   {
     icon: Briefcase,
@@ -18,7 +17,6 @@ const features = [
     description: 'Paid promote, dan gabung partner resmi JBJean.',
     href: '/layanan',
     linkText: 'Jelajahi Layanan',
-    color: '#ec4899',
   },
 ]
 
@@ -66,40 +64,14 @@ export default function StatsBar() {
                 position: 'relative',
                 padding: '24px',
                 borderRadius: '16px',
-                transition: 'all 0.3s ease',
                 background: 'var(--bg-card)',
                 border: '1px solid var(--border-card)',
                 backdropFilter: 'blur(16px)',
               }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget as HTMLElement
-                el.style.borderColor = 'var(--border-card-hover)'
-                el.style.boxShadow = '0 10px 30px -10px rgba(236, 72, 153, 0.2)'
-                el.style.transform = 'translateY(-4px)'
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget as HTMLElement
-                el.style.borderColor = 'var(--border-card)'
-                el.style.boxShadow = 'none'
-                el.style.transform = 'translateY(0)'
-              }}
             >
               {/* Icon Container */}
-              <div
-                style={{
-                  width: '48px',
-                  height: '48px',
-                  borderRadius: '12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: '16px',
-                  background: 'rgba(7, 1, 15, 0.8)',
-                  border: '1px solid rgba(147, 51, 234, 0.25)',
-                  transition: 'transform 0.3s ease',
-                }}
-              >
-                <item.icon style={{ width: '24px', height: '24px', color: item.color }} />
+              <div className="stats-icon">
+                <item.icon />
               </div>
 
               {/* Title & Desc */}
@@ -133,9 +105,7 @@ export default function StatsBar() {
                   gap: '6px',
                   fontSize: '14px',
                   fontWeight: 600,
-                  color: item.color,
                   textDecoration: 'none',
-                  transition: 'gap 0.2s ease',
                 }}
               >
                 {item.linkText}
@@ -148,6 +118,85 @@ export default function StatsBar() {
 
       {/* Responsive override for mobile */}
       <style jsx>{`
+        .stats-card-item {
+          transition:
+            transform 0.3s ease,
+            border-color 0.3s ease,
+            box-shadow 0.3s ease,
+            background 0.3s ease;
+        }
+
+        .stats-card-item:hover {
+          border-color: var(--border-card-hover) !important;
+          box-shadow: 0 10px 30px -10px rgba(236, 72, 153, 0.2);
+          transform: translateY(-4px);
+        }
+
+        .stats-icon {
+          width: 48px;
+          height: 48px;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 16px;
+          color: #ec4899;
+          background: rgba(7, 1, 15, 0.8);
+          border: 1px solid rgba(147, 51, 234, 0.25);
+          transition:
+            transform 0.3s ease,
+            color 0.3s ease,
+            background 0.3s ease,
+            border-color 0.3s ease;
+        }
+
+        .stats-icon :global(svg) {
+          width: 24px;
+          height: 24px;
+        }
+
+        .stats-card-item:hover .stats-icon {
+          transform: translateY(-1px);
+        }
+
+        .stats-card-item :global(a) {
+          color: #ec4899;
+          transition:
+            gap 0.2s ease,
+            color 0.2s ease;
+        }
+
+        .stats-card-item :global(a:hover) {
+          gap: 10px;
+          color: #f472b6;
+        }
+
+        :global(.light-mode) .stats-card-item {
+          background: linear-gradient(180deg, #ffffff, #fffafd) !important;
+          border-color: rgba(147, 51, 234, 0.18) !important;
+          box-shadow: 0 14px 34px rgba(76, 29, 149, 0.06);
+        }
+
+        :global(.light-mode) .stats-card-item:hover {
+          border-color: rgba(219, 39, 119, 0.34) !important;
+          box-shadow: 0 18px 42px rgba(190, 24, 93, 0.12);
+        }
+
+        :global(.light-mode) .stats-icon {
+          color: #be185d;
+          background: linear-gradient(135deg, #fdf2f8, #f5f3ff);
+          border-color: rgba(219, 39, 119, 0.2);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        :global(.light-mode) .stats-card-item :global(a) {
+          color: #be185d !important;
+        }
+
+        :global(.light-mode) .stats-card-item :global(a:hover) {
+          color: #9d174d !important;
+        }
+
         @media (max-width: 768px) {
           .stats-section {
             padding: 24px 0 !important;
