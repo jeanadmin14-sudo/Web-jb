@@ -12,8 +12,6 @@ type LocalAdmin = {
   passwordHash?: string
 }
 
-const SERVER_DB_ENABLED = process.env.NEXT_PUBLIC_ENABLE_SERVER_DB === 'true'
-
 export default function LoginPage() {
   const router = useRouter()
   const [username, setUsername] = useState('')
@@ -63,53 +61,8 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      // Check if database is configured
-      let dbConfigured = false
-      if (SERVER_DB_ENABLED) {
-        try {
-          const controller = new AbortController()
-          const timeout = window.setTimeout(() => controller.abort(), 900)
-          const setupRes = await fetch('/api/setup', { signal: controller.signal })
-          window.clearTimeout(timeout)
-          const setupData = await setupRes.json()
-          dbConfigured = setupRes.ok && setupData.message === 'Database initialized successfully'
-        } catch {
-          dbConfigured = false
-        }
-      }
-
-      if (!dbConfigured) {
-        // Fallback local localStorage authentication check
-        const localAdminsStr = localStorage.getItem('jbjean_admins')
-        const localAdmins: LocalAdmin[] = localAdminsStr
-          ? JSON.parse(localAdminsStr)
-          : [{ username: 'admin', passwordHash: 'admin123' }]
-        
-        const admin = localAdmins.find(
-          (a) =>
-            a.username === username.trim() &&
-            (a.passwordHash === password || a.password === password)
-        )
-
-        if (admin) {
-          localStorage.setItem('jbjean_session', admin.username)
-          localStorage.setItem('jbjean_session_token', 'local-mock-token')
-          if (rememberMe) {
-            localStorage.setItem('jbjean_remembered_user', admin.username)
-          } else {
-            localStorage.removeItem('jbjean_remembered_user')
-          }
-          router.push('/admin')
-          setLoading(false)
-          return
-        } else {
-          setError('Username atau password salah.')
-          setLoading(false)
-          return
-        }
-      }
-
-      // If database is active, use server-side API verification
+      // Always try server-side auth first. If DATABASE_URL is configured on hosting,
+      // this returns a shared server session token for admin API writes.
       const res = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -132,7 +85,30 @@ export default function LoginPage() {
         setError(data.error || 'Username atau password salah.')
       }
     } catch {
-      setError('Terjadi kesalahan sistem.')
+      // Fallback local localStorage authentication check for offline/local demo mode.
+      const localAdminsStr = localStorage.getItem('jbjean_admins')
+      const localAdmins: LocalAdmin[] = localAdminsStr
+        ? JSON.parse(localAdminsStr)
+        : [{ username: 'admin', passwordHash: 'admin123' }]
+
+      const admin = localAdmins.find(
+        (a) =>
+          a.username === username.trim() &&
+          (a.passwordHash === password || a.password === password)
+      )
+
+      if (admin) {
+        localStorage.setItem('jbjean_session', admin.username)
+        localStorage.setItem('jbjean_session_token', 'local-mock-token')
+        if (rememberMe) {
+          localStorage.setItem('jbjean_remembered_user', admin.username)
+        } else {
+          localStorage.removeItem('jbjean_remembered_user')
+        }
+        router.push('/admin')
+      } else {
+        setError('Username atau password salah.')
+      }
     } finally {
       setLoading(false)
     }

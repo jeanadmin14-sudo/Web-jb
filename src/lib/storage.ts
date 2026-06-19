@@ -191,7 +191,6 @@ const KEY_PRODUCTS = 'jbjean_products'
 const KEY_PARTNERS = 'jbjean_partners'
 const KEY_ADMINS = 'jbjean_admins'
 const KEY_LOGS = 'jbjean_logs'
-const SERVER_DB_ENABLED = process.env.NEXT_PUBLIC_ENABLE_SERVER_DB === 'true'
 
 function getLocal<T>(key: string, defaultVal: T): T {
   if (typeof window === 'undefined') return defaultVal
@@ -216,12 +215,11 @@ let isPostgresAvailable: boolean | null = null
 
 async function checkPostgres(): Promise<boolean> {
   if (typeof window === 'undefined') return false
-  if (!SERVER_DB_ENABLED) return false
   if (isPostgresAvailable !== null) return isPostgresAvailable
   
   try {
     const controller = new AbortController()
-    const timeout = window.setTimeout(() => controller.abort(), 900)
+    const timeout = window.setTimeout(() => controller.abort(), 6000)
     const res = await fetch('/api/setup', { signal: controller.signal })
     window.clearTimeout(timeout)
     const data = await res.json()
