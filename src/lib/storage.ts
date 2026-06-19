@@ -21,6 +21,11 @@ const DEFAULT_RENTAL_PACKAGES = JSON.stringify([
   { name: 'Permanen', price: 8000000 },
 ])
 
+function makeDefaultRentalGallery(imageUrl: string | null): string {
+  const image = imageUrl || '/Logo.jpeg'
+  return JSON.stringify([image, image, image, image, image, image])
+}
+
 const DEFAULT_PRODUCTS: Product[] = [
   {
     id: 'm1',
@@ -243,17 +248,34 @@ function normalizePartner(partner: Partner): Partner {
   }
 }
 
+function normalizeProduct(product: Product): Product {
+  if (product.category !== 'Rental') return product
+  return {
+    ...product,
+    gallery: product.gallery || makeDefaultRentalGallery(product.image_url),
+    rental_packages: product.rental_packages || DEFAULT_RENTAL_PACKAGES,
+  }
+}
+
 export async function getProducts(): Promise<Product[]> {
   if (await checkPostgres()) {
     const res = await fetch('/api/products')
-    if (res.ok) return await res.json()
+    if (res.ok) {
+      const data = await res.json()
+      return (data as Product[]).map(normalizeProduct)
+    }
   }
   const supabase = createSupabaseClient()
   if (supabase) {
     const { data } = await supabase.from('products').select('*').order('created_at', { ascending: false })
-    return (data as Product[]) ?? []
+    return ((data as Product[]) ?? []).map(normalizeProduct)
   }
-  return getLocal<Product[]>(KEY_PRODUCTS, DEFAULT_PRODUCTS)
+  const localProducts = getLocal<Product[]>(KEY_PRODUCTS, DEFAULT_PRODUCTS)
+  const normalized = localProducts.map(normalizeProduct)
+  if (JSON.stringify(localProducts) !== JSON.stringify(normalized)) {
+    setLocal(KEY_PRODUCTS, normalized)
+  }
+  return normalized
 }
 
 function getSessionTokenHeader(): Record<string, string> {
