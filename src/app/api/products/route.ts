@@ -1,21 +1,10 @@
 import { NextResponse } from 'next/server'
 import { query, getDbPool } from '@/lib/db'
-import { initializeDatabase } from '@/lib/db-init'
 import { insertLog } from '@/lib/db-log'
 import { getAuthSession } from '@/lib/auth-server'
 
-// Helper to ensure database is initialized on demand
-let isDbInitialized = false
-async function ensureDb() {
-  if (!isDbInitialized) {
-    await initializeDatabase()
-    isDbInitialized = true
-  }
-}
-
 export async function GET() {
   try {
-    await ensureDb()
     const { rows } = await query('SELECT * FROM products ORDER BY created_at DESC')
     
     // Postgres returns numeric types as strings, parse them to match frontend expectations
@@ -33,8 +22,6 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    await ensureDb()
-    
     // Security check
     if (getDbPool() && !getAuthSession(req)) {
       return NextResponse.json({ error: 'Unauthorized: Sesi tidak sah.' }, { status: 401 })
@@ -78,8 +65,6 @@ export async function POST(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
-    await ensureDb()
-
     // Security check
     if (getDbPool() && !getAuthSession(req)) {
       return NextResponse.json({ error: 'Unauthorized: Sesi tidak sah.' }, { status: 401 })

@@ -1,22 +1,10 @@
 import { NextResponse } from 'next/server'
 import { query, getDbPool } from '@/lib/db'
-import { initializeDatabase } from '@/lib/db-init'
 import { insertLog } from '@/lib/db-log'
 import { getAuthSession } from '@/lib/auth-server'
 
-// Helper to ensure database is initialized on demand
-let isDbInitialized = false
-async function ensureDb() {
-  if (!isDbInitialized) {
-    await initializeDatabase()
-    isDbInitialized = true
-  }
-}
-
 export async function GET(req: Request) {
   try {
-    await ensureDb()
-
     // Security check - admins list GET must be protected
     if (getDbPool() && !getAuthSession(req)) {
       return NextResponse.json({ error: 'Unauthorized: Sesi tidak sah.' }, { status: 401 })
@@ -39,8 +27,6 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    await ensureDb()
-
     // Security check
     if (getDbPool() && !getAuthSession(req)) {
       return NextResponse.json({ error: 'Unauthorized: Sesi tidak sah.' }, { status: 401 })
@@ -81,8 +67,6 @@ export async function POST(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
-    await ensureDb()
-
     // Security check
     if (getDbPool() && !getAuthSession(req)) {
       return NextResponse.json({ error: 'Unauthorized: Sesi tidak sah.' }, { status: 401 })

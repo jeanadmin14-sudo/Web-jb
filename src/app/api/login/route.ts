@@ -1,25 +1,13 @@
 import { NextResponse } from 'next/server'
 import { query, getDbPool } from '@/lib/db'
 import { generateSessionToken } from '@/lib/auth-server'
-import { initializeDatabase } from '@/lib/db-init'
 
 const DEFAULT_ADMINS = [
   { username: 'admin', passwordHash: 'admin123' },
 ]
 
-// Helper to ensure database is initialized on demand
-let isDbInitialized = false
-async function ensureDb() {
-  const pool = getDbPool()
-  if (pool && !isDbInitialized) {
-    await initializeDatabase()
-    isDbInitialized = true
-  }
-}
-
 export async function POST(req: Request) {
   try {
-    await ensureDb()
     const { username, password } = await req.json()
 
     if (!username || !password) {

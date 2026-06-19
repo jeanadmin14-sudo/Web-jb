@@ -211,26 +211,47 @@ function setLocal<T>(key: string, val: T) {
   localStorage.setItem(key, JSON.stringify(val))
 }
 
-let isPostgresAvailable: boolean | null = null
+async function fetchFromApi<T>(path: string, init?: RequestInit): Promise<T | null> {
+  if (typeof window === 'undefined') return null
 
-async function checkPostgres(): Promise<boolean> {
-  if (typeof window === 'undefined') return false
-  if (isPostgresAvailable !== null) return isPostgresAvailable
-  
   try {
     const controller = new AbortController()
     const timeout = window.setTimeout(() => controller.abort(), 6000)
-    const res = await fetch('/api/setup', { signal: controller.signal })
+    const res = await fetch(path, {
+      ...init,
+      signal: controller.signal,
+    })
     window.clearTimeout(timeout)
-    const data = await res.json()
-    if (res.ok && data.message === 'Database initialized successfully') {
-      isPostgresAvailable = true
+    if (!res.ok) return null
+    return await res.json() as T
+  } catch {
+    return null
+  }
+}
+
+async function writeToApi(path: string, init: RequestInit): Promise<boolean> {
+  if (typeof window === 'undefined') return false
+
+  try {
+    const controller = new AbortController()
+    const timeout = window.setTimeout(() => controller.abort(), 6000)
+    const res = await fetch(path, {
+      ...init,
+      signal: controller.signal,
+    })
+    window.clearTimeout(timeout)
+    if (res.ok) {
       return true
     }
-  } catch {
-    // ignore
+    if (res.status === 401 || res.status === 403) {
+      const data = await res.json().catch(() => null) as { error?: string } | null
+      throw new Error(data?.error || 'Sesi admin tidak sah. Silakan login ulang.')
+    }
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('Sesi admin')) {
+      throw error
+    }
   }
-  isPostgresAvailable = false
   return false
 }
 
@@ -256,13 +277,11 @@ function normalizeProduct(product: Product): Product {
 }
 
 export async function getProducts(): Promise<Product[]> {
-  if (await checkPostgres()) {
-    const res = await fetch('/api/products')
-    if (res.ok) {
-      const data = await res.json()
-      return (data as Product[]).map(normalizeProduct)
-    }
+  const apiProducts = await fetchFromApi<Product[]>('/api/products')
+  if (apiProducts) {
+    return apiProducts.map(normalizeProduct)
   }
+
   const supabase = createSupabaseClient()
   if (supabase) {
     const { data } = await supabase.from('products').select('*').order('created_at', { ascending: false })
@@ -289,18 +308,15 @@ function getSessionTokenHeader(): Record<string, string> {
 export async function saveProduct(product: Product): Promise<void> {
   const isNew = !product.created_at || getLocal<Product[]>(KEY_PRODUCTS, DEFAULT_PRODUCTS).findIndex(p => p.id === product.id) === -1
 
-  if (await checkPostgres()) {
-    const res = await fetch('/api/products', {
+  if (await writeToApi('/api/products', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
         ...getSessionTokenHeader()
       },
       body: JSON.stringify(product),
-    })
-    if (res.ok) return
-    throw new Error('Gagal menyimpan produk ke Postgres')
-  }
+    })) return
+
   const supabase = createSupabaseClient()
   if (supabase) {
     await supabase.from('products').upsert(product)
@@ -319,14 +335,11 @@ export async function saveProduct(product: Product): Promise<void> {
 
 export async function deleteProduct(id: string): Promise<void> {
   console.log("deleteProduct called with id:", id)
-  if (await checkPostgres()) {
-    const res = await fetch(`/api/products?id=${encodeURIComponent(id)}`, {
+  if (await writeToApi(`/api/products?id=${encodeURIComponent(id)}`, {
       method: 'DELETE',
       headers: getSessionTokenHeader()
-    })
-    if (res.ok) return
-    throw new Error('Gagal menghapus produk dari Postgres')
-  }
+    })) return
+
   const supabase = createSupabaseClient()
   if (supabase) {
     console.log("Supabase client found, deleting from Supabase...")
@@ -351,13 +364,11 @@ export async function deleteProduct(id: string): Promise<void> {
 }
 
 export async function getPartners(): Promise<Partner[]> {
-  if (await checkPostgres()) {
-    const res = await fetch('/api/partners')
-    if (res.ok) {
-      const data = await res.json()
-      return (data as Partner[]).map(normalizePartner)
-    }
+  const apiPartners = await fetchFromApi<Partner[]>('/api/partners')
+  if (apiPartners) {
+    return apiPartners.map(normalizePartner)
   }
+
   const supabase = createSupabaseClient()
   if (supabase) {
     const { data } = await supabase.from('partners').select('*').order('created_at', { ascending: false })
@@ -374,18 +385,15 @@ export async function getPartners(): Promise<Partner[]> {
 export async function savePartner(partner: Partner): Promise<void> {
   const isNew = !partner.created_at || getLocal<Partner[]>(KEY_PARTNERS, DEFAULT_PARTNERS).findIndex(p => p.id === partner.id) === -1
 
-  if (await checkPostgres()) {
-    const res = await fetch('/api/partners', {
+  if (await writeToApi('/api/partners', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
         ...getSessionTokenHeader()
       },
       body: JSON.stringify(partner),
-    })
-    if (res.ok) return
-    throw new Error('Gagal menyimpan partner ke Postgres')
-  }
+    })) return
+
   const supabase = createSupabaseClient()
   if (supabase) {
     await supabase.from('partners').upsert(partner)
@@ -404,14 +412,11 @@ export async function savePartner(partner: Partner): Promise<void> {
 
 export async function deletePartner(id: string): Promise<void> {
   console.log("deletePartner called with id:", id)
-  if (await checkPostgres()) {
-    const res = await fetch(`/api/partners?id=${encodeURIComponent(id)}`, {
+  if (await writeToApi(`/api/partners?id=${encodeURIComponent(id)}`, {
       method: 'DELETE',
       headers: getSessionTokenHeader()
-    })
-    if (res.ok) return
-    throw new Error('Gagal menghapus partner dari Postgres')
-  }
+    })) return
+
   const supabase = createSupabaseClient()
   if (supabase) {
     console.log("Supabase client found, deleting partner from Supabase...")
@@ -436,30 +441,26 @@ export async function deletePartner(id: string): Promise<void> {
 }
 
 export async function getAdmins(): Promise<AdminAccount[]> {
-  if (await checkPostgres()) {
-    const res = await fetch('/api/admins', {
+  const apiAdmins = await fetchFromApi<AdminAccount[]>('/api/admins', {
       headers: getSessionTokenHeader()
     })
-    if (res.ok) return await res.json()
-  }
+  if (apiAdmins) return apiAdmins
+
   return getLocal<AdminAccount[]>(KEY_ADMINS, DEFAULT_ADMINS)
 }
 
 export async function saveAdmin(admin: AdminAccount): Promise<void> {
   const isNew = getLocal<AdminAccount[]>(KEY_ADMINS, DEFAULT_ADMINS).findIndex(a => a.username === admin.username) === -1
 
-  if (await checkPostgres()) {
-    const res = await fetch('/api/admins', {
+  if (await writeToApi('/api/admins', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
         ...getSessionTokenHeader()
       },
       body: JSON.stringify(admin),
-    })
-    if (res.ok) return
-    throw new Error('Gagal menyimpan admin ke Postgres')
-  }
+    })) return
+
   const list = getLocal<AdminAccount[]>(KEY_ADMINS, DEFAULT_ADMINS)
   const idx = list.findIndex(a => a.username === admin.username)
   if (idx > -1) {
@@ -473,14 +474,11 @@ export async function saveAdmin(admin: AdminAccount): Promise<void> {
 
 export async function deleteAdmin(username: string): Promise<void> {
   console.log("deleteAdmin called for username:", username)
-  if (await checkPostgres()) {
-    const res = await fetch(`/api/admins?username=${encodeURIComponent(username)}`, {
+  if (await writeToApi(`/api/admins?username=${encodeURIComponent(username)}`, {
       method: 'DELETE',
       headers: getSessionTokenHeader()
-    })
-    if (res.ok) return
-    throw new Error('Gagal menghapus admin dari Postgres')
-  }
+    })) return
+
   let list = getLocal<AdminAccount[]>(KEY_ADMINS, DEFAULT_ADMINS)
   const initialLength = list.length
   list = list.filter(a => a.username !== username)
@@ -490,12 +488,11 @@ export async function deleteAdmin(username: string): Promise<void> {
 }
 
 export async function getActivityLogs(): Promise<ActivityLog[]> {
-  if (await checkPostgres()) {
-    const res = await fetch('/api/logs', {
+  const apiLogs = await fetchFromApi<ActivityLog[]>('/api/logs', {
       headers: getSessionTokenHeader()
     })
-    if (res.ok) return await res.json()
-  }
+  if (apiLogs) return apiLogs
+
   return getLocal<ActivityLog[]>(KEY_LOGS, [])
 }
 
