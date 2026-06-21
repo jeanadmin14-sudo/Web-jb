@@ -8,8 +8,9 @@ import Footer from '@/components/Footer'
 export default function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   const isLogin = pathname === '/login'
+  const isAdmin = pathname === '/admin' || pathname.startsWith('/admin/')
 
-  if (isLogin) {
+  if (isLogin || isAdmin) {
     return <main>{children}</main>
   }
 

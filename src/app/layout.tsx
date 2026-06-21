@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import AppShell from '@/components/AppShell'
 
 const inter = Inter({
   variable: '--font-inter',
@@ -83,12 +82,12 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="id" suppressHydrationWarning>
+    <html lang="id" data-scroll-behavior="smooth" suppressHydrationWarning>
       <body
         className={`${inter.variable} antialiased`}
         style={{ backgroundColor: '#07010f', color: '#fff' }}
       >
-        <AppShell>{children}</AppShell>
+        {children}
       </body>
     </html>
   )
