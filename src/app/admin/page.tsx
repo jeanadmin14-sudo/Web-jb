@@ -107,7 +107,7 @@ export default function AdminPage() {
   const handleProductFile = async (file: File | undefined) => {
     if (!file) return
     try {
-      setProdImage(await compressImageFile(file, 1200, 0.72))
+      setProdImage(await compressImageFile(file, 1600, 0.82))
     } catch {
       alert('Gagal memproses gambar. Coba gunakan file JPG/PNG/WEBP lain.')
     }
@@ -116,7 +116,7 @@ export default function AdminPage() {
   const handlePartnerFile = async (file: File | undefined) => {
     if (!file) return
     try {
-      setPartImage(await compressImageFile(file, 1200, 0.72))
+      setPartImage(await compressImageFile(file, 1600, 0.82))
     } catch {
       alert('Gagal memproses gambar. Coba gunakan file JPG/PNG/WEBP lain.')
     }
@@ -1175,7 +1175,7 @@ export default function AdminPage() {
                               const remaining = Math.max(0, 6 - prodGallery.length)
                               const selectedFiles = files.slice(0, remaining)
                               const compressed = await Promise.all(
-                                selectedFiles.map((file) => compressImageFile(file, 900, 0.7))
+                                selectedFiles.map((file) => compressImageFile(file, 1400, 0.8))
                               ).catch(() => [])
                               if (compressed.length > 0) {
                                 setProdGallery(prev => [...prev, ...compressed].slice(0, 6))
