@@ -1,9 +1,17 @@
 import crypto from 'crypto'
 
-const SECRET = process.env.SESSION_SECRET || 'jbjean-default-secret-key-9988'
+function getSessionSecret(): string {
+  const secret = process.env.SESSION_SECRET
+
+  if (!secret && process.env.NODE_ENV === 'production') {
+    throw new Error('SESSION_SECRET is required in production.')
+  }
+
+  return secret || 'jbjean-local-development-secret'
+}
 
 export function generateSessionToken(username: string): string {
-  return crypto.createHmac('sha256', SECRET).update(username).digest('hex')
+  return crypto.createHmac('sha256', getSessionSecret()).update(username).digest('hex')
 }
 
 export function verifySession(username: string | null, token: string | null): boolean {

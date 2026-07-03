@@ -1,10 +1,9 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import Link from 'next/link'
-import { Plus, Edit2, Trash2, LogOut, Package, Users, Shield, Check, Eye, History } from 'lucide-react'
+import { Plus, Edit2, Trash2, LogOut, Package, Users, Shield, History } from 'lucide-react'
 import {
   getProducts,
   saveProduct,
@@ -16,10 +15,17 @@ import {
   saveAdmin,
   deleteAdmin,
   getActivityLogs,
+  getBlockedIps,
+  suspendIp,
+  unsuspendIp,
   AdminAccount,
-  ActivityLog
+  ActivityLog,
+  BlockedIp
 } from '@/lib/storage'
 import type { Product, Partner } from '@/lib/supabase'
+import { uploadImageFile } from '@/lib/media-upload'
+
+type AdminTab = 'products' | 'partners' | 'admins' | 'logs'
 
 function formatRupiah(amount: number) {
   return new Intl.NumberFormat('id-ID', {
@@ -29,46 +35,41 @@ function formatRupiah(amount: number) {
   }).format(amount)
 }
 
-function loadImageElement(src: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const img = new window.Image()
-    img.onload = () => resolve(img)
-    img.onerror = reject
-    img.src = src
-  })
-}
+function getRiskStyle(level: string | null | undefined) {
+  if (level === 'High') {
+    return {
+      background: 'rgba(239, 68, 68, 0.14)',
+      border: '1px solid rgba(239, 68, 68, 0.35)',
+      color: '#f87171',
+    }
+  }
 
-async function compressImageFile(file: File, maxSize = 1200, quality = 0.72): Promise<string> {
-  const source = await new Promise<string>((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(String(reader.result))
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
+  if (level === 'Medium') {
+    return {
+      background: 'rgba(234, 179, 8, 0.14)',
+      border: '1px solid rgba(234, 179, 8, 0.35)',
+      color: '#facc15',
+    }
+  }
 
-  const img = await loadImageElement(source)
-  const scale = Math.min(1, maxSize / Math.max(img.naturalWidth, img.naturalHeight))
-  const width = Math.max(1, Math.round(img.naturalWidth * scale))
-  const height = Math.max(1, Math.round(img.naturalHeight * scale))
-  const canvas = document.createElement('canvas')
-  canvas.width = width
-  canvas.height = height
-  const ctx = canvas.getContext('2d')
-  if (!ctx) return source
-  ctx.drawImage(img, 0, 0, width, height)
-  return canvas.toDataURL('image/webp', quality)
+  return {
+    background: 'rgba(34, 197, 94, 0.12)',
+    border: '1px solid rgba(34, 197, 94, 0.3)',
+    color: '#86efac',
+  }
 }
 
 export default function AdminPage() {
   const router = useRouter()
   const [sessionUser, setSessionUser] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<'products' | 'partners' | 'admins' | 'logs'>('products')
+  const [activeTab, setActiveTab] = useState<AdminTab>('products')
   
   // Data lists
   const [products, setProducts] = useState<Product[]>([])
   const [partners, setPartners] = useState<Partner[]>([])
   const [admins, setAdmins] = useState<AdminAccount[]>([])
   const [logs, setLogs] = useState<ActivityLog[]>([])
+  const [blockedIps, setBlockedIps] = useState<BlockedIp[]>([])
 
   // Pagination states
   const [prodPage, setProdPage] = useState(1)
@@ -107,18 +108,18 @@ export default function AdminPage() {
   const handleProductFile = async (file: File | undefined) => {
     if (!file) return
     try {
-      setProdImage(await compressImageFile(file, 1600, 0.82))
-    } catch {
-      alert('Gagal memproses gambar. Coba gunakan file JPG/PNG/WEBP lain.')
+      setProdImage(await uploadImageFile(file, { folder: 'products', maxSize: 1600, quality: 0.82 }))
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Gagal upload gambar produk.')
     }
   }
 
   const handlePartnerFile = async (file: File | undefined) => {
     if (!file) return
     try {
-      setPartImage(await compressImageFile(file, 1600, 0.82))
-    } catch {
-      alert('Gagal memproses gambar. Coba gunakan file JPG/PNG/WEBP lain.')
+      setPartImage(await uploadImageFile(file, { folder: 'partners', maxSize: 1600, quality: 0.82 }))
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Gagal upload gambar partner.')
     }
   }
 
@@ -145,27 +146,65 @@ export default function AdminPage() {
   const [newAdminPass, setNewAdminPass] = useState('')
   const [editingAdmin, setEditingAdmin] = useState<AdminAccount | null>(null)
 
+  const loadAllData = useCallback(async () => {
+    const p = await getProducts()
+    const pt = await getPartners()
+    const a = await getAdmins()
+    const l = await getActivityLogs()
+    const b = await getBlockedIps()
+    setProducts(p)
+    setPartners(pt)
+    setAdmins(a)
+    setLogs(l)
+    setBlockedIps(b)
+  }, [])
+
+  const isIpSuspended = useCallback((ipAddress: string | null | undefined) => {
+    return blockedIps.some((item) => item.ip_address === ipAddress)
+  }, [blockedIps])
+
+  const handleSuspendIp = async (ipAddress: string | null | undefined, action: string) => {
+    if (!ipAddress || ipAddress === 'Tidak tersedia' || ipAddress === 'Tidak diketahui' || ipAddress === 'LocalStorage') {
+      alert('IP tidak valid untuk disuspend.')
+      return
+    }
+
+    const ok = window.confirm(`Suspend IP ${ipAddress}? IP ini tidak bisa login atau mengakses API admin lagi.`)
+    if (!ok) return
+
+    const saved = await suspendIp(ipAddress, `Suspended dari log: ${action.slice(0, 180)}`)
+    if (saved) {
+      await loadAllData()
+    } else {
+      alert('Gagal suspend IP. Cek sesi admin atau koneksi database.')
+    }
+  }
+
+  const handleUnsuspendIp = async (ipAddress: string) => {
+    const ok = window.confirm(`Buka suspend IP ${ipAddress}?`)
+    if (!ok) return
+
+    const saved = await unsuspendIp(ipAddress)
+    if (saved) {
+      await loadAllData()
+    } else {
+      alert('Gagal membuka suspend IP.')
+    }
+  }
+
   // Auth checking
   useEffect(() => {
     const session = localStorage.getItem('jbjean_session')
     if (!session) {
       router.push('/login')
-    } else {
-      setSessionUser(session)
-      loadAllData()
+      return
     }
-  }, [router])
 
-  const loadAllData = async () => {
-    const p = await getProducts()
-    const pt = await getPartners()
-    const a = await getAdmins()
-    const l = await getActivityLogs()
-    setProducts(p)
-    setPartners(pt)
-    setAdmins(a)
-    setLogs(l)
-  }
+    window.setTimeout(() => {
+      setSessionUser(session)
+      void loadAllData()
+    }, 0)
+  }, [loadAllData, router])
 
   const handleLogout = () => {
     localStorage.removeItem('jbjean_session')
@@ -450,18 +489,18 @@ export default function AdminPage() {
             width: 'fit-content',
           }}
         >
-          {[
+          {([
             { id: 'products', label: 'Kelola Produk', icon: Package },
             { id: 'partners', label: 'Kelola Layanan', icon: Users },
             { id: 'admins', label: 'Akun Admin', icon: Shield },
             { id: 'logs', label: 'Log Aktivitas', icon: History },
-          ].map((tab) => {
+          ] satisfies Array<{ id: AdminTab; label: string; icon: typeof Package }>).map((tab) => {
             const Icon = tab.icon
             const isActive = activeTab === tab.id
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id)}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -856,7 +895,12 @@ export default function AdminPage() {
         {activeTab === 'logs' && (
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: 800 }}>Log Aktivitas Admin</h2>
+              <div>
+                <h2 style={{ fontSize: '20px', fontWeight: 800 }}>Log Aktivitas Admin</h2>
+                <p style={{ marginTop: '6px', color: 'rgba(255,255,255,0.42)', fontSize: '13px' }}>
+                  IP suspended aktif: {blockedIps.length}
+                </p>
+              </div>
               <button
                 onClick={async () => {
                   await loadAllData()
@@ -885,17 +929,20 @@ export default function AdminPage() {
 
             {/* Logs Table */}
             <div style={{ overflowX: 'auto', background: 'rgba(12, 4, 20, 0.65)', border: '1px solid rgba(147, 51, 234, 0.15)', borderRadius: '20px' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px', minWidth: '700px' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px', minWidth: '980px' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid rgba(147, 51, 234, 0.15)', color: 'rgba(255,255,255,0.5)', textAlign: 'left' }}>
                     <th style={{ padding: '16px', width: '180px' }}>Waktu</th>
                     <th style={{ padding: '16px', width: '150px' }}>Admin</th>
                     <th style={{ padding: '16px' }}>Aktivitas / Aksi</th>
+                    <th style={{ padding: '16px', width: '140px' }}>Risiko</th>
+                    <th style={{ padding: '16px', width: '280px' }}>IP & Lokasi</th>
+                    <th style={{ padding: '16px', width: '260px' }}>Device</th>
                   </tr>
                 </thead>
                 <tbody>
                   {paginatedLogs.map((l) => (
-                    <tr key={l.id} style={{ borderBottom: '1px solid rgba(147, 51, 234, 0.08)' }}>
+                    <tr key={l.id} style={{ borderBottom: '1px solid rgba(147, 51, 234, 0.08)', verticalAlign: 'top' }}>
                       <td style={{ padding: '16px', color: 'rgba(255,255,255,0.45)' }}>
                         {new Date(l.created_at).toLocaleString('id-ID', {
                           day: '2-digit',
@@ -917,12 +964,66 @@ export default function AdminPage() {
                           fontWeight: 700
                         }}>{l.admin_user}</span>
                       </td>
-                      <td style={{ padding: '16px', color: '#fff', fontWeight: 500 }}>{l.action}</td>
+                      <td style={{ padding: '16px', color: '#fff', fontWeight: 500 }}>
+                        <div>{l.action}</div>
+                        {(l.origin || l.referer) && (
+                          <div style={{ marginTop: '8px', display: 'grid', gap: '4px', color: 'rgba(255,255,255,0.42)', fontSize: '12px', lineHeight: 1.5 }}>
+                            <span>Origin: {l.origin || 'Tidak tersedia'}</span>
+                            <span>Referer: {l.referer || 'Tidak tersedia'}</span>
+                          </div>
+                        )}
+                      </td>
+                      <td style={{ padding: '16px' }}>
+                        <span style={{
+                          ...getRiskStyle(l.risk_level),
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          padding: '4px 9px',
+                          borderRadius: '999px',
+                          fontSize: '12px',
+                          fontWeight: 800,
+                        }}>
+                          {l.risk_level || 'Low'}
+                        </span>
+                        {l.risk_flags && (
+                          <div style={{ marginTop: '8px', color: 'rgba(255,255,255,0.45)', fontSize: '12px', lineHeight: 1.45 }}>
+                            {l.risk_flags}
+                          </div>
+                        )}
+                      </td>
+                      <td style={{ padding: '16px', color: 'rgba(255,255,255,0.62)', lineHeight: 1.55 }}>
+                        <div style={{ color: '#fff', fontWeight: 700 }}>{l.ip_address || 'Tidak tersedia'}</div>
+                        <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.45)' }}>{l.location || 'Tidak tersedia'}</div>
+                        {l.ip_address && l.ip_address !== 'Tidak tersedia' && (
+                          <button
+                            onClick={() => isIpSuspended(l.ip_address) ? handleUnsuspendIp(l.ip_address as string) : handleSuspendIp(l.ip_address, l.action)}
+                            style={{
+                              marginTop: '10px',
+                              padding: '6px 10px',
+                              borderRadius: '8px',
+                              border: isIpSuspended(l.ip_address) ? '1px solid rgba(34,197,94,0.35)' : '1px solid rgba(239,68,68,0.35)',
+                              background: isIpSuspended(l.ip_address) ? 'rgba(34,197,94,0.12)' : 'rgba(239,68,68,0.12)',
+                              color: isIpSuspended(l.ip_address) ? '#86efac' : '#f87171',
+                              fontSize: '12px',
+                              fontWeight: 800,
+                              cursor: 'pointer',
+                            }}
+                          >
+                            {isIpSuspended(l.ip_address) ? 'Buka Suspend' : 'Suspend IP'}
+                          </button>
+                        )}
+                      </td>
+                      <td style={{ padding: '16px', color: 'rgba(255,255,255,0.62)', lineHeight: 1.5 }}>
+                        <div style={{ fontWeight: 700 }}>{l.device || 'Tidak tersedia'}</div>
+                        <div style={{ marginTop: '6px', fontSize: '12px', color: 'rgba(255,255,255,0.42)', maxWidth: '360px', wordBreak: 'break-word' }}>
+                          {l.user_agent || 'Tidak tersedia'}
+                        </div>
+                      </td>
                     </tr>
                   ))}
                   {logs.length === 0 && (
                     <tr>
-                      <td colSpan={3} style={{ padding: '32px', textAlign: 'center', color: 'rgba(255,255,255,0.35)' }}>Belum ada aktivitas log.</td>
+                      <td colSpan={6} style={{ padding: '32px', textAlign: 'center', color: 'rgba(255,255,255,0.35)' }}>Belum ada aktivitas log.</td>
                     </tr>
                   )}
                 </tbody>
@@ -1174,11 +1275,15 @@ export default function AdminPage() {
                               const files = Array.from(e.target.files || [])
                               const remaining = Math.max(0, 6 - prodGallery.length)
                               const selectedFiles = files.slice(0, remaining)
-                              const compressed = await Promise.all(
-                                selectedFiles.map((file) => compressImageFile(file, 1400, 0.8))
-                              ).catch(() => [])
-                              if (compressed.length > 0) {
-                                setProdGallery(prev => [...prev, ...compressed].slice(0, 6))
+                              try {
+                                const uploaded = await Promise.all(
+                                  selectedFiles.map((file) => uploadImageFile(file, { folder: 'gallery', maxSize: 1400, quality: 0.8 }))
+                                )
+                                if (uploaded.length > 0) {
+                                  setProdGallery(prev => [...prev, ...uploaded].slice(0, 6))
+                                }
+                              } catch (error) {
+                                alert(error instanceof Error ? error.message : 'Gagal upload galeri produk.')
                               }
                               e.currentTarget.value = ''
                             }}
@@ -1313,20 +1418,21 @@ export default function AdminPage() {
                           type="file"
                           multiple
                           accept="image/*"
-                          onChange={(e) => {
+                          onChange={async (e) => {
                             const files = Array.from(e.target.files || [])
-                            files.forEach(file => {
-                              const reader = new FileReader()
-                              reader.onload = (ev) => {
-                                if (ev.target?.result) {
-                                  setProdGallery(prev => {
-                                    if (prev.length >= 6) return prev
-                                    return [...prev, ev.target!.result as string]
-                                  })
-                                }
+                            const remaining = Math.max(0, 6 - prodGallery.length)
+                            const selectedFiles = files.slice(0, remaining)
+                            try {
+                              const uploaded = await Promise.all(
+                                selectedFiles.map((file) => uploadImageFile(file, { folder: 'gallery', maxSize: 1400, quality: 0.8 }))
+                              )
+                              if (uploaded.length > 0) {
+                                setProdGallery(prev => [...prev, ...uploaded].slice(0, 6))
                               }
-                              reader.readAsDataURL(file)
-                            })
+                            } catch (error) {
+                              alert(error instanceof Error ? error.message : 'Gagal upload galeri produk.')
+                            }
+                            e.currentTarget.value = ''
                           }}
                           style={{ display: 'none' }}
                         />

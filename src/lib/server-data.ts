@@ -51,11 +51,11 @@ async function fetchServerPartners(): Promise<Partner[] | null> {
 }
 
 export const getServerProducts = unstable_cache(fetchServerProducts, ['server-products'], {
-  revalidate: 300,
+  revalidate: 3600,
   tags: ['products'],
 })
 
 export const getServerPartners = unstable_cache(fetchServerPartners, ['server-partners'], {
-  revalidate: 300,
+  revalidate: 3600,
   tags: ['partners'],
 })

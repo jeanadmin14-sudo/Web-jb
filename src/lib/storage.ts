@@ -10,6 +10,22 @@ export type ActivityLog = {
   id: string | number
   admin_user: string
   action: string
+  ip_address?: string | null
+  user_agent?: string | null
+  device?: string | null
+  location?: string | null
+  origin?: string | null
+  referer?: string | null
+  risk_level?: 'Low' | 'Medium' | 'High' | string | null
+  risk_flags?: string | null
+  created_at: string
+}
+
+export type BlockedIp = {
+  id: number
+  ip_address: string
+  reason: string | null
+  blocked_by: string | null
   created_at: string
 }
 
@@ -496,6 +512,31 @@ export async function getActivityLogs(): Promise<ActivityLog[]> {
   return getLocal<ActivityLog[]>(KEY_LOGS, [])
 }
 
+export async function getBlockedIps(): Promise<BlockedIp[]> {
+  const apiBlockedIps = await fetchFromApi<BlockedIp[]>('/api/blocked-ips', {
+      headers: getSessionTokenHeader()
+    })
+  return apiBlockedIps || []
+}
+
+export async function suspendIp(ipAddress: string, reason: string): Promise<boolean> {
+  return writeToApi('/api/blocked-ips', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getSessionTokenHeader()
+    },
+    body: JSON.stringify({ ipAddress, reason }),
+  })
+}
+
+export async function unsuspendIp(ipAddress: string): Promise<boolean> {
+  return writeToApi(`/api/blocked-ips?ip=${encodeURIComponent(ipAddress)}`, {
+    method: 'DELETE',
+    headers: getSessionTokenHeader()
+  })
+}
+
 export async function saveActivityLog(action: string): Promise<void> {
   const actor = getSessionUser()
   const list = getLocal<ActivityLog[]>(KEY_LOGS, [])
@@ -503,6 +544,14 @@ export async function saveActivityLog(action: string): Promise<void> {
     id: 'log_' + Date.now(),
     admin_user: actor,
     action,
+    ip_address: 'LocalStorage',
+    user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
+    device: typeof navigator !== 'undefined' ? navigator.platform : null,
+    location: 'Mode lokal',
+    origin: typeof window !== 'undefined' ? window.location.origin : null,
+    referer: typeof document !== 'undefined' ? document.referrer : null,
+    risk_level: 'Low',
+    risk_flags: null,
     created_at: new Date().toISOString()
   }
   list.unshift(newLog)

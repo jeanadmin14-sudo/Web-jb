@@ -3,8 +3,7 @@ import PartnersPage from '@/components/PartnersPage'
 import ContactSection from '@/components/ContactSection'
 import { getServerPartners } from '@/lib/server-data'
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+export const revalidate = 3600
 export const preferredRegion = 'sin1'
 
 export const metadata: Metadata = {

@@ -1,5 +1,19 @@
 import { query, getDbPool } from './db'
 
+type SeedProduct = {
+  id: string
+  name: string
+  description: string
+  price: number
+  category: string
+  status: string
+  image_url: string
+  created_at: string
+  rent_end_date: string | null
+  gallery?: string
+  rental_packages?: string
+}
+
 export async function initializeDatabase() {
   const pool = getDbPool()
   if (!pool) {
@@ -69,6 +83,40 @@ export async function initializeDatabase() {
         id SERIAL PRIMARY KEY,
         admin_user TEXT NOT NULL,
         action TEXT NOT NULL,
+        ip_address TEXT,
+        user_agent TEXT,
+        device TEXT,
+        location TEXT,
+        origin TEXT,
+        referer TEXT,
+        risk_level TEXT DEFAULT 'Low',
+        risk_flags TEXT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      );
+    `)
+
+    try {
+      await query(`
+        ALTER TABLE activity_logs
+          ADD COLUMN IF NOT EXISTS ip_address TEXT,
+          ADD COLUMN IF NOT EXISTS user_agent TEXT,
+          ADD COLUMN IF NOT EXISTS device TEXT,
+          ADD COLUMN IF NOT EXISTS location TEXT,
+          ADD COLUMN IF NOT EXISTS origin TEXT,
+          ADD COLUMN IF NOT EXISTS referer TEXT,
+          ADD COLUMN IF NOT EXISTS risk_level TEXT DEFAULT 'Low',
+          ADD COLUMN IF NOT EXISTS risk_flags TEXT;
+      `)
+    } catch (e) {
+      console.warn('ALTER TABLE activity_logs ADD COLUMN warn:', e)
+    }
+
+    await query(`
+      CREATE TABLE IF NOT EXISTS blocked_ips (
+        id SERIAL PRIMARY KEY,
+        ip_address TEXT UNIQUE NOT NULL,
+        reason TEXT,
+        blocked_by TEXT,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
       );
     `)
@@ -89,7 +137,7 @@ export async function initializeDatabase() {
     const prodCount = await query('SELECT count(*) FROM products')
     if (parseInt(prodCount.rows[0].count, 10) === 0) {
       console.log('Products table is empty. Seeding default products...')
-      const defaultProducts = [
+      const defaultProducts: SeedProduct[] = [
         {
           id: 'm1',
           name: 'Akun Free Fire Old Season 1',
@@ -248,7 +296,7 @@ export async function initializeDatabase() {
       for (const p of defaultProducts) {
         await query(
           'INSERT INTO products (id, name, description, price, category, status, image_url, created_at, rent_end_date, gallery, rental_packages) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)',
-          [p.id, p.name, p.description, p.price, p.category, p.status, p.image_url, p.created_at, p.rent_end_date, (p as any).gallery || null, (p as any).rental_packages || null]
+          [p.id, p.name, p.description, p.price, p.category, p.status, p.image_url, p.created_at, p.rent_end_date, p.gallery || null, p.rental_packages || null]
         )
       }
     }
@@ -280,8 +328,8 @@ export async function initializeDatabase() {
 
     console.log('Database initialization completed successfully.')
     return { success: true }
-  } catch (error: any) {
+  } catch (error) {
     console.error('Failed to initialize database:', error)
-    return { success: false, reason: error.message || error }
+    return { success: false, reason: error instanceof Error ? error.message : String(error) }
   }
 }
