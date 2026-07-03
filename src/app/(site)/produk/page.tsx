@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import ProductsPage from '@/components/ProductsPage'
 import ContactSection from '@/components/ContactSection'
-import { getServerProducts } from '@/lib/server-data'
 
 export const revalidate = 3600
 export const preferredRegion = 'sin1'
@@ -19,12 +18,10 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function Produk() {
-  const products = await getServerProducts()
-
+export default function Produk() {
   return (
     <>
-      <ProductsPage initialProducts={products ?? undefined} />
+      <ProductsPage />
       <ContactSection />
     </>
   )

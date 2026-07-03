@@ -19,7 +19,24 @@ function normalizeProductRow(product: ProductRow): Product {
   return {
     ...product,
     price: Number(product.price),
+    image_url: stripInlineImage(product.image_url),
+    gallery: stripInlineGallery(product.gallery),
     created_at: toIsoString(product.created_at),
+  }
+}
+
+function stripInlineImage(value: string | null): string | null {
+  return value?.startsWith('data:image/') ? '/Logo.jpeg' : value
+}
+
+function stripInlineGallery(value: string | null | undefined): string | null | undefined {
+  if (!value) return value
+  try {
+    const gallery = JSON.parse(value)
+    if (!Array.isArray(gallery)) return value
+    return JSON.stringify(gallery.map((image) => typeof image === 'string' && image.startsWith('data:image/') ? '/Logo.jpeg' : image))
+  } catch {
+    return value.startsWith('data:image/') ? null : value
   }
 }
 

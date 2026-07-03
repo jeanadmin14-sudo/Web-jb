@@ -66,7 +66,7 @@ export function optionalSafeUrl(value: unknown, field: string, allowedHosts?: st
   if (typeof value !== 'string') throw new PublicInputError(`${field} tidak valid.`)
 
   const trimmed = value.trim()
-  if (trimmed.startsWith('/') || trimmed.startsWith('data:image/')) return trimmed
+  if (trimmed.startsWith('/')) return trimmed
 
   let url: URL
   try {

@@ -22,6 +22,22 @@ type ProductRow = {
   [key: string]: unknown
 }
 
+function stripInlineImage(value: unknown): unknown {
+  if (typeof value !== 'string') return value
+  return value.startsWith('data:image/') ? '/Logo.jpeg' : value
+}
+
+function stripInlineGallery(value: unknown): unknown {
+  if (typeof value !== 'string') return value
+  try {
+    const gallery = JSON.parse(value)
+    if (!Array.isArray(gallery)) return value
+    return JSON.stringify(gallery.map((image) => stripInlineImage(image)))
+  } catch {
+    return value.startsWith('data:image/') ? null : value
+  }
+}
+
 export async function GET() {
   try {
     const { rows } = await query('SELECT * FROM products ORDER BY created_at DESC')
@@ -30,6 +46,8 @@ export async function GET() {
     const formatted = (rows as ProductRow[]).map((p) => ({
       ...p,
       price: Number(p.price),
+      image_url: stripInlineImage(p.image_url),
+      gallery: stripInlineGallery(p.gallery),
     }))
     
     return NextResponse.json(formatted, {
