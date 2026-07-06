@@ -43,6 +43,8 @@ export async function initializeDatabase() {
 
     try {
       await query(`
+        ALTER TABLE products ALTER COLUMN id DROP DEFAULT;
+        ALTER TABLE products ALTER COLUMN id TYPE TEXT USING id::text;
         ALTER TABLE products ADD COLUMN IF NOT EXISTS gallery TEXT;
         ALTER TABLE products ADD COLUMN IF NOT EXISTS rental_packages TEXT;
       `)
@@ -65,6 +67,8 @@ export async function initializeDatabase() {
 
     try {
       await query(`
+        ALTER TABLE partners ALTER COLUMN id DROP DEFAULT;
+        ALTER TABLE partners ALTER COLUMN id TYPE TEXT USING id::text;
         ALTER TABLE partners ADD COLUMN IF NOT EXISTS whatsapp_number TEXT;
       `)
     } catch (e) {

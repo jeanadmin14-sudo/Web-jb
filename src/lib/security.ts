@@ -86,6 +86,24 @@ export function optionalSafeUrl(value: unknown, field: string, allowedHosts?: st
   return url.toString()
 }
 
+export function optionalImageSource(value: unknown, field = 'URL gambar'): string | null {
+  if (value === null || value === undefined || value === '') return null
+  if (typeof value !== 'string') throw new PublicInputError(`${field} tidak valid.`)
+
+  const trimmed = value.trim()
+  if (trimmed.startsWith('data:image/')) {
+    if (!/^data:image\/(?:webp|png|jpe?g);base64,[a-z0-9+/=]+$/i.test(trimmed)) {
+      throw new PublicInputError(`${field} tidak valid.`)
+    }
+    if (trimmed.length > 6_000_000) {
+      throw new PublicInputError(`${field} terlalu besar.`)
+    }
+    return trimmed
+  }
+
+  return optionalSafeUrl(trimmed, field)
+}
+
 export function optionalPhone(value: unknown): string | null {
   if (value === null || value === undefined || value === '') return null
   if (typeof value !== 'string') throw new PublicInputError('Nomor WhatsApp tidak valid.')

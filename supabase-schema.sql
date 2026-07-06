@@ -2,7 +2,7 @@
 -- Run this in your Supabase SQL Editor
 
 create table if not exists products (
-  id uuid default gen_random_uuid() primary key,
+  id text primary key,
   name text not null,
   description text,
   price numeric not null default 0,
@@ -15,7 +15,7 @@ create table if not exists products (
 );
 
 create table if not exists partners (
-  id uuid default gen_random_uuid() primary key,
+  id text primary key,
   name text not null,
   description text,
   wa_channel_url text,
@@ -55,7 +55,7 @@ create policy "Public read site_config" on site_config for select using (true);
 -- Run this in your Supabase SQL Editor
 
 create table if not exists products (
-  id uuid default gen_random_uuid() primary key,
+  id text primary key,
   name text not null,
   description text,
   price numeric not null default 0,
@@ -68,7 +68,7 @@ create table if not exists products (
 );
 
 create table if not exists partners (
-  id uuid default gen_random_uuid() primary key,
+  id text primary key,
   name text not null,
   description text,
   wa_channel_url text,

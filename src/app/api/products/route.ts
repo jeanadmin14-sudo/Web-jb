@@ -9,7 +9,7 @@ import {
   assertText,
   jsonError,
   optionalDate,
-  optionalSafeUrl,
+  optionalImageSource,
   PublicInputError,
   serverError,
 } from '@/lib/security'
@@ -86,7 +86,7 @@ export async function POST(req: Request) {
       price: assertNumber(price, 'Harga'),
       category: assertText(category, 'Kategori', 40),
       status: assertText(status, 'Status', 40),
-      image_url: optionalSafeUrl(image_url, 'URL gambar') || '/Logo.jpeg',
+      image_url: optionalImageSource(image_url, 'URL gambar') || '/Logo.jpeg',
       created_at: typeof created_at === 'string' && created_at ? created_at : new Date().toISOString(),
       rent_end_date: optionalDate(rent_end_date),
       gallery: assertText(gallery, 'Galeri', 100000, false) || null,

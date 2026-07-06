@@ -7,6 +7,7 @@ import {
   assertSafeId,
   assertText,
   jsonError,
+  optionalImageSource,
   optionalPhone,
   optionalSafeUrl,
   PublicInputError,
@@ -54,7 +55,7 @@ export async function POST(req: Request) {
       description: assertText(description, 'Deskripsi', 2000, false),
       wa_channel_url: optionalSafeUrl(wa_channel_url, 'URL channel WhatsApp', ['whatsapp.com']) || null,
       whatsapp_number: optionalPhone(whatsapp_number),
-      image_url: optionalSafeUrl(image_url, 'URL gambar') || '/Logo.jpeg',
+      image_url: optionalImageSource(image_url, 'URL gambar') || '/Logo.jpeg',
       status: assertText(status || 'Online', 'Status', 40),
       created_at: typeof created_at === 'string' && created_at ? created_at : new Date().toISOString(),
     }
