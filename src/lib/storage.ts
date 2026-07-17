@@ -29,6 +29,24 @@ export type BlockedIp = {
   created_at: string
 }
 
+export type SiteSettings = {
+  wa_stock_url: string
+  wa_rental_url: string
+  wa_partner_url: string
+  instagram_url: string
+  tiktok_url: string
+  wa_channel_url: string
+}
+
+export const DEFAULT_SETTINGS: SiteSettings = {
+  wa_stock_url: 'https://wa.me/6287832017296',
+  wa_rental_url: 'https://wa.me/6287832017296',
+  wa_partner_url: 'https://wa.me/6287720826802',
+  instagram_url: 'https://www.instagram.com/jean_cruel23?igsh=MW5iYXk4amFzNThsdw==',
+  tiktok_url: 'https://www.tiktok.com/@jeancruell23?_r=1&_t=ZS-978iPy4vI6S',
+  wa_channel_url: 'https://whatsapp.com/channel/0029VbBqyVG0AgWAXwVIu73m',
+}
+
 const DEFAULT_RENTAL_GALLERY = JSON.stringify(['/Logo.jpeg', '/Logo.jpeg', '/Logo.jpeg', '/Logo.jpeg', '/Logo.jpeg', '/Logo.jpeg'])
 const DEFAULT_RENTAL_PACKAGES = JSON.stringify([
   { name: '6 Jam', price: 80000 },
@@ -534,6 +552,22 @@ export async function unsuspendIp(ipAddress: string): Promise<boolean> {
   return writeToApi(`/api/blocked-ips?ip=${encodeURIComponent(ipAddress)}`, {
     method: 'DELETE',
     headers: getSessionTokenHeader()
+  })
+}
+
+export async function getSettings(): Promise<SiteSettings> {
+  const apiSettings = await fetchFromApi<Partial<SiteSettings>>('/api/settings')
+  return { ...DEFAULT_SETTINGS, ...(apiSettings || {}) }
+}
+
+export async function saveSettings(settings: SiteSettings): Promise<boolean> {
+  return writeToApi('/api/settings', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getSessionTokenHeader()
+    },
+    body: JSON.stringify(settings),
   })
 }
 

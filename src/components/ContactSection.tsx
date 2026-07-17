@@ -1,12 +1,20 @@
 "use client"
 
+import { useEffect, useState } from 'react'
 import { MessageCircle, Send } from 'lucide-react'
+import { getSettings, DEFAULT_SETTINGS, type SiteSettings } from '@/lib/storage'
 
 export default function ContactSection() {
+  const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SETTINGS)
+
+  useEffect(() => {
+    getSettings().then(setSettings)
+  }, [])
+
   const waLinks = [
-    { label: 'Wa Khusus Stock', href: 'https://wa.me/6287832017296' },
-    { label: 'Wa Khusus Rental', href: 'https://wa.me/6287832017296' },
-    { label: 'Wa Khusus Join PP/PT', href: 'https://wa.me/6287720826802' },
+    { label: 'Wa Khusus Stock', href: settings.wa_stock_url },
+    { label: 'Wa Khusus Rental', href: settings.wa_rental_url },
+    { label: 'Wa Khusus Join PP/PT', href: settings.wa_partner_url },
   ]
 
   return (
@@ -159,7 +167,7 @@ export default function ContactSection() {
               {/* Instagram & TikTok side by side */}
               <div className="contact-social-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <a
-                  href="https://www.instagram.com/jean_cruel23?igsh=MW5iYXk4amFzNThsdw=="
+                  href={settings.instagram_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
@@ -200,7 +208,7 @@ export default function ContactSection() {
                 </a>
 
                 <a
-                  href="https://www.tiktok.com/@jeancruell23?_r=1&_t=ZS-978iPy4vI6S"
+                  href={settings.tiktok_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
@@ -241,7 +249,7 @@ export default function ContactSection() {
 
               {/* Saluran WA */}
               <a
-                href="https://whatsapp.com/channel/0029VbBqyVG0AgWAXwVIu73m"
+                href={settings.wa_channel_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{

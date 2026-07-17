@@ -125,6 +125,13 @@ export async function initializeDatabase() {
       );
     `)
 
+    await query(`
+      CREATE TABLE IF NOT EXISTS settings (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL
+      );
+    `)
+
     console.log('Tables initialized successfully.')
 
     // 2. Check if admin table is empty and insert default admin
@@ -327,6 +334,24 @@ export async function initializeDatabase() {
           'INSERT INTO partners (id, name, description, wa_channel_url, whatsapp_number, image_url, status, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
           [pt.id, pt.name, pt.description, pt.wa_channel_url, pt.whatsapp_number, pt.image_url, pt.status, pt.created_at]
         )
+      }
+    }
+
+    // 5. Check if settings table is empty and seed default contact/social links
+    const settingsCount = await query('SELECT count(*) FROM settings')
+    if (parseInt(settingsCount.rows[0].count, 10) === 0) {
+      console.log('Settings table is empty. Seeding default contact & social settings...')
+      const defaultSettings: Record<string, string> = {
+        wa_stock_url: 'https://wa.me/6287832017296',
+        wa_rental_url: 'https://wa.me/6287832017296',
+        wa_partner_url: 'https://wa.me/6287720826802',
+        instagram_url: 'https://www.instagram.com/jean_cruel23?igsh=MW5iYXk4amFzNThsdw==',
+        tiktok_url: 'https://www.tiktok.com/@jeancruell23?_r=1&_t=ZS-978iPy4vI6S',
+        wa_channel_url: 'https://whatsapp.com/channel/0029VbBqyVG0AgWAXwVIu73m',
+      }
+
+      for (const [key, value] of Object.entries(defaultSettings)) {
+        await query('INSERT INTO settings (key, value) VALUES ($1, $2) ON CONFLICT DO NOTHING', [key, value])
       }
     }
 

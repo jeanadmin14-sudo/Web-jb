@@ -1,9 +1,17 @@
 "use client"
 
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { Crown } from 'lucide-react'
+import { getSettings, DEFAULT_SETTINGS, type SiteSettings } from '@/lib/storage'
 
 export default function Footer() {
+  const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SETTINGS)
+
+  useEffect(() => {
+    getSettings().then(setSettings)
+  }, [])
+
   return (
     <footer
       style={{
@@ -154,7 +162,7 @@ export default function Footer() {
               <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px' }}>
                 <li>
                   <a
-                    href="https://www.instagram.com/jean_cruel23?igsh=MW5iYXk4amFzNThsdw=="
+                    href={settings.instagram_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
@@ -178,7 +186,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <a
-                    href="https://www.tiktok.com/@jeancruell23?_r=1&_t=ZS-978iPy4vI6S"
+                    href={settings.tiktok_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
@@ -200,7 +208,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <a
-                    href="https://whatsapp.com/channel/0029VbBqyVG0AgWAXwVIu73m"
+                    href={settings.wa_channel_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{

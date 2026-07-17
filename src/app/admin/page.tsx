@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { Plus, Edit2, Trash2, LogOut, Package, Users, Shield, History } from 'lucide-react'
+import { Plus, Edit2, Trash2, LogOut, Package, Users, Shield, History, Link2 } from 'lucide-react'
 import {
   getProducts,
   saveProduct,
@@ -18,14 +18,18 @@ import {
   getBlockedIps,
   suspendIp,
   unsuspendIp,
+  getSettings,
+  saveSettings,
+  DEFAULT_SETTINGS,
   AdminAccount,
   ActivityLog,
-  BlockedIp
+  BlockedIp,
+  SiteSettings
 } from '@/lib/storage'
 import type { Product, Partner } from '@/lib/supabase'
 import { uploadImageFile } from '@/lib/media-upload'
 
-type AdminTab = 'products' | 'partners' | 'admins' | 'logs'
+type AdminTab = 'products' | 'partners' | 'admins' | 'logs' | 'settings'
 
 function formatRupiah(amount: number) {
   return new Intl.NumberFormat('id-ID', {
@@ -146,18 +150,35 @@ export default function AdminPage() {
   const [newAdminPass, setNewAdminPass] = useState('')
   const [editingAdmin, setEditingAdmin] = useState<AdminAccount | null>(null)
 
+  // Contact & social settings
+  const [settingsForm, setSettingsForm] = useState<SiteSettings>(DEFAULT_SETTINGS)
+  const [savingSettings, setSavingSettings] = useState(false)
+
   const loadAllData = useCallback(async () => {
     const p = await getProducts()
     const pt = await getPartners()
     const a = await getAdmins()
     const l = await getActivityLogs()
     const b = await getBlockedIps()
+    const s = await getSettings()
     setProducts(p)
     setPartners(pt)
     setAdmins(a)
     setLogs(l)
     setBlockedIps(b)
+    setSettingsForm(s)
   }, [])
+
+  const handleSaveSettings = async () => {
+    setSavingSettings(true)
+    const ok = await saveSettings(settingsForm)
+    setSavingSettings(false)
+    if (ok) {
+      alert('Kontak & sosmed berhasil disimpan.')
+    } else {
+      alert('Gagal menyimpan. Cek sesi admin atau koneksi database.')
+    }
+  }
 
   const isIpSuspended = useCallback((ipAddress: string | null | undefined) => {
     return blockedIps.some((item) => item.ip_address === ipAddress)
@@ -492,6 +513,7 @@ export default function AdminPage() {
           {([
             { id: 'products', label: 'Kelola Produk', icon: Package },
             { id: 'partners', label: 'Kelola Layanan', icon: Users },
+            { id: 'settings', label: 'Kontak & Sosmed', icon: Link2 },
             { id: 'admins', label: 'Akun Admin', icon: Shield },
             { id: 'logs', label: 'Log Aktivitas', icon: History },
           ] satisfies Array<{ id: AdminTab; label: string; icon: typeof Package }>).map((tab) => {
@@ -1057,6 +1079,71 @@ export default function AdminPage() {
                 </button>
               </div>
             )}
+          </div>
+        )}
+
+        {/* --- SETTINGS TAB --- */}
+        {activeTab === 'settings' && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h2 style={{ fontSize: '20px', fontWeight: 800 }}>Kontak & Sosial Media</h2>
+              <button
+                onClick={handleSaveSettings}
+                disabled={savingSettings}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '10px 20px',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #ec4899, #a855f7)',
+                  color: '#fff',
+                  border: 'none',
+                  fontSize: '14px',
+                  fontWeight: 700,
+                  cursor: savingSettings ? 'not-allowed' : 'pointer',
+                  opacity: savingSettings ? 0.6 : 1,
+                  boxShadow: '0 4px 15px rgba(236, 72, 153, 0.2)',
+                }}
+              >
+                {savingSettings ? 'Menyimpan...' : 'Simpan Perubahan'}
+              </button>
+            </div>
+
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '16px',
+                maxWidth: '640px',
+                padding: '24px',
+                background: 'rgba(12, 4, 20, 0.65)',
+                border: '1px solid rgba(147, 51, 234, 0.15)',
+                borderRadius: '20px',
+              }}
+            >
+              {([
+                { key: 'wa_stock_url', label: 'LINK WA KHUSUS STOCK', placeholder: 'https://wa.me/62...' },
+                { key: 'wa_rental_url', label: 'LINK WA KHUSUS RENTAL', placeholder: 'https://wa.me/62...' },
+                { key: 'wa_partner_url', label: 'LINK WA KHUSUS JOIN PP/PT', placeholder: 'https://wa.me/62...' },
+                { key: 'instagram_url', label: 'LINK INSTAGRAM', placeholder: 'https://www.instagram.com/...' },
+                { key: 'tiktok_url', label: 'LINK TIKTOK', placeholder: 'https://www.tiktok.com/@...' },
+                { key: 'wa_channel_url', label: 'LINK SALURAN WHATSAPP', placeholder: 'https://whatsapp.com/channel/...' },
+              ] satisfies Array<{ key: keyof SiteSettings; label: string; placeholder: string }>).map((field) => (
+                <div key={field.key} style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>
+                    {field.label}
+                  </label>
+                  <input
+                    type="text"
+                    value={settingsForm[field.key]}
+                    onChange={(e) => setSettingsForm({ ...settingsForm, [field.key]: e.target.value })}
+                    placeholder={field.placeholder}
+                    style={inputStyle}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
