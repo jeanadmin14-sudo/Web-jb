@@ -22,7 +22,7 @@ export async function GET() {
     const { rows } = await query('SELECT * FROM partners ORDER BY created_at ASC')
     return NextResponse.json(rows, {
       headers: {
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+        'Cache-Control': 'no-store',
       },
     })
   } catch (err) {
