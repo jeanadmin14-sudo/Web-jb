@@ -5,7 +5,7 @@ import { getPartners } from '@/lib/storage'
 import type { Partner } from '@/lib/supabase'
 import Image from 'next/image'
 import { createPortal } from 'react-dom'
-import { ExternalLink, Crown, MessageSquare, Search, X } from 'lucide-react'
+import { ExternalLink, Crown, MessageSquare, Search, ShieldAlert, X } from 'lucide-react'
 
 function getWhatsAppChatUrl(partner: Partner) {
   const number = partner.whatsapp_number?.replace(/\D/g, '')
@@ -157,6 +157,7 @@ export default function PartnersPage({ initialPartners }: { initialPartners?: Pa
           >
             {partners.map((partner) => {
               const chatUrl = getWhatsAppChatUrl(partner)
+              const isBlacklist = partner.category === 'Blacklist'
               return (
               <div
                 key={partner.id}
@@ -231,43 +232,67 @@ export default function PartnersPage({ initialPartners }: { initialPartners?: Pa
                   )}
                   {/* Badges */}
                   <div className="partner-badge-left" style={{ position: 'absolute', top: '10px', left: '10px' }}>
-                    <span
-                      className="partner-official-badge"
-                      style={{
-                        fontSize: '12px',
-                        fontWeight: 700,
-                        padding: '4px 10px',
-                        borderRadius: '999px',
-                        background: 'rgba(147,51,234,0.85)',
-                        color: '#fff',
-                        backdropFilter: 'blur(8px)',
-                        border: '1px solid rgba(168,85,247,0.4)',
-                      }}
-                    >
-                      Partner Resmi JBJean
-                    </span>
+                    {isBlacklist ? (
+                      <span
+                        className="partner-official-badge"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                          fontSize: '12px',
+                          fontWeight: 700,
+                          padding: '4px 10px',
+                          borderRadius: '999px',
+                          background: 'rgba(239,68,68,0.85)',
+                          color: '#fff',
+                          backdropFilter: 'blur(8px)',
+                          border: '1px solid rgba(248,113,113,0.5)',
+                        }}
+                      >
+                        <ShieldAlert style={{ width: '13px', height: '13px' }} />
+                        Diblacklist
+                      </span>
+                    ) : (
+                      <span
+                        className="partner-official-badge"
+                        style={{
+                          fontSize: '12px',
+                          fontWeight: 700,
+                          padding: '4px 10px',
+                          borderRadius: '999px',
+                          background: 'rgba(147,51,234,0.85)',
+                          color: '#fff',
+                          backdropFilter: 'blur(8px)',
+                          border: '1px solid rgba(168,85,247,0.4)',
+                        }}
+                      >
+                        Partner Resmi JBJean
+                      </span>
+                    )}
                   </div>
-                  <div className="partner-badge-right" style={{ position: 'absolute', top: '10px', right: '10px' }}>
-                    <span
-                      className="partner-status-badge"
-                      style={{
-                        fontSize: '12px',
-                        fontWeight: 700,
-                        padding: '4px 10px',
-                        borderRadius: '999px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                        background: 'rgba(34,197,94,0.15)',
-                        color: '#4ade80',
-                        backdropFilter: 'blur(8px)',
-                        border: '1px solid rgba(34,197,94,0.3)',
-                      }}
-                    >
-                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4ade80' }} />
-                      {partner.status}
-                    </span>
-                  </div>
+                  {!isBlacklist && (
+                    <div className="partner-badge-right" style={{ position: 'absolute', top: '10px', right: '10px' }}>
+                      <span
+                        className="partner-status-badge"
+                        style={{
+                          fontSize: '12px',
+                          fontWeight: 700,
+                          padding: '4px 10px',
+                          borderRadius: '999px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          background: 'rgba(34,197,94,0.15)',
+                          color: '#4ade80',
+                          backdropFilter: 'blur(8px)',
+                          border: '1px solid rgba(34,197,94,0.3)',
+                        }}
+                      >
+                        <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4ade80' }} />
+                        {partner.status}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Body */}
@@ -289,6 +314,26 @@ export default function PartnersPage({ initialPartners }: { initialPartners?: Pa
                   >
                     {partner.description}
                   </p>
+                  {isBlacklist ? (
+                    <div
+                      style={{
+                        marginTop: 'auto',
+                        padding: '12px 14px',
+                        borderRadius: '12px',
+                        background: 'rgba(239,68,68,0.08)',
+                        border: '1px solid rgba(239,68,68,0.25)',
+                      }}
+                    >
+                      {partner.whatsapp_number && (
+                        <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.65)', marginBottom: '4px' }}>
+                          Nomor WhatsApp: <strong style={{ color: '#f87171' }}>{partner.whatsapp_number}</strong>
+                        </p>
+                      )}
+                      <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', lineHeight: 1.5 }}>
+                        Jangan bertransaksi dengan kontak ini.
+                      </p>
+                    </div>
+                  ) : (
                   <div style={{ display: 'grid', gridTemplateColumns: partner.wa_channel_url && chatUrl ? '1fr 1fr' : '1fr', gap: '10px', width: '100%', marginTop: 'auto' }}>
                     {partner.wa_channel_url && (
                       <a
@@ -371,6 +416,7 @@ export default function PartnersPage({ initialPartners }: { initialPartners?: Pa
                       </a>
                     )}
                   </div>
+                  )}
                 </div>
               </div>
               )

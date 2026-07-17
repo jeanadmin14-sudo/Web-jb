@@ -48,7 +48,7 @@ export async function POST(req: Request) {
     const adminUser = req.headers.get('x-admin-user')
     const logContext = getRequestLogContext(req)
     const body = await req.json()
-    const { id, name, description, wa_channel_url, whatsapp_number, image_url, status, created_at } = body
+    const { id, name, description, wa_channel_url, whatsapp_number, image_url, status, category, created_at } = body
     const safePartner = {
       id: assertSafeId(id),
       name: assertText(name, 'Nama partner', 120),
@@ -57,6 +57,7 @@ export async function POST(req: Request) {
       whatsapp_number: optionalPhone(whatsapp_number),
       image_url: optionalImageSource(image_url, 'URL gambar') || '/Logo.jpeg',
       status: assertText(status || 'Online', 'Status', 40),
+      category: assertText(category || 'Partner Resmi', 'Kategori', 40),
       created_at: typeof created_at === 'string' && created_at ? created_at : new Date().toISOString(),
     }
 
@@ -65,8 +66,8 @@ export async function POST(req: Request) {
     const isNew = checkExist.rowCount === 0
 
     await query(
-      `INSERT INTO partners (id, name, description, wa_channel_url, whatsapp_number, image_url, status, created_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      `INSERT INTO partners (id, name, description, wa_channel_url, whatsapp_number, image_url, status, category, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        ON CONFLICT (id) DO UPDATE SET
          name = EXCLUDED.name,
          description = EXCLUDED.description,
@@ -74,6 +75,7 @@ export async function POST(req: Request) {
          whatsapp_number = EXCLUDED.whatsapp_number,
          image_url = EXCLUDED.image_url,
          status = EXCLUDED.status,
+         category = EXCLUDED.category,
          created_at = EXCLUDED.created_at`,
       [
         safePartner.id,
@@ -83,6 +85,7 @@ export async function POST(req: Request) {
         safePartner.whatsapp_number,
         safePartner.image_url,
         safePartner.status,
+        safePartner.category,
         safePartner.created_at,
       ]
     )

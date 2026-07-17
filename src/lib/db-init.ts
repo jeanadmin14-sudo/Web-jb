@@ -70,6 +70,7 @@ export async function initializeDatabase() {
         ALTER TABLE partners ALTER COLUMN id DROP DEFAULT;
         ALTER TABLE partners ALTER COLUMN id TYPE TEXT USING id::text;
         ALTER TABLE partners ADD COLUMN IF NOT EXISTS whatsapp_number TEXT;
+        ALTER TABLE partners ADD COLUMN IF NOT EXISTS category TEXT NOT NULL DEFAULT 'Partner Resmi';
       `)
     } catch (e) {
       console.warn('ALTER TABLE partners ADD COLUMN warn:', e)

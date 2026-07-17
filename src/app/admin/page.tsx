@@ -136,6 +136,7 @@ export default function AdminPage() {
   const [partWaNumber, setPartWaNumber] = useState('')
   const [partImage, setPartImage] = useState('/Logo.jpeg')
   const [partStatus, setPartStatus] = useState('Ready')
+  const [partCategory, setPartCategory] = useState('Partner Resmi')
 
   // State for beautiful custom confirm delete modal
   const [deleteConfirm, setDeleteConfirm] = useState<{
@@ -357,6 +358,7 @@ export default function AdminPage() {
     setPartWaNumber('')
     setPartImage('/Logo.jpeg')
     setPartStatus('Ready')
+    setPartCategory('Partner Resmi')
     setShowPartnerModal(true)
   }
 
@@ -368,6 +370,7 @@ export default function AdminPage() {
     setPartWaNumber(pt.whatsapp_number || '')
     setPartImage(pt.image_url || '/Logo.jpeg')
     setPartStatus(pt.status || 'Ready')
+    setPartCategory(pt.category || 'Partner Resmi')
     setShowPartnerModal(true)
   }
 
@@ -381,6 +384,7 @@ export default function AdminPage() {
       whatsapp_number: partWaNumber || null,
       image_url: partImage || '/Logo.jpeg',
       status: partStatus,
+      category: partCategory,
       created_at: editingPartner ? editingPartner.created_at : new Date().toISOString()
     }
     await savePartner(newPart)
@@ -739,7 +743,22 @@ export default function AdminPage() {
                           <Image src={pt.image_url || '/Logo.jpeg'} alt={pt.name} fill style={{ objectFit: 'cover' }} unoptimized />
                         </div>
                         <div>
-                          <strong style={{ display: 'block', color: '#fff' }}>{pt.name}</strong>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <strong style={{ display: 'block', color: '#fff' }}>{pt.name}</strong>
+                            {pt.category === 'Blacklist' && (
+                              <span style={{
+                                fontSize: '10px',
+                                fontWeight: 700,
+                                padding: '2px 7px',
+                                borderRadius: '999px',
+                                background: 'rgba(239,68,68,0.14)',
+                                color: '#f87171',
+                                border: '1px solid rgba(239,68,68,0.35)',
+                              }}>
+                                BLACKLIST
+                              </span>
+                            )}
+                          </div>
                           <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>{pt.description}</span>
                         </div>
                       </td>
@@ -1634,12 +1653,22 @@ export default function AdminPage() {
 
               <div className="admin-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>KATEGORI</label>
+                  <select value={partCategory} onChange={(e) => setPartCategory(e.target.value)} style={inputStyle}>
+                    <option value="Partner Resmi">Partner Resmi</option>
+                    <option value="Blacklist">PT Blacklist</option>
+                  </select>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   <label style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>STATUS</label>
                   <select value={partStatus} onChange={(e) => setPartStatus(e.target.value)} style={inputStyle}>
                     <option value="Ready">Ready</option>
                     <option value="Not Active">Not Active</option>
                   </select>
                 </div>
+              </div>
+
+              <div className="admin-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   <label style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>GAMBAR PARTNER</label>
                   <div

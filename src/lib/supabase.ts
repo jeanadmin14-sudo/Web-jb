@@ -37,6 +37,7 @@ export type Partner = {
   whatsapp_number?: string | null
   image_url: string | null
   status: string
+  category?: string
   created_at: string
 }
 
