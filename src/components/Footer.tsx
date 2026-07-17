@@ -240,24 +240,7 @@ export default function Footer() {
             flexWrap: 'wrap',
           }}
         >
-          <p>
-            dibuat oleh Copyright &copy;{' '}
-            <a
-              href="https://genzcoderush.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                color: 'rgba(255,255,255,0.45)',
-                textDecoration: 'none',
-                fontWeight: 700,
-              }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = '#ec4899' }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.45)' }}
-            >
-              GenZcodeRush
-            </a>
-            {' '}- PT.GenZ selalu cuan - code by Jarpad
-          </p>
+    <p>&copy; 2026 Jean Store. All rights reserved.</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             <Crown style={{ width: '12px', height: '12px', color: 'rgba(234,179,8,0.4)' }} />
             <span>Premium Game Marketplace</span>
