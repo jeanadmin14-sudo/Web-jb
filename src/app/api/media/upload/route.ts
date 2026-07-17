@@ -31,7 +31,7 @@ export async function POST(req: Request) {
       return jsonError('Unauthorized: Sesi tidak sah.', 401)
     }
 
-    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    if (!process.env.BLOB_STORE_ID && !process.env.BLOB_READ_WRITE_TOKEN) {
       return jsonError('Vercel Blob belum dikonfigurasi. Hubungkan Blob store di tab Storage project ini.', 503)
     }
 
