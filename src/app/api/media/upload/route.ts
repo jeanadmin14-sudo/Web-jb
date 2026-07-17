@@ -1,11 +1,10 @@
-import { createClient } from '@supabase/supabase-js'
+import { put } from '@vercel/blob'
 import { NextResponse } from 'next/server'
 import { getAuthSession } from '@/lib/auth-server'
 import { getRequestLogContext, insertLog } from '@/lib/db-log'
 import { isRequestIpBlocked } from '@/lib/ip-block'
 import { jsonError, serverError } from '@/lib/security'
 
-const IMAGE_BUCKET = 'jbjean-images'
 const ALLOWED_FOLDERS = new Set(['products', 'partners', 'gallery'])
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024
 
@@ -22,22 +21,6 @@ function makeStoragePath(fileName: string, folder: string): string {
   return `${folder}/${Date.now()}-${crypto.randomUUID()}-${safeName}.webp`
 }
 
-function createStorageClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-  if (!url || !serviceRoleKey) {
-    throw new Error('Supabase Storage belum dikonfigurasi. Isi NEXT_PUBLIC_SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY.')
-  }
-
-  return createClient(url, serviceRoleKey, {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-    },
-  })
-}
-
 export async function POST(req: Request) {
   try {
     if (await isRequestIpBlocked(req)) {
@@ -46,6 +29,10 @@ export async function POST(req: Request) {
 
     if (!getAuthSession(req)) {
       return jsonError('Unauthorized: Sesi tidak sah.', 401)
+    }
+
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      return jsonError('Vercel Blob belum dikonfigurasi. Hubungkan Blob store di tab Storage project ini.', 503)
     }
 
     const formData = await req.formData()
@@ -62,27 +49,16 @@ export async function POST(req: Request) {
       return jsonError('Ukuran gambar maksimal 4 MB setelah kompres.', 400)
     }
 
-    const arrayBuffer = await file.arrayBuffer()
     const path = makeStoragePath(file.name, folder)
-    const supabase = createStorageClient()
-    const { error } = await supabase.storage
-      .from(IMAGE_BUCKET)
-      .upload(path, Buffer.from(arrayBuffer), {
-        cacheControl: '31536000',
-        contentType: 'image/webp',
-        upsert: false,
-      })
+    const blob = await put(path, file, {
+      access: 'public',
+      contentType: 'image/webp',
+    })
 
-    if (error) {
-      return jsonError(`Gagal upload ke Supabase Storage: ${error.message}`, 500)
-    }
+    await insertLog(req.headers.get('x-admin-user'), `Upload gambar ke Vercel Blob: ${path}`, getRequestLogContext(req))
 
-    const { data } = supabase.storage.from(IMAGE_BUCKET).getPublicUrl(path)
-    await insertLog(req.headers.get('x-admin-user'), `Upload gambar ke Supabase Storage: ${path}`, getRequestLogContext(req))
-
-    return NextResponse.json({ url: data.publicUrl, path })
+    return NextResponse.json({ url: blob.url, path })
   } catch (err) {
     return serverError('API media upload POST error:', err)
   }
 }
-
