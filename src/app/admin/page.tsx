@@ -108,22 +108,30 @@ export default function AdminPage() {
   // Drag and Drop active states
   const [prodDragActive, setProdDragActive] = useState(false)
   const [partDragActive, setPartDragActive] = useState(false)
+  const [uploadingProdImage, setUploadingProdImage] = useState(false)
+  const [uploadingPartImage, setUploadingPartImage] = useState(false)
 
   const handleProductFile = async (file: File | undefined) => {
     if (!file) return
+    setUploadingProdImage(true)
     try {
       setProdImage(await uploadImageFile(file, { folder: 'products', maxSize: 1600, quality: 0.82 }))
     } catch (error) {
       alert(error instanceof Error ? error.message : 'Gagal upload gambar produk.')
+    } finally {
+      setUploadingProdImage(false)
     }
   }
 
   const handlePartnerFile = async (file: File | undefined) => {
     if (!file) return
+    setUploadingPartImage(true)
     try {
       setPartImage(await uploadImageFile(file, { folder: 'partners', maxSize: 1600, quality: 0.82 }))
     } catch (error) {
       alert(error instanceof Error ? error.message : 'Gagal upload gambar partner.')
+    } finally {
+      setUploadingPartImage(false)
     }
   }
 
@@ -1288,7 +1296,9 @@ export default function AdminPage() {
                       onChange={(e) => handleProductFile(e.target.files?.[0])}
                       style={{ display: 'none' }}
                     />
-                    {prodImage ? (
+                    {uploadingProdImage ? (
+                      <span style={{ fontSize: '12px', color: '#c084fc', fontWeight: 600, textAlign: 'center' }}>Sedang memproses gambar, mohon tunggu...</span>
+                    ) : prodImage ? (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', pointerEvents: 'none' }}>
                         <div style={{ width: '50px', height: '50px', borderRadius: '8px', overflow: 'hidden', position: 'relative', border: '1px solid rgba(255,255,255,0.1)', flexShrink: 0 }}>
                           <img src={prodImage} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -1699,7 +1709,9 @@ export default function AdminPage() {
                       onChange={(e) => handlePartnerFile(e.target.files?.[0])}
                       style={{ display: 'none' }}
                     />
-                    {partImage ? (
+                    {uploadingPartImage ? (
+                      <span style={{ fontSize: '12px', color: '#c084fc', fontWeight: 600, textAlign: 'center' }}>Sedang memproses gambar, mohon tunggu...</span>
+                    ) : partImage ? (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', pointerEvents: 'none' }}>
                         <div style={{ width: '50px', height: '50px', borderRadius: '8px', overflow: 'hidden', position: 'relative', border: '1px solid rgba(255,255,255,0.1)', flexShrink: 0 }}>
                           <img src={partImage} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />

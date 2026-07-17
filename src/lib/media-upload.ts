@@ -4,6 +4,8 @@ type UploadOptions = {
   quality?: number
 }
 
+const MAX_SOURCE_FILE_BYTES = 20 * 1024 * 1024
+
 function fileToDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
@@ -41,16 +43,11 @@ async function compressImageFile(file: File, maxSize = 1400, quality = 0.8): Pro
   })
 }
 
-function blobToDataUrl(blob: Blob): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(String(reader.result))
-    reader.onerror = reject
-    reader.readAsDataURL(blob)
-  })
-}
-
 export async function uploadImageFile(file: File, options: UploadOptions): Promise<string> {
+  if (file.size > MAX_SOURCE_FILE_BYTES) {
+    throw new Error('Foto terlalu besar (maks 20MB). Coba pilih foto lain atau kecilkan ukurannya dulu.')
+  }
+
   const compressed = await compressImageFile(file, options.maxSize, options.quality)
   const formData = new FormData()
   formData.set('file', compressed, `${file.name.replace(/\.[^.]+$/, '') || 'image'}.webp`)
@@ -69,11 +66,7 @@ export async function uploadImageFile(file: File, options: UploadOptions): Promi
 
   const data = await res.json().catch(() => null) as { url?: string; error?: string } | null
   if (!res.ok || !data?.url) {
-    if (res.status === 401 || res.status === 403) {
-      throw new Error(data?.error || 'Sesi admin tidak sah. Silakan login ulang.')
-    }
-
-    return blobToDataUrl(compressed)
+    throw new Error(data?.error || 'Gagal mengunggah gambar. Coba gunakan foto dengan ukuran lebih kecil.')
   }
 
   return data.url
