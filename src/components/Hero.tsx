@@ -143,12 +143,12 @@ export default function Hero() {
             {/* BIG Headline */}
             <h1
               style={{
-                fontSize: 'clamp(1.5rem, 2.6vw, 2.35rem)',
+                fontSize: 'clamp(1.05rem, 1.9vw, 1.65rem)',
                 fontWeight: 900,
                 color: '#fff',
-                lineHeight: 1.15,
-                letterSpacing: '-0.03em',
-                marginBottom: '0.85rem',
+                lineHeight: 1.2,
+                letterSpacing: '-0.02em',
+                marginBottom: '0.7rem',
                 whiteSpace: 'nowrap',
               }}
             >
@@ -431,7 +431,7 @@ export default function Hero() {
             display: none !important;
           }
           section > div > div > div:first-child h1 {
-            font-size: clamp(1.5rem, 7vw, 2rem) !important;
+            font-size: clamp(1.1rem, 5.5vw, 1.5rem) !important;
             line-height: 1.15 !important;
             white-space: normal !important;
           }
