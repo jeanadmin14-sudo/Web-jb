@@ -77,6 +77,17 @@ export default function Hero() {
         }}
       />
 
+      {/* Cyberpunk grid */}
+      <div
+        className="bg-grid"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          opacity: 0.7,
+          pointerEvents: 'none',
+        }}
+      />
+
       {/* Dot grid */}
       <div
         className="bg-dots"
@@ -112,18 +123,15 @@ export default function Hero() {
 
             {/* Badge */}
             <div
+              className="badge-cyan animate-electric"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                borderRadius: '999px',
                 padding: '7px 14px',
                 fontSize: '11px',
                 fontWeight: 800,
                 marginBottom: '16px',
-                background: 'rgba(255,255,255,0.055)',
-                border: '1px solid rgba(255,255,255,0.12)',
-                color: '#f0abfc',
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
               }}
@@ -143,7 +151,7 @@ export default function Hero() {
                 marginBottom: '1.15rem',
               }}
             >
-              Akun game premium, rental aman, transaksi cepat.
+              Akun game premium, <span className="text-glow" style={{ color: '#e9d5ff' }}>rental aman</span>, transaksi cepat.
             </h1>
 
             {/* Description */}
