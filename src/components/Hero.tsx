@@ -411,6 +411,15 @@ export default function Hero() {
           }
         }
         @media (max-width: 480px) {
+          section {
+            padding-top: 5rem !important;
+            padding-bottom: 1.75rem !important;
+          }
+          section > div > div > div:first-child > div[style*="border-radius: 999px"] {
+            padding: 5px 11px !important;
+            font-size: 9px !important;
+            margin-bottom: 10px !important;
+          }
           section > div > div > div:last-child {
             display: flex !important;
             order: -1 !important;
@@ -431,13 +440,15 @@ export default function Hero() {
             display: none !important;
           }
           section > div > div > div:first-child h1 {
-            font-size: clamp(1.1rem, 5.5vw, 1.5rem) !important;
-            line-height: 1.15 !important;
+            font-size: clamp(0.92rem, 4.3vw, 1.15rem) !important;
+            line-height: 1.25 !important;
             white-space: normal !important;
+            margin-bottom: 0.5rem !important;
           }
           section > div > div > div:first-child p {
-            font-size: 0.92rem !important;
-            line-height: 1.65 !important;
+            font-size: 0.76rem !important;
+            line-height: 1.5 !important;
+            margin-bottom: 0.9rem !important;
           }
           .hero-inline-stats {
             display: none !important;
