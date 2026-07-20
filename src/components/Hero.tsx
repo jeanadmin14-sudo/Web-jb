@@ -143,12 +143,13 @@ export default function Hero() {
             {/* BIG Headline */}
             <h1
               style={{
-                fontSize: 'clamp(3rem, 6vw, 5.2rem)',
+                fontSize: 'clamp(1.5rem, 2.6vw, 2.35rem)',
                 fontWeight: 900,
                 color: '#fff',
-                lineHeight: 1.02,
-                letterSpacing: '-0.045em',
-                marginBottom: '1.15rem',
+                lineHeight: 1.15,
+                letterSpacing: '-0.03em',
+                marginBottom: '0.85rem',
+                whiteSpace: 'nowrap',
               }}
             >
               Akun game premium, <span className="text-glow" style={{ color: '#e9d5ff' }}>rental aman</span>, transaksi cepat.
@@ -158,10 +159,10 @@ export default function Hero() {
             <p
               style={{
                 color: 'rgba(255,255,255,0.62)',
-                fontSize: '1.02rem',
-                lineHeight: 1.75,
-                marginBottom: '1.5rem',
-                maxWidth: '540px',
+                fontSize: '0.85rem',
+                lineHeight: 1.55,
+                marginBottom: '1.25rem',
+                maxWidth: '480px',
               }}
             >
               Temukan stock Free Fire, Mobile Legends, rental akun, dan layanan
@@ -392,6 +393,9 @@ export default function Hero() {
             flex-direction: column;
             align-items: center;
           }
+          section > div > div > div:first-child h1 {
+            white-space: normal !important;
+          }
           section > div > div > div:first-child p {
             max-width: 100% !important;
           }
@@ -427,8 +431,9 @@ export default function Hero() {
             display: none !important;
           }
           section > div > div > div:first-child h1 {
-            font-size: clamp(2.1rem, 10vw, 3rem) !important;
-            line-height: 1.08 !important;
+            font-size: clamp(1.5rem, 7vw, 2rem) !important;
+            line-height: 1.15 !important;
+            white-space: normal !important;
           }
           section > div > div > div:first-child p {
             font-size: 0.92rem !important;
