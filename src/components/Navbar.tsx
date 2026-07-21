@@ -223,7 +223,7 @@ export default function Navbar() {
           WebkitBackdropFilter: 'blur(30px) saturate(1.45)',
           borderRadius: open ? '24px' : '999px',
           border: open
-            ? '1px solid rgba(216, 180, 254, 0.32)'
+            ? '1px solid rgba(196,132,252, 0.32)'
             : '1px solid var(--border-navbar-pill, rgba(147, 51, 234, 0.25))',
           boxShadow: scrolled
             ? '0 14px 36px rgba(0, 0, 0, 0.66), inset 0 1px 0 rgba(255,255,255,0.08)'
@@ -269,7 +269,7 @@ export default function Navbar() {
               JB
               <span
                 style={{
-                  background: 'linear-gradient(90deg, #ec4899, #a855f7)',
+                  background: 'linear-gradient(90deg, #9333ea, #a855f7)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
@@ -364,9 +364,9 @@ export default function Navbar() {
                   whiteSpace: 'nowrap',
                   ...(isActive
                     ? {
-                        background: 'linear-gradient(135deg, #ec4899, #a855f7)',
+                        background: 'linear-gradient(135deg, #9333ea, #a855f7)',
                         color: '#fff',
-                        boxShadow: '0 0 18px rgba(236,72,153,0.48)',
+                        boxShadow: '0 0 18px rgba(147,51,234,0.48)',
                       }
                     : { color: 'rgba(255,255,255,0.66)' }),
                 }}
@@ -440,17 +440,17 @@ export default function Navbar() {
               fontSize: '14px',
               fontWeight: 900,
               transition: 'all 0.2s ease',
-              background: 'linear-gradient(135deg, #ec4899, #a855f7)',
+              background: 'linear-gradient(135deg, #9333ea, #a855f7)',
               color: '#fff',
-              boxShadow: '0 0 16px rgba(236,72,153,0.42)',
+              boxShadow: '0 0 16px rgba(147,51,234,0.42)',
               textDecoration: 'none',
             }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.boxShadow = '0 0 20px rgba(236,72,153,0.65)'
+              (e.currentTarget as HTMLElement).style.boxShadow = '0 0 20px rgba(147,51,234,0.65)'
               ;(e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.boxShadow = '0 0 12px rgba(236,72,153,0.4)'
+              (e.currentTarget as HTMLElement).style.boxShadow = '0 0 12px rgba(147,51,234,0.4)'
               ;(e.currentTarget as HTMLElement).style.transform = 'translateY(0)'
             }}
           >
@@ -530,7 +530,7 @@ export default function Navbar() {
             padding: '14px',
             gap: '8px',
             borderRadius: '22px',
-            border: '1px solid rgba(216, 180, 254, 0.34)',
+            border: '1px solid rgba(196,132,252, 0.34)',
             background: 'linear-gradient(180deg, rgba(13, 6, 30, 0.985), rgba(7, 2, 18, 0.97))',
             backdropFilter: 'blur(34px) saturate(1.35)',
             WebkitBackdropFilter: 'blur(34px) saturate(1.35)',
@@ -586,9 +586,9 @@ export default function Navbar() {
                   textDecoration: 'none',
                   ...(isActive
                     ? {
-                        background: 'linear-gradient(135deg,#ec4899,#a855f7)',
+                        background: 'linear-gradient(135deg,#9333ea,#a855f7)',
                         color: '#fff',
-                        boxShadow: '0 10px 24px rgba(236,72,153,0.28)',
+                        boxShadow: '0 10px 24px rgba(147,51,234,0.28)',
                       }
                     : {
                         color: 'rgba(255,255,255,0.84)',
@@ -618,7 +618,7 @@ export default function Navbar() {
               fontSize: '14px',
               fontWeight: 700,
               color: '#fff',
-              background: 'linear-gradient(135deg,#ec4899,#a855f7)',
+              background: 'linear-gradient(135deg,#9333ea,#a855f7)',
               textDecoration: 'none',
             }}
           >
@@ -670,7 +670,7 @@ export default function Navbar() {
         :global(.light-mode) .navbar-nav-item.is-active,
         :global(.light-mode) .navbar-order-link,
         :global(.light-mode) .navbar-mobile-order-link {
-          background: linear-gradient(135deg, #ec4899, #a855f7) !important;
+          background: linear-gradient(135deg, #9333ea, #a855f7) !important;
           color: #fff !important;
         }
 
@@ -762,7 +762,7 @@ export default function Navbar() {
         @media (max-width: 767px) {
           .navbar-pill {
             background: linear-gradient(135deg, rgba(8, 3, 18, 0.98), rgba(22, 8, 42, 0.96)) !important;
-            border-color: rgba(216, 180, 254, 0.26) !important;
+            border-color: rgba(196,132,252, 0.26) !important;
           }
           .mobile-nav-menu {
             left: 10px !important;

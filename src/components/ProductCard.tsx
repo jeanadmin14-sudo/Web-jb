@@ -154,7 +154,7 @@ export default function ProductCard({ product }: { product: Product }) {
             width: '36px',
             height: '36px',
             borderRadius: '50%',
-            background: hovered ? 'linear-gradient(135deg, #ec4899, #a855f7)' : 'rgba(9, 4, 22, 0.85)',
+            background: hovered ? 'linear-gradient(135deg, #9333ea, #a855f7)' : 'rgba(9, 4, 22, 0.85)',
             border: hovered ? 'none' : '1px solid rgba(168, 85, 247, 0.35)',
             display: 'flex',
             alignItems: 'center',
@@ -179,9 +179,9 @@ export default function ProductCard({ product }: { product: Product }) {
             fontWeight: 800,
             padding: '5px 14px',
             borderRadius: '999px',
-            background: 'rgba(236, 72, 153, 0.1)',
-            border: '1px solid rgba(236, 72, 153, 0.3)',
-            color: '#f472b6',
+            background: 'rgba(147,51,234, 0.1)',
+            border: '1px solid rgba(147,51,234, 0.3)',
+            color: '#a855f7',
             textTransform: 'uppercase',
             letterSpacing: '0.05em',
             transition: 'all 0.3s ease',
@@ -288,12 +288,12 @@ export default function ProductCard({ product }: { product: Product }) {
               borderRadius: '999px',
               fontSize: '13px',
               fontWeight: 800,
-              background: 'linear-gradient(90deg, #ec4899, #d946ef)',
+              background: 'linear-gradient(90deg, #9333ea, #d946ef)',
               color: '#fff',
               border: 'none',
               cursor: 'pointer',
               textDecoration: 'none',
-              boxShadow: hovered ? '0 6px 20px rgba(236,72,153,0.45)' : 'none',
+              boxShadow: hovered ? '0 6px 20px rgba(147,51,234,0.45)' : 'none',
               transform: hovered ? 'scale(1.03)' : 'scale(1)',
               transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
@@ -478,8 +478,8 @@ export default function ProductCard({ product }: { product: Product }) {
                       fontWeight: 800,
                       padding: '4px 11px',
                       borderRadius: '999px',
-                      background: 'rgba(236, 72, 153, 0.12)',
-                      border: '1px solid rgba(236, 72, 153, 0.35)',
+                      background: 'rgba(147,51,234, 0.12)',
+                      border: '1px solid rgba(147,51,234, 0.35)',
                       color: '#ff6fae',
                     }}
                   >
@@ -523,7 +523,7 @@ export default function ProductCard({ product }: { product: Product }) {
                         aspectRatio: '1 / 1',
                         overflow: 'hidden',
                         borderRadius: '18px',
-                        border: '1px solid rgba(236, 72, 153, 0.35)',
+                        border: '1px solid rgba(147,51,234, 0.35)',
                         background: 'rgba(20, 7, 42, 0.75)',
                         cursor: 'pointer',
                         padding: 0,
@@ -561,7 +561,7 @@ export default function ProductCard({ product }: { product: Product }) {
                         padding: '12px 16px',
                         borderRadius: '22px',
                         background: 'rgba(50, 31, 82, 0.72)',
-                        border: '1px solid rgba(236, 72, 153, 0.28)',
+                        border: '1px solid rgba(147,51,234, 0.28)',
                       }}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: '13px', minWidth: 0 }}>
@@ -570,7 +570,7 @@ export default function ProductCard({ product }: { product: Product }) {
                             width: '36px',
                             height: '36px',
                             borderRadius: '999px',
-                            background: 'rgba(236, 72, 153, 0.12)',
+                            background: 'rgba(147,51,234, 0.12)',
                             color: '#f35fa4',
                             display: 'inline-flex',
                             alignItems: 'center',
@@ -609,7 +609,7 @@ export default function ProductCard({ product }: { product: Product }) {
                       fontSize: '16px',
                       fontWeight: 900,
                       textDecoration: 'none',
-                      boxShadow: '0 14px 26px rgba(236, 72, 153, 0.24)',
+                      boxShadow: '0 14px 26px rgba(147,51,234, 0.24)',
                     }}
                   >
                     Sewa Sekarang
@@ -690,9 +690,9 @@ export default function ProductCard({ product }: { product: Product }) {
                         fontWeight: 800,
                         padding: '4px 10px',
                         borderRadius: '999px',
-                        background: 'rgba(236, 72, 153, 0.1)',
-                        border: '1px solid rgba(236, 72, 153, 0.3)',
-                        color: '#f472b6',
+                        background: 'rgba(147,51,234, 0.1)',
+                        border: '1px solid rgba(147,51,234, 0.3)',
+                        color: '#a855f7',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em',
                       }}
@@ -763,7 +763,7 @@ export default function ProductCard({ product }: { product: Product }) {
                     style={{
                       fontSize: '24px',
                       fontWeight: 900,
-                      background: 'linear-gradient(90deg, #ec4899, #c084fc)',
+                      background: 'linear-gradient(90deg, #9333ea, #c084fc)',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                       backgroundClip: 'text',
@@ -850,21 +850,21 @@ export default function ProductCard({ product }: { product: Product }) {
                       borderRadius: '999px',
                       fontSize: '14px',
                       fontWeight: 800,
-                      background: 'linear-gradient(90deg, #ec4899, #d946ef)',
+                      background: 'linear-gradient(90deg, #9333ea, #d946ef)',
                       color: '#fff',
                       border: 'none',
                       cursor: 'pointer',
                       textDecoration: 'none',
                       transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-                      boxShadow: '0 4px 15px rgba(236,72,153,0.3)',
+                      boxShadow: '0 4px 15px rgba(147,51,234,0.3)',
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'translateY(-2px)'
-                      e.currentTarget.style.boxShadow = '0 6px 20px rgba(236,72,153,0.5)'
+                      e.currentTarget.style.boxShadow = '0 6px 20px rgba(147,51,234,0.5)'
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.transform = 'translateY(0)'
-                      e.currentTarget.style.boxShadow = '0 4px 15px rgba(236,72,153,0.3)'
+                      e.currentTarget.style.boxShadow = '0 4px 15px rgba(147,51,234,0.3)'
                     }}
                   >
                     <MessageSquare style={{ width: '16px', height: '16px' }} />
@@ -996,7 +996,7 @@ export default function ProductCard({ product }: { product: Product }) {
                         aspectRatio: '1 / 1',
                         overflow: 'hidden',
                         borderRadius: '10px',
-                        border: isActive ? '2px solid #f472b6' : '1px solid rgba(168, 85, 247, 0.25)',
+                        border: isActive ? '2px solid #a855f7' : '1px solid rgba(168, 85, 247, 0.25)',
                         background: 'rgba(12, 4, 20, 0.8)',
                         cursor: 'pointer',
                         padding: 0,

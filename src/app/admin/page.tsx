@@ -479,7 +479,7 @@ export default function AdminPage() {
             />
             <div>
               <h1 style={{ fontSize: '18px', fontWeight: 900, margin: 0 }}>
-                JB<span style={{ background: 'linear-gradient(90deg, #ec4899, #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Jean</span> Dashboard
+                JB<span style={{ background: 'linear-gradient(90deg, #9333ea, #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Jean</span> Dashboard
               </h1>
               <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.45)' }}>Login sebagai: {sessionUser}</span>
             </div>
@@ -547,7 +547,7 @@ export default function AdminPage() {
                   border: 'none',
                   transition: 'all 0.2s',
                   ...(isActive
-                    ? { background: 'linear-gradient(135deg, #ec4899, #a855f7)', color: '#fff', boxShadow: '0 0 12px rgba(236,72,153,0.3)' }
+                    ? { background: 'linear-gradient(135deg, #9333ea, #a855f7)', color: '#fff', boxShadow: '0 0 12px rgba(147,51,234,0.3)' }
                     : { background: 'transparent', color: 'rgba(255,255,255,0.6)' }),
                 }}
               >
@@ -571,13 +571,13 @@ export default function AdminPage() {
                   gap: '6px',
                   padding: '10px 20px',
                   borderRadius: '12px',
-                  background: 'linear-gradient(135deg, #ec4899, #a855f7)',
+                  background: 'linear-gradient(135deg, #9333ea, #a855f7)',
                   color: '#fff',
                   border: 'none',
                   fontSize: '14px',
                   fontWeight: 700,
                   cursor: 'pointer',
-                  boxShadow: '0 4px 15px rgba(236, 72, 153, 0.2)',
+                  boxShadow: '0 4px 15px rgba(147,51,234, 0.2)',
                 }}
               >
                 <Plus style={{ width: '16px', height: '16px' }} />
@@ -611,7 +611,7 @@ export default function AdminPage() {
                         </div>
                       </td>
                       <td style={{ padding: '16px' }}>
-                        <span style={{ fontSize: '12px', background: 'rgba(236, 72, 153, 0.12)', border: '1px solid rgba(236,72,153,0.3)', color: '#f472b6', padding: '3px 8px', borderRadius: '999px' }}>{p.category}</span>
+                        <span style={{ fontSize: '12px', background: 'rgba(147,51,234, 0.12)', border: '1px solid rgba(147,51,234,0.3)', color: '#a855f7', padding: '3px 8px', borderRadius: '999px' }}>{p.category}</span>
                       </td>
                       <td style={{ padding: '16px', fontWeight: 700, color: '#c084fc' }}>{formatRupiah(p.price)}</td>
                       <td style={{ padding: '16px' }}>
@@ -718,13 +718,13 @@ export default function AdminPage() {
                   gap: '6px',
                   padding: '10px 20px',
                   borderRadius: '12px',
-                  background: 'linear-gradient(135deg, #ec4899, #a855f7)',
+                  background: 'linear-gradient(135deg, #9333ea, #a855f7)',
                   color: '#fff',
                   border: 'none',
                   fontSize: '14px',
                   fontWeight: 700,
                   cursor: 'pointer',
-                  boxShadow: '0 4px 15px rgba(236, 72, 153, 0.2)',
+                  boxShadow: '0 4px 15px rgba(147,51,234, 0.2)',
                 }}
               >
                 <Plus style={{ width: '16px', height: '16px' }} />
@@ -778,7 +778,7 @@ export default function AdminPage() {
                             </a>
                           )}
                           {pt.whatsapp_number ? (
-                            <a href={`https://wa.me/${pt.whatsapp_number}`} target="_blank" rel="noopener noreferrer" style={{ color: '#f472b6', textDecoration: 'underline', fontSize: '13px' }}>
+                            <a href={`https://wa.me/${pt.whatsapp_number}`} target="_blank" rel="noopener noreferrer" style={{ color: '#a855f7', textDecoration: 'underline', fontSize: '13px' }}>
                               WhatsApp Chat (+{pt.whatsapp_number})
                             </a>
                           ) : (
@@ -873,13 +873,13 @@ export default function AdminPage() {
                   gap: '6px',
                   padding: '10px 20px',
                   borderRadius: '12px',
-                  background: 'linear-gradient(135deg, #ec4899, #a855f7)',
+                  background: 'linear-gradient(135deg, #9333ea, #a855f7)',
                   color: '#fff',
                   border: 'none',
                   fontSize: '14px',
                   fontWeight: 700,
                   cursor: 'pointer',
-                  boxShadow: '0 4px 15px rgba(236, 72, 153, 0.2)',
+                  boxShadow: '0 4px 15px rgba(147,51,234, 0.2)',
                 }}
               >
                 <Plus style={{ width: '16px', height: '16px' }} />
@@ -1123,14 +1123,14 @@ export default function AdminPage() {
                   gap: '6px',
                   padding: '10px 20px',
                   borderRadius: '12px',
-                  background: 'linear-gradient(135deg, #ec4899, #a855f7)',
+                  background: 'linear-gradient(135deg, #9333ea, #a855f7)',
                   color: '#fff',
                   border: 'none',
                   fontSize: '14px',
                   fontWeight: 700,
                   cursor: savingSettings ? 'not-allowed' : 'pointer',
                   opacity: savingSettings ? 0.6 : 1,
-                  boxShadow: '0 4px 15px rgba(236, 72, 153, 0.2)',
+                  boxShadow: '0 4px 15px rgba(147,51,234, 0.2)',
                 }}
               >
                 {savingSettings ? 'Menyimpan...' : 'Simpan Perubahan'}
@@ -1417,7 +1417,7 @@ export default function AdminPage() {
                         <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(147,51,234,0.1)', padding: '8px 12px', borderRadius: '10px' }}>
                           <span style={{ fontSize: '13px', fontWeight: 600 }}>{pkg.name}</span>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <span style={{ fontSize: '13px', fontWeight: 700, color: '#f472b6' }}>{formatRupiah(pkg.price)}</span>
+                            <span style={{ fontSize: '13px', fontWeight: 700, color: '#a855f7' }}>{formatRupiah(pkg.price)}</span>
                             <button
                               type="button"
                               onClick={() => setProdPackages(prev => prev.filter((_, i) => i !== idx))}
@@ -1568,7 +1568,7 @@ export default function AdminPage() {
                 </button>
                 <button
                   type="submit"
-                  style={{ flex: 1, padding: '12px', borderRadius: '12px', background: 'linear-gradient(135deg, #ec4899, #a855f7)', border: 'none', color: '#fff', fontWeight: 800, cursor: 'pointer', boxShadow: '0 4px 15px rgba(236,72,153,0.3)' }}
+                  style={{ flex: 1, padding: '12px', borderRadius: '12px', background: 'linear-gradient(135deg, #9333ea, #a855f7)', border: 'none', color: '#fff', fontWeight: 800, cursor: 'pointer', boxShadow: '0 4px 15px rgba(147,51,234,0.3)' }}
                 >
                   Simpan Produk
                 </button>
@@ -1741,7 +1741,7 @@ export default function AdminPage() {
                 </button>
                 <button
                   type="submit"
-                  style={{ flex: 1, padding: '12px', borderRadius: '12px', background: 'linear-gradient(135deg, #ec4899, #a855f7)', border: 'none', color: '#fff', fontWeight: 800, cursor: 'pointer', boxShadow: '0 4px 15px rgba(236,72,153,0.3)' }}
+                  style={{ flex: 1, padding: '12px', borderRadius: '12px', background: 'linear-gradient(135deg, #9333ea, #a855f7)', border: 'none', color: '#fff', fontWeight: 800, cursor: 'pointer', boxShadow: '0 4px 15px rgba(147,51,234,0.3)' }}
                 >
                   Simpan Partner
                 </button>
@@ -1824,7 +1824,7 @@ export default function AdminPage() {
                 </button>
                 <button
                   type="submit"
-                  style={{ flex: 1, padding: '12px', borderRadius: '12px', background: 'linear-gradient(135deg, #ec4899, #a855f7)', border: 'none', color: '#fff', fontWeight: 800, cursor: 'pointer', boxShadow: '0 4px 15px rgba(236,72,153,0.3)' }}
+                  style={{ flex: 1, padding: '12px', borderRadius: '12px', background: 'linear-gradient(135deg, #9333ea, #a855f7)', border: 'none', color: '#fff', fontWeight: 800, cursor: 'pointer', boxShadow: '0 4px 15px rgba(147,51,234,0.3)' }}
                 >
                   {editingAdmin ? 'Simpan Password' : 'Tambah Admin'}
                 </button>
@@ -2015,12 +2015,12 @@ const pageNumStyle = (active: boolean): React.CSSProperties => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  background: active ? 'linear-gradient(135deg, #ec4899, #a855f7)' : 'rgba(12,4,20,0.8)',
+  background: active ? 'linear-gradient(135deg, #9333ea, #a855f7)' : 'rgba(12,4,20,0.8)',
   border: active ? 'none' : '1px solid rgba(147,51,234,0.15)',
   color: '#fff',
   cursor: 'pointer',
   fontSize: '13px',
   fontWeight: 700,
-  boxShadow: active ? '0 0 10px rgba(236,72,153,0.3)' : 'none',
+  boxShadow: active ? '0 0 10px rgba(147,51,234,0.3)' : 'none',
   transition: 'all 0.2s',
 })

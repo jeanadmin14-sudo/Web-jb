@@ -134,13 +134,13 @@ export default function ProductsPage({ initialProducts }: { initialProducts?: Pr
               fontSize: '11px',
               fontWeight: 800,
               marginBottom: '16px',
-              background: 'rgba(236, 72, 153, 0.1)',
-              border: '1px solid rgba(236, 72, 153, 0.3)',
-              color: '#ec4899',
+              background: 'rgba(147,51,234, 0.1)',
+              border: '1px solid rgba(147,51,234, 0.3)',
+              color: '#9333ea',
               letterSpacing: '0.05em',
             }}
           >
-            <Package style={{ width: '12px', height: '12px', color: '#ec4899' }} />
+            <Package style={{ width: '12px', height: '12px', color: '#9333ea' }} />
             PRODUK
           </div>
           <h1
@@ -379,13 +379,13 @@ export default function ProductsPage({ initialProducts }: { initialProducts?: Pr
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        background: isPageActive ? 'linear-gradient(135deg, #ec4899, #a855f7)' : 'rgba(12,4,20,0.8)',
+                        background: isPageActive ? 'linear-gradient(135deg, #9333ea, #a855f7)' : 'rgba(12,4,20,0.8)',
                         border: isPageActive ? 'none' : '1px solid rgba(147,51,234,0.15)',
                         color: '#fff',
                         cursor: 'pointer',
                         fontSize: '14px',
                         fontWeight: 700,
-                        boxShadow: isPageActive ? '0 0 12px rgba(236,72,153,0.3)' : 'none',
+                        boxShadow: isPageActive ? '0 0 12px rgba(147,51,234,0.3)' : 'none',
                         transition: 'all 0.2s',
                       }}
                     >

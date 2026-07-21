@@ -109,7 +109,7 @@ export default function PartnersPage({ initialPartners }: { initialPartners?: Pa
             List partner resmi{' '}
             <span
               style={{
-                background: 'linear-gradient(90deg, #ec4899, #a855f7)',
+                background: 'linear-gradient(90deg, #9333ea, #a855f7)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
@@ -394,21 +394,21 @@ export default function PartnersPage({ initialPartners }: { initialPartners?: Pa
                           padding: '10px 16px',
                           borderRadius: '12px',
                           transition: 'all 0.2s',
-                          background: 'linear-gradient(90deg, #ec4899, #d946ef)',
+                          background: 'linear-gradient(90deg, #9333ea, #d946ef)',
                           border: 'none',
                           color: '#fff',
-                          boxShadow: '0 4px 15px rgba(236, 72, 153, 0.2)',
+                          boxShadow: '0 4px 15px rgba(147,51,234, 0.2)',
                           textDecoration: 'none',
                         }}
                         onMouseEnter={(e) => {
                           const el = e.currentTarget as HTMLElement
                           el.style.transform = 'translateY(-1px)'
-                          el.style.boxShadow = '0 6px 20px rgba(236, 72, 153, 0.4)'
+                          el.style.boxShadow = '0 6px 20px rgba(147,51,234, 0.4)'
                         }}
                         onMouseLeave={(e) => {
                           const el = e.currentTarget as HTMLElement
                           el.style.transform = 'translateY(0)'
-                          el.style.boxShadow = '0 4px 15px rgba(236, 72, 153, 0.2)'
+                          el.style.boxShadow = '0 4px 15px rgba(147,51,234, 0.2)'
                         }}
                       >
                         <MessageSquare style={{ width: '16px', height: '16px' }} />
@@ -504,7 +504,7 @@ export default function PartnersPage({ initialPartners }: { initialPartners?: Pa
 
         .partner-image-view-button:hover {
           color: #fff;
-          background: linear-gradient(135deg, #ec4899, #a855f7);
+          background: linear-gradient(135deg, #9333ea, #a855f7);
           border-color: transparent;
           box-shadow: 0 0 18px rgba(168, 85, 247, 0.6);
           transform: scale(1.12) rotate(90deg);
@@ -570,7 +570,7 @@ export default function PartnersPage({ initialPartners }: { initialPartners?: Pa
         }
 
         :global(.light-mode) .partner-image-view-button {
-          color: #be185d;
+          color: #6d28d9;
           background: rgba(255, 255, 255, 0.94);
           border-color: rgba(219, 39, 119, 0.24);
           box-shadow: 0 12px 26px rgba(76, 29, 149, 0.14);
@@ -578,7 +578,7 @@ export default function PartnersPage({ initialPartners }: { initialPartners?: Pa
 
         :global(.light-mode) .partner-image-view-button:hover {
           color: #fff;
-          background: linear-gradient(135deg, #db2777, #7c3aed);
+          background: linear-gradient(135deg, #7c3aed, #7c3aed);
           border-color: transparent;
         }
 

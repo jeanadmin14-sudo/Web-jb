@@ -128,7 +128,7 @@ export default function StatsBar() {
 
         .stats-card-item:hover {
           border-color: var(--border-card-hover) !important;
-          box-shadow: 0 10px 30px -10px rgba(236, 72, 153, 0.2);
+          box-shadow: 0 10px 30px -10px rgba(147,51,234, 0.2);
           transform: translateY(-4px);
         }
 
@@ -140,7 +140,7 @@ export default function StatsBar() {
           align-items: center;
           justify-content: center;
           margin-bottom: 16px;
-          color: #ec4899;
+          color: #9333ea;
           background: rgba(7, 1, 15, 0.8);
           border: 1px solid rgba(147, 51, 234, 0.25);
           transition:
@@ -160,7 +160,7 @@ export default function StatsBar() {
         }
 
         .stats-card-item :global(a) {
-          color: #ec4899;
+          color: #9333ea;
           transition:
             gap 0.2s ease,
             color 0.2s ease;
@@ -168,7 +168,7 @@ export default function StatsBar() {
 
         .stats-card-item :global(a:hover) {
           gap: 10px;
-          color: #f472b6;
+          color: #a855f7;
         }
 
         :global(.light-mode) .stats-card-item {
@@ -183,14 +183,14 @@ export default function StatsBar() {
         }
 
         :global(.light-mode) .stats-icon {
-          color: #be185d;
+          color: #6d28d9;
           background: linear-gradient(135deg, #fdf2f8, #f5f3ff);
           border-color: rgba(219, 39, 119, 0.2);
           box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
         }
 
         :global(.light-mode) .stats-card-item :global(a) {
-          color: #be185d !important;
+          color: #6d28d9 !important;
         }
 
         :global(.light-mode) .stats-card-item :global(a:hover) {

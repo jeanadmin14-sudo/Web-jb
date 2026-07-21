@@ -82,7 +82,7 @@ export default function Footer() {
                   JB
                   <span
                     style={{
-                      background: 'linear-gradient(90deg, #ec4899, #a855f7)',
+                      background: 'linear-gradient(90deg, #9333ea, #a855f7)',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                       backgroundClip: 'text',
@@ -113,7 +113,7 @@ export default function Footer() {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '16px' }}>
               {[
                 { label: 'Cepat', color: '#eab308' },
-                { label: '100% Aman', color: '#ec4899' },
+                { label: '100% Aman', color: '#9333ea' },
                 { label: '24/7', color: '#06b6d4' },
               ].map((f) => (
                 <span
@@ -173,7 +173,7 @@ export default function Footer() {
                       textDecoration: 'none',
                       transition: 'color 0.2s',
                     }}
-                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = '#ec4899' }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = '#9333ea' }}
                     onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.35)' }}
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -197,7 +197,7 @@ export default function Footer() {
                       textDecoration: 'none',
                       transition: 'color 0.2s',
                     }}
-                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = '#ec4899' }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = '#9333ea' }}
                     onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.35)' }}
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -219,7 +219,7 @@ export default function Footer() {
                       textDecoration: 'none',
                       transition: 'color 0.2s',
                     }}
-                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = '#ec4899' }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = '#9333ea' }}
                     onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.35)' }}
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

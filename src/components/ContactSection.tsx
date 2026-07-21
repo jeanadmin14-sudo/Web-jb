@@ -142,21 +142,21 @@ export default function ContactSection() {
                     transition: 'all 0.25s ease',
                     cursor: 'pointer',
                     width: '100%',
-                    background: 'linear-gradient(135deg, #ec4899, #a855f7)',
+                    background: 'linear-gradient(135deg, #9333ea, #a855f7)',
                     color: '#fff',
-                    boxShadow: '0 4px 20px rgba(236, 72, 153, 0.3)',
+                    boxShadow: '0 4px 20px rgba(147,51,234, 0.3)',
                     textDecoration: 'none',
                     border: 'none',
                   }}
                   onMouseEnter={(e) => {
                     const el = e.currentTarget as HTMLElement
                     el.style.transform = 'translateY(-2px)'
-                    el.style.boxShadow = '0 6px 28px rgba(236, 72, 153, 0.5)'
+                    el.style.boxShadow = '0 6px 28px rgba(147,51,234, 0.5)'
                   }}
                   onMouseLeave={(e) => {
                     const el = e.currentTarget as HTMLElement
                     el.style.transform = 'translateY(0)'
-                    el.style.boxShadow = '0 4px 20px rgba(236, 72, 153, 0.3)'
+                    el.style.boxShadow = '0 4px 20px rgba(147,51,234, 0.3)'
                   }}
                 >
                   <MessageCircle style={{ width: '18px', height: '18px' }} />
@@ -189,7 +189,7 @@ export default function ContactSection() {
                   onMouseEnter={(e) => {
                     const el = e.currentTarget as HTMLElement
                     el.style.background = 'rgba(255,255,255,0.08)'
-                    el.style.borderColor = 'rgba(236, 72, 153, 0.45)'
+                    el.style.borderColor = 'rgba(147,51,234, 0.45)'
                     el.style.transform = 'translateY(-1px)'
                   }}
                   onMouseLeave={(e) => {
@@ -230,7 +230,7 @@ export default function ContactSection() {
                   onMouseEnter={(e) => {
                     const el = e.currentTarget as HTMLElement
                     el.style.background = 'rgba(255,255,255,0.08)'
-                    el.style.borderColor = 'rgba(236, 72, 153, 0.45)'
+                    el.style.borderColor = 'rgba(147,51,234, 0.45)'
                     el.style.transform = 'translateY(-1px)'
                   }}
                   onMouseLeave={(e) => {
@@ -272,7 +272,7 @@ export default function ContactSection() {
                 onMouseEnter={(e) => {
                   const el = e.currentTarget as HTMLElement
                   el.style.background = 'rgba(147, 51, 234, 0.12)'
-                  el.style.borderColor = 'rgba(236, 72, 153, 0.5)'
+                  el.style.borderColor = 'rgba(147,51,234, 0.5)'
                   el.style.transform = 'translateY(-1px)'
                 }}
                 onMouseLeave={(e) => {

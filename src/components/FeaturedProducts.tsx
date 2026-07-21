@@ -143,7 +143,7 @@ export default function FeaturedProducts() {
               Akun game premium, rental aman,{' '}
               <span
                 style={{
-                  background: 'linear-gradient(90deg, #ec4899, #a855f7)',
+                  background: 'linear-gradient(90deg, #9333ea, #a855f7)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
@@ -176,19 +176,19 @@ export default function FeaturedProducts() {
               transition: 'all 0.2s',
               borderRadius: '999px',
               padding: '8px 16px',
-              color: '#ec4899',
-              border: '1px solid rgba(236,72,153,0.25)',
+              color: '#9333ea',
+              border: '1px solid rgba(147,51,234,0.25)',
               textDecoration: 'none',
             }}
             onMouseEnter={(e) => {
               const el = e.currentTarget as HTMLElement
-              el.style.background = 'rgba(236,72,153,0.1)'
-              el.style.color = '#f472b6'
+              el.style.background = 'rgba(147,51,234,0.1)'
+              el.style.color = '#a855f7'
             }}
             onMouseLeave={(e) => {
               const el = e.currentTarget as HTMLElement
               el.style.background = 'transparent'
-              el.style.color = '#ec4899'
+              el.style.color = '#9333ea'
             }}
           >
             Lihat Semua <ArrowRight style={{ width: '16px', height: '16px' }} />
@@ -234,7 +234,7 @@ export default function FeaturedProducts() {
               gap: '8px',
               fontSize: '14px',
               fontWeight: 600,
-              color: '#ec4899',
+              color: '#9333ea',
               textDecoration: 'none',
             }}
           >
