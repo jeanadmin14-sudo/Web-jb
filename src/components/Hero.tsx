@@ -97,7 +97,7 @@ export default function Hero() {
               color: '#fff',
             }}
           >
-            Akun game premium,
+            Selamat datang di
             <span
               style={{
                 display: 'block',
@@ -109,7 +109,7 @@ export default function Hero() {
                 backgroundClip: 'text',
               }}
             >
-              rental aman & terpercaya
+              JB Jean
             </span>
           </h1>
 
