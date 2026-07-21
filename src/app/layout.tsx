@@ -1,10 +1,17 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Squada_One } from 'next/font/google'
 import './globals.css'
 
 const inter = Inter({
   variable: '--font-inter',
   subsets: ['latin'],
+  display: 'swap',
+})
+
+const squadaOne = Squada_One({
+  variable: '--font-brand',
+  subsets: ['latin'],
+  weight: '400',
   display: 'swap',
 })
 
@@ -87,7 +94,7 @@ export default function RootLayout({
   return (
     <html lang="id" data-scroll-behavior="smooth" suppressHydrationWarning>
       <body
-        className={`${inter.variable} antialiased`}
+        className={`${inter.variable} ${squadaOne.variable} antialiased`}
         style={{ backgroundColor: '#07010f', color: '#fff' }}
       >
         {children}

@@ -57,7 +57,7 @@ export default function Hero() {
           left: '-10%',
           width: '550px',
           height: '550px',
-          background: 'radial-gradient(circle, rgba(124,58,237,0.22) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(147,51,234,0.22) 0%, transparent 70%)',
           borderRadius: '50%',
           filter: 'blur(70px)',
           pointerEvents: 'none',
@@ -70,7 +70,7 @@ export default function Hero() {
           right: '5%',
           width: '400px',
           height: '400px',
-          background: 'radial-gradient(circle, rgba(192,38,211,0.12) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(168,85,247,0.12) 0%, transparent 70%)',
           borderRadius: '50%',
           filter: 'blur(60px)',
           pointerEvents: 'none',
@@ -184,20 +184,20 @@ export default function Hero() {
                   padding: '14px 28px',
                   borderRadius: '14px',
                   transition: 'all 0.2s ease',
-                  background: 'linear-gradient(135deg, #ec4899, #a855f7)',
+                  background: 'linear-gradient(135deg, #9333ea, #a855f7)',
                   color: '#fff',
                   fontSize: '0.9rem',
-                  boxShadow: '0 4px 24px rgba(236,72,153,0.45)',
+                  boxShadow: '0 4px 24px rgba(168,85,247,0.45)',
                   textDecoration: 'none',
                 }}
                 onMouseEnter={(e) => {
                   const el = e.currentTarget as HTMLElement
-                  el.style.boxShadow = '0 6px 32px rgba(236,72,153,0.7)'
+                  el.style.boxShadow = '0 6px 32px rgba(168,85,247,0.7)'
                   el.style.transform = 'translateY(-2px)'
                 }}
                 onMouseLeave={(e) => {
                   const el = e.currentTarget as HTMLElement
-                  el.style.boxShadow = '0 4px 24px rgba(236,72,153,0.45)'
+                  el.style.boxShadow = '0 4px 24px rgba(168,85,247,0.45)'
                   el.style.transform = 'translateY(0)'
                 }}
               >
@@ -330,7 +330,7 @@ export default function Hero() {
                   position: 'absolute',
                   inset: '-30px',
                   borderRadius: '50%',
-                  background: 'radial-gradient(circle, rgba(236,72,153,0.2) 0%, rgba(147,51,234,0.15) 40%, transparent 70%)',
+                  background: 'radial-gradient(circle, rgba(168,85,247,0.2) 0%, rgba(147,51,234,0.15) 40%, transparent 70%)',
                   filter: 'blur(25px)',
                   pointerEvents: 'none',
                 }}
@@ -349,7 +349,7 @@ export default function Hero() {
                   position: 'relative',
                   zIndex: 10,
                   borderRadius: '28px',
-                  filter: 'drop-shadow(0 0 40px rgba(147,51,234,0.3)) drop-shadow(0 0 80px rgba(236,72,153,0.15))',
+                  filter: 'drop-shadow(0 0 40px rgba(147,51,234,0.3)) drop-shadow(0 0 80px rgba(168,85,247,0.15))',
                 }}
                 priority
               />
@@ -495,7 +495,7 @@ export default function Hero() {
         .hero-logo-motion:hover .hero-logo-glow {
           background:
             radial-gradient(circle at var(--glow-x) var(--glow-y), rgba(255, 255, 255, 0.22), transparent 18%),
-            radial-gradient(circle, rgba(236,72,153,0.32) 0%, rgba(147,51,234,0.24) 42%, transparent 72%) !important;
+            radial-gradient(circle, rgba(168,85,247,0.32) 0%, rgba(147,51,234,0.24) 42%, transparent 72%) !important;
           opacity: 1;
           filter: blur(32px) saturate(1.18);
         }
