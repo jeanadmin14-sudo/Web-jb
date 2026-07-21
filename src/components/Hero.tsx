@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight, Flame, MessageCircle, ShieldCheck, Zap } from 'lucide-react'
+import { ArrowRight, MessageCircle, ShieldCheck } from 'lucide-react'
 
 export default function Hero() {
   return (
@@ -193,59 +193,6 @@ export default function Hero() {
               Chat WhatsApp
             </Link>
           </div>
-
-          {/* Promo / Hot banner */}
-          <Link
-            href="/layanan"
-            style={{
-              marginTop: '20px',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              maxWidth: '420px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              borderRadius: '16px',
-              background: 'linear-gradient(90deg, rgba(249,115,22,0.15), rgba(239,68,68,0.1))',
-              border: '1px solid rgba(255,255,255,0.08)',
-              padding: '14px 20px',
-              textDecoration: 'none',
-              transition: 'transform 0.2s, border-color 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              const el = e.currentTarget as HTMLElement
-              el.style.transform = 'translateY(-1px)'
-              el.style.borderColor = 'rgba(249,115,22,0.4)'
-            }}
-            onMouseLeave={(e) => {
-              const el = e.currentTarget as HTMLElement
-              el.style.transform = 'translateY(0)'
-              el.style.borderColor = 'rgba(255,255,255,0.08)'
-            }}
-          >
-            <span
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-                flexShrink: 0,
-                borderRadius: '999px',
-                background: '#f97316',
-                padding: '4px 10px',
-                fontSize: '11px',
-                fontWeight: 800,
-                color: '#fff',
-                textTransform: 'uppercase',
-              }}
-            >
-              <Flame style={{ width: '12px', height: '12px' }} />
-              Hot
-            </span>
-            <span style={{ flex: 1, textAlign: 'left', fontSize: '14px', fontWeight: 700, color: '#fff' }}>
-              Cek Daftar Blacklist Partner
-            </span>
-            <Zap style={{ width: '20px', height: '20px', color: '#fb923c', flexShrink: 0 }} />
-          </Link>
         </div>
       </div>
     </section>
