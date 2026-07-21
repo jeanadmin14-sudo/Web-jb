@@ -189,9 +189,43 @@ export default function Hero() {
                 el.style.transform = 'translateY(0) scale(1)'
               }}
             >
+              <ShieldCheck style={{ width: '16px', height: '16px' }} />
+              Cek Keaslian Partner
+            </Link>
+
+            <a
+              href="https://wa.me/6287832017296"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                borderRadius: '999px',
+                border: '1px solid rgba(255,255,255,0.15)',
+                padding: '13px 26px',
+                fontSize: '14px',
+                fontWeight: 700,
+                color: '#fff',
+                textDecoration: 'none',
+                transition: 'border-color 0.2s, background 0.2s, transform 0.2s',
+              }}
+              onMouseEnter={(e) => {
+                const el = e.currentTarget as HTMLElement
+                el.style.borderColor = 'rgba(255,255,255,0.3)'
+                el.style.background = 'rgba(255,255,255,0.05)'
+                el.style.transform = 'translateY(-2px) scale(1.02)'
+              }}
+              onMouseLeave={(e) => {
+                const el = e.currentTarget as HTMLElement
+                el.style.borderColor = 'rgba(255,255,255,0.15)'
+                el.style.background = 'transparent'
+                el.style.transform = 'translateY(0) scale(1)'
+              }}
+            >
               <MessageCircle style={{ width: '16px', height: '16px' }} />
               Chat WhatsApp
-            </Link>
+            </a>
           </div>
         </div>
       </div>
