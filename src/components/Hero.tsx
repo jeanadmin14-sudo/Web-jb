@@ -51,11 +51,11 @@ export default function Hero() {
           }}
         >
           <Image
-            src="/Logo.jpeg"
-            alt="JBJean — Premium Game Marketplace"
+            src="/banner.jpg"
+            alt="JBJean — Platform Jual Beli Akun Game Aman & Terpercaya di Seluruh Indonesia"
             width={1200}
-            height={675}
-            style={{ width: '100%', aspectRatio: '16 / 9', objectFit: 'cover', display: 'block' }}
+            height={480}
+            style={{ width: '100%', aspectRatio: '2.5 / 1', objectFit: 'cover', display: 'block' }}
             priority
           />
         </div>
@@ -97,7 +97,7 @@ export default function Hero() {
               color: '#fff',
             }}
           >
-            Selamat datang di
+            Akun game premium,
             <span
               style={{
                 display: 'block',
@@ -109,7 +109,7 @@ export default function Hero() {
                 backgroundClip: 'text',
               }}
             >
-              JBJean Store
+              rental aman & terpercaya
             </span>
           </h1>
 
