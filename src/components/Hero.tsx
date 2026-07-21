@@ -38,11 +38,11 @@ export default function Hero() {
         }}
       />
 
-      <div style={{ position: 'relative', maxWidth: '720px', margin: '0 auto', padding: '0 20px' }}>
+      <div style={{ position: 'relative', maxWidth: 'min(1400px, 94vw)', margin: '0 auto', padding: '0 20px' }}>
         {/* Banner image */}
         <div
           style={{
-            maxWidth: '620px',
+            maxWidth: 'min(1200px, 90vw)',
             margin: '0 auto',
             borderRadius: '20px',
             overflow: 'hidden',
