@@ -443,19 +443,8 @@ export default function ProductsPage({ initialProducts }: { initialProducts?: Pr
             padding: 0 14px !important;
           }
           .products-grid {
-            grid-template-columns: minmax(0, 1fr) !important;
-            gap: 16px !important;
-            max-width: 430px;
-            margin-left: auto;
-            margin-right: auto;
-          }
-          .products-grid :global(> div) {
-            width: 100%;
-          }
-        }
-        @media (min-width: 560px) and (max-width: 768px) {
-          .products-grid {
-            max-width: 480px;
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 12px !important;
           }
         }
         @media (min-width: 769px) and (max-width: 1024px) {
