@@ -2,9 +2,25 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
 import { ArrowRight, MessageCircle, ShieldCheck } from 'lucide-react'
 
+const BANNER_SLIDES = [
+  { src: '/banner.jpg', alt: 'JBJean — Platform Jual Beli Akun Game Aman & Terpercaya di Seluruh Indonesia' },
+  { src: '/Logo.jpeg', alt: 'JBJean — Jean Cruel' },
+  { src: '/banner.jpg', alt: 'JBJean — Platform Jual Beli Akun Game Aman & Terpercaya di Seluruh Indonesia' },
+]
+
 export default function Hero() {
+  const [activeSlide, setActiveSlide] = useState(0)
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % BANNER_SLIDES.length)
+    }, 4500)
+    return () => window.clearInterval(timer)
+  }, [])
+
   return (
     <section
       id="hero-section"
@@ -39,32 +55,56 @@ export default function Hero() {
       />
 
       <div style={{ position: 'relative', maxWidth: 'min(1400px, 94vw)', margin: '0 auto', padding: '0 20px' }}>
-        {/* Banner image */}
+        {/* Banner carousel */}
         <div
           style={{
+            position: 'relative',
             maxWidth: 'min(1200px, 90vw)',
+            aspectRatio: '2.5 / 1',
             margin: '0 auto',
             borderRadius: '20px',
             overflow: 'hidden',
             border: '2px solid rgba(255,255,255,0.8)',
             boxShadow: '0 0 34px -6px rgba(255,255,255,0.3)',
+            background: '#000',
           }}
         >
-          <Image
-            src="/banner.jpg"
-            alt="JBJean — Platform Jual Beli Akun Game Aman & Terpercaya di Seluruh Indonesia"
-            width={1200}
-            height={480}
-            style={{ width: '100%', aspectRatio: '2.5 / 1', objectFit: 'cover', display: 'block' }}
-            priority
-          />
+          {BANNER_SLIDES.map((slide, index) => (
+            <Image
+              key={index}
+              src={slide.src}
+              alt={slide.alt}
+              fill
+              style={{
+                objectFit: 'cover',
+                opacity: activeSlide === index ? 1 : 0,
+                transition: 'opacity 0.9s ease',
+              }}
+              priority={index === 0}
+            />
+          ))}
         </div>
 
         {/* Dots */}
         <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-          <span style={{ height: '6px', width: '16px', borderRadius: '999px', background: '#a855f7' }} />
-          <span style={{ height: '6px', width: '6px', borderRadius: '999px', background: 'rgba(255,255,255,0.15)' }} />
-          <span style={{ height: '6px', width: '6px', borderRadius: '999px', background: 'rgba(255,255,255,0.15)' }} />
+          {BANNER_SLIDES.map((_, index) => (
+            <button
+              key={index}
+              type="button"
+              aria-label={`Slide ${index + 1}`}
+              onClick={() => setActiveSlide(index)}
+              style={{
+                height: '6px',
+                width: activeSlide === index ? '16px' : '6px',
+                borderRadius: '999px',
+                border: 'none',
+                padding: 0,
+                cursor: 'pointer',
+                background: activeSlide === index ? '#a855f7' : 'rgba(255,255,255,0.15)',
+                transition: 'width 0.3s ease, background 0.3s ease',
+              }}
+            />
+          ))}
         </div>
 
         <div style={{ marginTop: '2.25rem', textAlign: 'center' }}>
@@ -85,50 +125,6 @@ export default function Hero() {
             <ShieldCheck style={{ width: '14px', height: '14px' }} />
             Jual Beli Akun Game Terpercaya
           </span>
-
-          {/* Headline */}
-          <h1
-            style={{
-              marginTop: '20px',
-              fontSize: 'clamp(1.9rem, 7vw, 3rem)',
-              fontWeight: 800,
-              lineHeight: 1.1,
-              letterSpacing: '-0.02em',
-              color: '#fff',
-            }}
-          >
-            Selamat datang di
-            <span
-              style={{
-                display: 'block',
-                fontFamily: 'var(--font-brand-display)',
-                fontWeight: 400,
-                background: 'linear-gradient(120deg, #e9d5ff, #a855f7 65%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
-              JB Jean
-            </span>
-          </h1>
-
-          {/* Description */}
-          <p
-            style={{
-              marginTop: '14px',
-              maxWidth: '460px',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              color: 'rgba(255,255,255,0.6)',
-              fontSize: '0.92rem',
-              lineHeight: 1.65,
-            }}
-          >
-            Temukan stock Free Fire, Mobile Legends, rental akun, dan layanan
-            partner dalam satu pengalaman web yang cepat, jelas, dan nyaman
-            dipakai dari mobile.
-          </p>
 
           {/* CTA Buttons */}
           <div style={{ marginTop: '26px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>

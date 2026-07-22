@@ -42,6 +42,10 @@ export default function ContactSection() {
           pointerEvents: 'none',
         }}
       />
+      <div
+        className="bg-grid"
+        style={{ position: 'absolute', inset: 0, opacity: 0.35, pointerEvents: 'none' }}
+      />
 
       <div
         style={{

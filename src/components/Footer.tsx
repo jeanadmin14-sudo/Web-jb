@@ -248,7 +248,7 @@ export default function Footer() {
             flexWrap: 'wrap',
           }}
         >
-    <p>&copy; 2026 OzinVoidWalker. All rights reserved.</p>
+    <p>&copy; 2026 JBJEAN. All rights reserved.<br />Created by OzinVoidWalker</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             <Crown style={{ width: '12px', height: '12px', color: 'rgba(234,179,8,0.4)' }} />
             <span>Premium Game Marketplace</span>

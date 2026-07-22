@@ -39,6 +39,10 @@ export default function StatsBar() {
           background: 'linear-gradient(180deg, transparent, rgba(147, 51, 234, 0.03), transparent)',
         }}
       />
+      <div
+        className="bg-grid"
+        style={{ position: 'absolute', inset: 0, opacity: 0.35, pointerEvents: 'none' }}
+      />
 
       <div
         style={{

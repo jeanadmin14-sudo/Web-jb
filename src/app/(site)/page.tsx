@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Hero from '@/components/Hero'
-import StatsBar from '@/components/StatsBar'
+import FeaturedProducts from '@/components/FeaturedProducts'
 import ContactSection from '@/components/ContactSection'
 
 export const metadata: Metadata = {
@@ -42,7 +42,7 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Hero />
-      <StatsBar />
+      <FeaturedProducts />
       <ContactSection />
     </>
   )

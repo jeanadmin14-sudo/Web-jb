@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import type { Product } from '@/lib/supabase'
-import { Search, MessageSquare, Info, ShoppingCart, X, Clock3, Box } from 'lucide-react'
+import { Search, MessageSquare, X, Clock3, Box } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 
@@ -63,20 +63,28 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <div
       className="product-card"
+      role="button"
+      tabIndex={0}
+      onClick={() => setIsDetailOpen(true)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          setIsDetailOpen(true)
+        }
+      }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
         background: hovered ? 'var(--bg-card-hover)' : 'var(--bg-card)',
         border: hovered ? '1px solid var(--border-card-hover)' : '1px solid var(--border-card)',
-        borderRadius: '28px',
-        padding: '18px',
+        borderRadius: '20px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '16px',
+        cursor: 'pointer',
         transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-        transform: hovered ? 'translateY(-10px) scale(1.02)' : 'translateY(0) scale(1)',
-        boxShadow: hovered 
-          ? '0 25px 50px -12px rgba(147, 51, 234, 0.35), 0 0 20px 0 rgba(147, 51, 234, 0.15)' 
+        transform: hovered ? 'translateY(-6px)' : 'translateY(0)',
+        boxShadow: hovered
+          ? '0 20px 40px -12px rgba(147, 51, 234, 0.35), 0 0 20px 0 rgba(147, 51, 234, 0.15)'
           : '0 4px 20px -2px rgba(0, 0, 0, 0.5)',
         backdropFilter: 'blur(20px)',
         position: 'relative',
@@ -98,16 +106,17 @@ export default function ProductCard({ product }: { product: Product }) {
         />
       )}
 
-      {/* Visual Header / Image Box (Portrait ratio 3/4) */}
+      {/* Visual Header / Image Box (4:3) */}
       <div
         className="product-card-image"
         style={{
           position: 'relative',
-          aspectRatio: '3/4',
-          borderRadius: '20px',
+          aspectRatio: '1010 / 1280',
+          borderRadius: '20px 20px 0 0',
           overflow: 'hidden',
           background: 'rgba(7, 2, 15, 0.95)',
           border: '1px solid rgba(255, 255, 255, 0.08)',
+          borderBottom: 'none',
           boxShadow: 'inset 0 0 20px rgba(0,0,0,0.8)',
         }}
       >
@@ -117,8 +126,8 @@ export default function ProductCard({ product }: { product: Product }) {
             alt={product.name}
             fill
             style={{
-              objectFit: 'cover',
-              transform: hovered ? 'scale(1.08)' : 'scale(1)',
+              objectFit: 'contain',
+              transform: hovered ? 'scale(1.05)' : 'scale(1)',
               transition: 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
             unoptimized
@@ -143,7 +152,8 @@ export default function ProductCard({ product }: { product: Product }) {
 
         {/* Magnifier Glass overlay at bottom-right */}
         <div
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation()
             setSelectedImage(product.image_url || '/Logo.jpeg')
             setIsImageOpen(true)
           }}
@@ -170,188 +180,47 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
       </div>
 
-      {/* Badges Area */}
-      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
-        {/* Category Badge */}
+      {/* Info Area */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', padding: '8px 10px 10px', fontFamily: "'Trebuchet MS', sans-serif" }}>
         <span
           style={{
-            fontSize: '11px',
+            width: 'fit-content',
+            fontSize: '9px',
             fontWeight: 800,
-            padding: '5px 14px',
+            padding: '3px 9px',
             borderRadius: '999px',
-            background: 'rgba(147,51,234, 0.1)',
+            background: 'rgba(147,51,234, 0.12)',
             border: '1px solid rgba(147,51,234, 0.3)',
             color: '#a855f7',
             textTransform: 'uppercase',
             letterSpacing: '0.05em',
-            transition: 'all 0.3s ease',
           }}
         >
           {product.category}
         </span>
-
-        {/* Status Badge */}
-        <span
-          style={{
-            fontSize: '11px',
-            fontWeight: 800,
-            padding: '5px 14px',
-            borderRadius: '999px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            background: statusStyle.bg,
-            border: `1px solid ${statusStyle.dot}35`,
-            color: statusStyle.color,
-            transition: 'all 0.3s ease',
-          }}
-        >
-          <span
-            style={{
-              width: '6px',
-              height: '6px',
-              borderRadius: '50%',
-              background: statusStyle.dot,
-              boxShadow: `0 0 8px ${statusStyle.dot}`,
-            }}
-          />
-          {product.status}
-        </span>
-
-        {/* Rental Expiry Badge */}
-        {product.category === 'Rental' && product.rent_end_date && (
-          <span
-            style={{
-              fontSize: '11px',
-              fontWeight: 800,
-              padding: '5px 14px',
-              borderRadius: '999px',
-              background: 'rgba(147, 51, 234, 0.15)',
-              border: '1px solid rgba(168, 85, 247, 0.35)',
-              color: '#c084fc',
-              display: 'inline-flex',
-              alignItems: 'center',
-            }}
-          >
-            Sewa s/d {new Date(product.rent_end_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-          </span>
-        )}
-      </div>
-
-      {/* Info Area */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
         <h3
           style={{
-            fontWeight: 800,
+            fontWeight: 700,
             color: 'var(--text-title)',
-            fontSize: '18px',
-            lineHeight: 1.25,
+            fontSize: '11px',
+            lineHeight: 1.3,
             margin: 0,
-            textTransform: 'uppercase',
-            letterSpacing: '-0.01em',
-            transition: 'color 0.3s ease',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
           }}
         >
           {product.name}
         </h3>
-        <p
+        <strong
           style={{
-            fontSize: '13px',
-            color: 'var(--text-desc)',
-            lineHeight: 1.6,
-            margin: 0,
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-            transition: 'color 0.3s ease',
+            fontSize: '15px',
+            fontWeight: 900,
+            color: '#c084fc',
           }}
         >
-          {product.description}
-        </p>
-      </div>
-
-      {/* Action Buttons Row */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: 'auto' }}>
-        <div className="product-card-actions-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-          {/* Hubungi */}
-          <a
-            href={waUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-              padding: '12px',
-              borderRadius: '999px',
-              fontSize: '13px',
-              fontWeight: 800,
-              background: 'linear-gradient(90deg, #9333ea, #d946ef)',
-              color: '#fff',
-              border: 'none',
-              cursor: 'pointer',
-              textDecoration: 'none',
-              boxShadow: hovered ? '0 6px 20px rgba(147,51,234,0.45)' : 'none',
-              transform: hovered ? 'scale(1.03)' : 'scale(1)',
-              transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-            }}
-          >
-            <MessageSquare style={{ width: '14px', height: '14px' }} />
-            Hubungi
-          </a>
-
-          {/* Detail */}
-          <button
-            onClick={() => setIsDetailOpen(true)}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-              padding: '12px',
-              borderRadius: '999px',
-              fontSize: '13px',
-              fontWeight: 800,
-              background: hovered ? 'var(--bg-btn-outline-hover)' : 'var(--bg-btn-outline)',
-              border: hovered ? '1px solid var(--border-btn-outline-hover)' : '1px solid var(--border-btn-outline)',
-              color: hovered ? 'var(--text-btn-outline-hover)' : 'var(--text-btn-outline)',
-              cursor: 'pointer',
-              textDecoration: 'none',
-              transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-            }}
-          >
-            <Info style={{ width: '14px', height: '14px' }} />
-            Detail
-          </button>
-        </div>
-
-        {/* Full-width Order & Price Button */}
-        <a
-          href={waUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
-            padding: '12px',
-            borderRadius: '999px',
-            fontSize: '13px',
-            fontWeight: 800,
-            background: hovered ? 'var(--bg-btn-outline-hover)' : 'var(--bg-btn-full)',
-            border: hovered ? '1px solid var(--border-btn-outline-hover)' : '1px solid var(--bg-btn-full)',
-            color: hovered ? '#fff' : 'var(--text-btn-full)',
-            cursor: 'pointer',
-            textDecoration: 'none',
-            transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-          }}
-        >
-          <ShoppingCart style={{ width: '14px', height: '14px' }} />
-          {isRental ? 'Sewa Sekarang' : 'Beli Sekarang'} - {formatRupiah(product.price)}
-        </a>
+          {formatRupiah(product.price)}
+        </strong>
       </div>
 
       {isDetailOpen && mounted && createPortal(
@@ -1026,8 +895,8 @@ export default function ProductCard({ product }: { product: Product }) {
             box-shadow: 0 12px 32px rgba(0, 0, 0, 0.36) !important;
           }
           .product-card-image {
-            aspect-ratio: 16 / 10 !important;
-            border-radius: 16px !important;
+            aspect-ratio: 1010 / 1280 !important;
+            border-radius: 16px 16px 0 0 !important;
           }
           .product-card-actions-row {
             grid-template-columns: 1fr 1fr !important;
